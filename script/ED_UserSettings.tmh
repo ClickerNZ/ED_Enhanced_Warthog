@@ -55,15 +55,15 @@
 	//				The below path is usually where the Elite Dangerous journal files can be found.
 	//				Just replace '<username>' with your Windows username, NOT your CMDR Name!!!
 	
-	alias	JournalFolder		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
-	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
-	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
+//	alias	JournalFolder		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
+//	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
+//	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
 	
 //	here's mine as an example...
 
-//	alias	JournalFolder		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
-//	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
-//	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
+	alias	JournalFolder		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
+	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
+	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
 	
 	define	StatusReadRate		500		// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
 										// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
@@ -77,7 +77,6 @@
 	//				Saves the script states after a game restart or relog. 
 	
 	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\MyStatusFile.json";
-
 
 //----------------//
 // Text To Speech //
