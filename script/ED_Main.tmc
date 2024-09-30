@@ -135,8 +135,12 @@ include "ED_Toggles.tmh"
 		// The following method eliminates user having to set compatible connected hardware manually
 		// Alternate method would be to get user to declare which alias to use depending on what hardware they own
 		
+		//   !!!   THE SCRIPT WILL ABORT IF NO COMPATIBLE JOYSTICK OR THROTTLE IS FOUND   !!!
+		
 		// There are 4 Joystick combos compatible with this script...
-		&MyJoystick = &joy0;		
+		
+		&MyJoystick = &joy0;													// set to equivalent of 'nul' by default
+		
 		if (&Joystick != &joy0) {
 			&MyJoystick = &Joystick;
 			printf("\x0a\++	Connected joystick	is WARTHOG Base + F16 Flight stick.\x0a");
@@ -169,7 +173,9 @@ include "ED_Toggles.tmh"
 		}
 
 		// There is only one Throttle compatible with this script...
-		&MyThrottle = &joy0;		
+		
+		&MyThrottle = &joy0;													// set to equivalent of 'nul' by default
+		
 		if (&Throttle == &joy0) {
 			printf("\x0a\	/////////////////////////////////////////////////////////////////////////////\x0a\x0a");
 			printf("	!!! WARNING:	This script will not run without the WARTHOG Throttle connected\x0a\x0a");
@@ -184,8 +190,11 @@ include "ED_Toggles.tmh"
 			printf("++	Connected throttle	is WARTHOG Replica A-10C Throttle\x0a");
 		}
 
+		// If no rudder is found the script will not abort.
 		// There are two Rudders compatible with this script...
-		&MyRudder = &joy0;
+		
+		&MyRudder = &joy0;													// set to equivalent of 'nul' by default
+		
 		if (&TFRPRudder != &joy0) {
 			&MyRudder = &TFRPRudder;
 			printf("++	Connected rudder	is TFRPRudder.\x0a");
