@@ -63,7 +63,7 @@
 
 
 	// FUNCTION: Initialise Rudder Axis 
-	int initRudderAxis() {																		// Initialise Thrustmaster TFRP Rudder
+	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
 		if(EnableMyRudder) {
 			MapAxis(&MyRudder, TRUDDER, DX_Z_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
 			printf("Rudder Axis	... done\x0a");
