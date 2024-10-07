@@ -23,7 +23,7 @@
 
 // Index:	Line		FUNCTION
 //			Line 69: 	int fnNotValid()
-//			Line 92: 	int fnSetCurves()
+//			Line 91: 	int fnSetCurves()
 //			Line 161: 	int fnSetSliderCurve()
 //			Line 192: 	int fnGetFlightMode()
 //			Line 210:	int fnLEDBrightness()
