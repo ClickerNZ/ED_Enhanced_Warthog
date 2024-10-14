@@ -87,6 +87,7 @@ include "ED_Initialise.tmh"
 include "ED_Functions.tmh"
 include "ED_StateTracker.tmh"
 include "ED_Toggles.tmh"
+include "ED_JSMouseEmulation.tmh"		// NEW - Testing
 
 //include "ED_CommsControl.tmh"			// UNTESTED: ENABLE 'CommsModule' in UserSettings to use CommsControl and...
 										// ... remove the comments in front of the initCommsChannels() call below.
@@ -240,16 +241,19 @@ include "ED_Toggles.tmh"
 // Initialise Flight controls //
 // -------------------------- //
 
-		printf("\x0a\++	Initialise Joystick, Throttle and Rudder pedals\x0a");
+		printf("\x0a\++	Initialise Joystick, Throttle and Rudder\x0a");
+		
 		initJoystickAxis();
-		initThrottleAxis();														// Includes Throttle "Friction Control" Slider
+		initThrottleAxis();
+		initSliderAxis();
+		initSlewAxis();
 		initRudderAxis();
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a");
 
-// -----------------//
-// Check Game State //
-// -----------------//
+// ----------------- //
+// Check Game State  //
+// ----------------- //
 
 		printf("\x0a\++	Check Game state ...\x0a");
 		
@@ -258,8 +262,28 @@ include "ED_Toggles.tmh"
 	
 // end of int main()	
 
+// ------------ //
+// EventHandle  //
+// ------------ //
+
 	int EventHandle(int type, alias o, int x) {
 		DefaultMapping(&o, x);
+
+    // REQUIRED for ED_fa_off_stick_mouse_advanced
+
+//		if (g_config==ED_MOUSE_CONFIG) {
+		if (MouseEmulation) {
+	
+		 	if (&o==&MyJoystick) {
+
+				if (x == JOYY) {
+					ApplyEdgeJoystickInputY(); // check to see if we need pitch authority
+				}
+				if (x == JOYX) { 
+					ApplyEdgeJoystickInputX(); // check to see if we need yaw authority
+				}
+			}
+		}
 	}
 
 // END
