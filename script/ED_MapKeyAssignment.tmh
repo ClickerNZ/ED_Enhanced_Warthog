@@ -83,7 +83,7 @@
 			MapKeyUMD(&MyJoystick, S1,
 				EXEC("tgHUDMode();"),																			// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints();"),																		// M - Deploy/Retract Hard-points
-				EXEC("tgXAxis();")																				// D - Toggle Joystick X-Axis between Roll and Yaw
+				EXEC("tgXAxis(SET);")																			// D - Toggle Joystick X-Axis between Roll and Yaw
 				);
 		}
 	
@@ -119,7 +119,11 @@
 			MapKey(&MyJoystick, S4, PULSE+FlightAssist);
 		}
 		else {		
-			MapKey(&MyJoystick, S4, EXEC("tgEnhancedFAOFF();"));													// TOGGLE: FA-OFF/ON
+			MapKeyUMD(&MyJoystick, S4,
+				EXEC("tgEnhancedFAOFF(1)"),																		// Engage JSMouseEmulation
+				EXEC("tgEnhancedFAOFF(0);"),																	// TOGGLE: FA-OFF/ON
+				0
+				);
 		}
 
 //		China Hat (Trim Switch)
@@ -534,7 +538,7 @@
 			MapKey(&MyThrottle, APUOFF, 0);
 		}
 		else {
-			MapKey(&MyThrottle, APUON, EXEC("fnDeploySRV(DEPLOY);"));								// "APU Start"	= Deploy SRV
+			MapKey(&MyThrottle, APUON, EXEC("fnDeploySRV(DEPLOY);"));							// "APU Start"	= Deploy SRV
 			MapKey(&MyThrottle, APUOFF, EXEC("fnDeploySRV(RECOVER);"));							// "AAPU OFF"	= Board Ship
 		}
 
@@ -545,10 +549,11 @@
 			MapKey(&MyThrottle, EORIGN, 0);
 		}
 		else {
-			MapKey(&MyThrottle, EORIGN, EXEC("fnDRShip();"));										// From SRV - Recall/Dismiss Ship
+			MapKey(&MyThrottle, EORIGN, EXEC("fnDRShip();"));									// From SRV - Recall/Dismiss Ship
 		}
 		
-		MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);											// Toggle: Ship GUI OFF
+		MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);										// Toggle: Ship GUI OFF
+		MapKey(&MyThrottle, EORNORM, 0);														// Not Mapped
 		MapKeyR(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);	// RELEASE							// Toggle: Ship GUI ON
 
 //		(Engine Operate - Left)
@@ -699,7 +704,11 @@
 //		(Joystick Pinky Lever Switch)
 //		-----------------------------
 
-		MapKey(&MyJoystick, S4, EXEC("fnVPOutput(\"Toggle Flight Assist\");"));
+		MapKeyUMD(&MyJoystick, S4,
+			EXEC("fnVPOutput(\"Toggle Flight Assist with joystick mouse emulation\");"),
+			EXEC("fnVPOutput(\"Toggle Flight Assist\");"),
+			EXEC("fnVPOutput(\"Arrrr,ummmmm, no, Not mapped\");")
+			);
 
 //		China Hat (Trim Switch)
 //		-----------------------
