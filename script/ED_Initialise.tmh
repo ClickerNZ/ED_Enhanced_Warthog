@@ -36,11 +36,20 @@
 
 	// FUNCTION: Initialise Joystick Axes 
 	int initJoystickAxis() { 																	// Set Default Joystick Axis
-		printf("\x0a\Initialising: v%d%d%d.%s\x0a", VMajor, VMinor, VPoint, VBranch);
-		printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+		if (StartupLock) {
+			printf("\x0a\Initialising: v%d%d%d.%s\x0a", VMajor, VMinor, VPoint, VBranch);
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+		}	
+
 		MapAxis(&MyJoystick, JOYX, DX_X_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
 		MapAxis(&MyJoystick, JOYY, DX_Y_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
-		printf("Joystick Axis	... done		");
+
+		if (StartupLock) {
+			printf("Joystick Axes	... done		");
+		}
+		else {
+			printf("Joystick Axes	... re set\x0a");
+		}
 	}
 
 
@@ -48,30 +57,58 @@
 	int initThrottleAxis() {																	// Set Default Throttle Axis
 		
 		// Throttle mapping...
-		MapAxis(&MyThrottle, THR_LEFT, DX_ZROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);				// Set Left Throttle. Right throttle not used.
-		printf("Throttle Axis	... done\x0a");
+		MapAxis(&MyThrottle, THR_LEFT, DX_ZROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);				// Set Left Throttle. 
+		LockAxis(&MyThrottle, THR_RIGHT, 1);													// 1=Lock, 0=Unlock - Right Throttle lever not used 
+		
+		if (StartupLock) {
+			printf("Throttle Axes	... LEFT ... done	RIGHT 		... Locked\x0a");
+		}
+		else {
+			printf("Throttle Axes	... re set\x0a");
+		}
+	}
 
+	int initSliderAxis() {
+	
 		// Slider Mapping...
 		MapAxis(&MyThrottle, THR_FC, DX_SLIDER_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);				// Set Friction Control Axis Curve (Sensor Range Zoom Scaling)
-		printf("Slider Axis	... done		");
 		fnSetSliderCurve(1);
-		
-		// Slew Control Mapping...
-		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control X Axis		
-		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control Y Axis
+		if (StartupLock) {
+			printf("Slider Axis	... done		");
+		}
+		else {
+			printf("Slider Axis	... re set\x0aa");
+		}
 	}
+
+	int initSlewAxis() {
+	
+		// Slew Control Mapping...
+		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control X Axis (UP/DOWN)	
+		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control Y Axis (LEFT/RIGHT)
+
+//		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control X Axis (UP/DOWN)	
+//		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control Y Axis (LEFT/RIGHT)
+
+		if (StartupLock) {
+			printf("Slew Axis	... done		");
+		}
+		else {
+			printf("Slew Axis	... re set\x0aa");
+		}
+	}	
 
 
 	// FUNCTION: Initialise Rudder Axis 
 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
 		if(EnableMyRudder) {
 			MapAxis(&MyRudder, TRUDDER, DX_Z_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
-			printf("Rudder Axis	... done\x0a");
+			if (StartupLock) printf("Rudder Axis	... done\x0a");
 		}
 		else {
-			printf("Rudder Axis	... disabled\x0a");		
+			if (StartupLock) printf("Rudder Axis	... disabled\x0a");		
 		}
-		printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");		
+		if (StartupLock) printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
 	}
 
 
