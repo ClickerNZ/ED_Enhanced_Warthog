@@ -68,11 +68,14 @@
 		}
 	}
 
-	// TOGGLE: Flight/Drive Assist OFF/ON - LED1
+	// TOGGLE: 		Flight/Drive Assist OFF/ON - LED1
+	// Parameter:	0 = Standard FA-Off, 1 = FA-Off with Joystick-Mouse Emulation
 
-	int tgEnhancedFAOFF() {
+	int tgEnhancedFAOFF(int param=0) {
 		int fnName = "Flight Assist";
 		int reason;
+		int printtxt;
+		
 		if (fMainShip)	{
 			if (!fSupercruise) {
 				if (fFAOff) {
@@ -80,14 +83,33 @@
 						printf("FA-ON Curves:\x0a");
 					}
 					fnSetCurves(OldCurves, CurveInfo, TRUE, FALSE);					// Announce curve profile, don't save curve info
+					if (MouseEmulation) {
+						MouseEmulation = RESET;										// Turn off MouseEmulation
+						if (!SwapRoll4Yaw) {										// If DEFAULT X-Axis is ROLL...
+							if(XAxisYAW) tgXAxis(0);								// Toggle X-Axis to ROLL if set to YAW.
+						}
+					}
 				}
 				else {
 					if (CurveInfo == PRINT) {
 						printf("FA-OFF Curves:\x0a");
 					}
 					fnSetCurves(FAOFFCurves, CurveInfo, TRUE, FALSE);				// Announce curve profile, don't save curve info
-				}			
+				}
+				
 				ActKey(PULSE+KEYON+FlightAssist);
+
+				if (param==1) {
+					MouseEmulation = SET;											// Turn ON MouseEmulation 				
+					tgMouseEmulation(1);											// TESTING - refer ED_JSMouseEmulation.tmh 
+					if (CurveInfo == PRINT) {
+						printf("MouseEmulation Curves:\x0a");
+					}
+					if (!SwapRoll4Yaw) {											// If DEFAULT X-Axis is ROLL...
+						if(!XAxisYAW) tgXAxis(0);									// Toggle X-Axis to YAW if set to ROLL 
+					}
+					fnSetCurves(FAOFFMouseCurves, CurveInfo, TRUE, FALSE);			// Announce curve profile, don't save curve info
+				}
 			}
 			else {
 				reason = "we are currently in Supercruise";
@@ -95,7 +117,7 @@
 			}
 		}
 		else if (fSRV) {
-			ActKey(PULSE+KEYON+FlightAssist);										// Toggles Drive Assist 
+			ActKey(PULSE+KEYON+FlightAssist);										// Toggles Drive Assist in SRV 
 		}	
 	}
 
@@ -567,21 +589,30 @@
 		}
 	}
 	
-	// TOGGLE:	X-Axis between Roll and Yaw
+	// TOGGLE:		X-Axis between Roll and Yaw
+	// Parameter:	0 = No Toggle SwapRoll4Yaw flag, 1 = Toggle SwapRoll4Yaw flag
+	//				Toggle SwapRoll4Yaw if requested via manual switch using B-S1
+	//				Don't toggle SwapRoll4Yaw
 	
-	int tgXAxis(int dummy = NUL) {
+	int tgXAxis(int param = 0) {
 		
 		int VoiceTxt;
-
-		ActKey(PULSE+KEYON+SwapRollYaw);
-		XAxisMode = !XAxisMode;
 		
-		if (XAxisMode) {
+		ActKey(PULSE+KEYON+SwapRollYaw);
+
+		if (param==SET) {
+			SwapRoll4Yaw = !SwapRoll4Yaw; 
+		}
+
+		XAxisYAW = !XAxisYAW;
+		
+		if (XAxisYAW) {
 			VoiceTxt = "X Axis set to Yaw";
 		}
 		else {
 			VoiceTxt = "X Axis set to Roll";
 		}
+
 		fnVPOutput(VoiceTxt);
 	}
 
