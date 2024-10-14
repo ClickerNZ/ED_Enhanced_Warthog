@@ -77,13 +77,11 @@
 	int FireModeS			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int ShipDismissed		= 0;		// Track when Ship is dismissed/recalled via EORIGN-U
 	int SilentStrobe		= 0;		// Used to track when we are using the Silent Running Strobe feature
-	int XAxisMode			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
+	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	
 	int WDRetries			= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
 	
 	int SCO					= 0;		// Supercruise Overcharge flag
 	
-	int EnableMyRudder		= ENABLED;	// Set to DISABLED if you do not have a Thrustmaster TFRP or TFRPHA Rudder.
-
 			
 // END
