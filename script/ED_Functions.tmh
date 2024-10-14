@@ -82,11 +82,11 @@
 	
 
 	// FUNCTION:	Set Joystick and rudder curves according to Autopilot switch position.
-	// Parameters:	profile		=	0 - 5 (see JSProfile in EDGlobalVars)
-	// 				print		=	NO (default) to supress console print of Curve settings, YES to print
-	//				announce	=	NO to supress voice announcement at game start/restart, else YES (default) to announce
-	//				manual		=	TRUE (default) when called by using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
-	//								...this saves last manually selected state for FA-ON
+	// Parameters:	profile			=	0 - 5 (see JSProfile in EDGlobalVars)
+	// 				print			=	NO (default) to supress console print of Curve settings, YES to print
+	//				announce		=	NO to supress voice announcement at game start/restart, else YES (default) to announce
+	//				SaveCurveInfo	=	TRUE (default) when called by using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
+	//									...this saves last manually selected state for FA-ON
 	
 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
 
@@ -178,7 +178,7 @@
 			SliderProfile = "Supercruise";
 		}
 		
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);			// Forces re-read of slider axis
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);		// Forces re-read of slider axis
 
 		if (!StartupLock) {
 			printf("Slider Curve Profile:	[%d] %s\x0a", x, SliderProfile);
