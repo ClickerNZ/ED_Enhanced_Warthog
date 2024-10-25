@@ -3,7 +3,7 @@
 	<KeyboardLayout>en-AU</KeyboardLayout>
 	<MouseXMode Value="Bindings_MouseYaw" />
 	<MouseXDecay Value="1" />
-	<MouseYMode Value="Bindings_MousePitchInverted" />
+	<MouseYMode Value="Bindings_MousePitch" />
 	<MouseYDecay Value="1" />
 	<MouseReset>
 		<Primary Device="Mouse" Key="Mouse_5" />
@@ -11,7 +11,7 @@
 			<Modifier Device="Keyboard" Key="Key_LeftShift" />
 		</Secondary>
 	</MouseReset>
-	<MouseSensitivity Value="0.37568793" />
+	<MouseSensitivity Value="2.5" />
 	<MouseDecayRate Value="10.00000000" />
 	<MouseDeadzone Value="0.00000000" />
 	<MouseLinearity Value="1.00000000" />
