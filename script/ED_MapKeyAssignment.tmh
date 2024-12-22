@@ -2,7 +2,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_MapKeyAssignment.tmh (v503) ... supports Elite Dangerous (Odyssey)
+// This file: ED_MapKeyAssignment.tmh (v503) ... supports Elite Dangerous (Ascendancy)
 
 // Contains MapKey Statements for all button and switch actions
 // Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
@@ -144,12 +144,12 @@
 	
 			MapKey(&MyJoystick, H1D, PULSE+PrevFireGroup);														// Select Previous Fire Group
 		
-			MapKey(&MyJoystick, H1L, TEMPO(0, EXEC("tgLandingGear(0);"), LongPress));								// Long Press = Toggle Landing Gear (avoids accidental toggle)
+			MapKey(&MyJoystick, H1L, TEMPO(0, EXEC("tgLandingGear(0);"), LongPress));							// Long Press = Toggle Landing Gear (avoids accidental toggle)
 		
 			MapKeyUMD(&MyJoystick, H1R,
 				EXEC("tgLights(ON);"),																			// U - Turn on Night Vision
-				TEMPO(0,	EXEC("tgLights(OFF);"), LongPress),													// M - Long Press = Toggle Ship Lights (avoids accidental toggle)
-				EXEC("fnTextToSpeech(\"Not mapped\");")																								// D - 
+				TEMPO(0, EXEC("tgLights(OFF);"), LongPress),													// M - Long Press = Toggle Ship Lights (avoids accidental toggle)
+				EXEC("fnTextToSpeech(\"Not mapped\");")															// D - 
 				);
 		}
 		
@@ -170,19 +170,19 @@
 				);
 				
 			MapKeyUMD(&MyJoystick, H2D,
-				EXEC("fnTextToSpeech(\"Not mapped\");"),																							// U
+				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
 				PULSE+SelectHighestThreat,																	// M - default - Target highest threat
 				PULSE+WingmanTarget																			// D - Select currently selected wing-man's target
 				);
 				
 			MapKeyUMD(&MyJoystick, H2L,
-				EXEC("fnTextToSpeech(\"Not mapped\");"),																							// U
+				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
 				PULSE+SelectNextShip,																		// M - default - Cycle selection of Next Ship
 				SEQ(PULSE+SelectWingman1, PULSE+SelectWingman2, PULSE+SelectWingman3)						// D - Cycle selection of Wing-men
 				);
 				
 			MapKeyUMD(&MyJoystick, H2R,
-				EXEC("fnTextToSpeech(\"Not mapped\");"),																							// U
+				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
 				PULSE+SelectNextHostileShip,																// M - default - Cycle selection of Next Hostile
 				PULSE+WingmanNavlock																		// D - Select currently selected wing-man's NAV target
 				);
