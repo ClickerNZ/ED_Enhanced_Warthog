@@ -1,10 +1,10 @@
 
 //----------------------------------------------------------------------//
-//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
+//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog & TFRP Script	//
 //----------------------------------------------------------------------//
 
 // This file:	ED_Main.tmc 		v503
-// Supports:	Elite Dangerous 	v4.0.0.1900 (Ascendancy)
+// Supports:	Elite Dangerous 	v4.0.0.1904
 // Requires:	TARGET 				v3.0.24.618_rev1
 //				Joystick firmware	v12
 //				Throttle firmware 	v23
@@ -132,93 +132,13 @@ include "ED_JSMouseEmulation.tmh"		// NEW - Testing
 // Initialise Hardware, LEDs, variables and functions //
 // -------------------------------------------------- //
 
-		// Aliases MyJoystick, MyThrottle and MyRudder declared in ED_GlobalVars.tmh
-		// The following method eliminates user having to set compatible connected hardware manually
-		// Alternate method would be to get user to declare which alias to use depending on what hardware they own
+		CheckControllers();														// Refer ED_Initialise.tmh
 		
-		//   !!!   THE SCRIPT WILL ABORT IF NO COMPATIBLE JOYSTICK OR THROTTLE IS FOUND   !!!
-		
-		// There are 4 Joystick combos compatible with this script...
-		
-		&MyJoystick = &joy0;													// set to equivalent of 'nul' by default
-		
-		if (&Joystick != &joy0) {
-			&MyJoystick = &Joystick;
-			printf("\x0a\++	Connected joystick	is WARTHOG Base + F16 Flight stick.\x0a");
-		}
-		else if (&JoystickF18 != &joy0) {
-			&MyJoystick = &JoystickF18;
-			printf("++	Connected joystick	is WARTHOG Base + F18 Flight stick.\x0a");
-		}
-		else if (&AVA_F16 != &joy0) {
-			&MyJoystick = &AVA_F16;		
-			printf("++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
-		}
-		else if (&AVA_F18 != &joy0) {
-			&MyJoystick = &AVA_F18;
-			printf("++	Connected joystick	is AVA Base + F18 Flight stick.\x0a");
-		}
-		else {
-			printf("\x0a\	///////////////////////////////////////////////////////////////////////////////\x0a\x0a");
-			printf("	!!! WARNING:	This script will not run without a compatible Joystick connected\x0a\x0a");
-			printf("	///////////////////////////////////////////////////////////////////////////////\x0a\x0a");
-			printf("	Please connect one of the following compatible JOYSTICKS:-\x0a");
-			printf("	1) WARTHOG Base with F16 Flight stick\x0a");
-			printf("	2) WARTHOG Base with F18 Flight stick\x0a");
-			printf("	3) AVA Base with F16 Flight stick\x0a");
-			printf("	4) AVA Base with F18 Flight stick\x0a");
-
-			if (ControllerCheck == ENABLED) {									// if DISABLED allows script to run without connected controllers. Refer ED_ScriptDefines.ttm 
-				Abort();
-			}
-		}
-
-		// There is only one Throttle compatible with this script...
-		
-		&MyThrottle = &joy0;													// set to equivalent of 'nul' by default
-		
-		if (&Throttle == &joy0) {
-			printf("\x0a\	/////////////////////////////////////////////////////////////////////////////\x0a\x0a");
-			printf("	!!! WARNING:	This script will not run without the WARTHOG Throttle connected\x0a\x0a");
-			printf("	/////////////////////////////////////////////////////////////////////////////\x0a\x0a");
-			
-			if (ControllerCheck == ENABLED) {									// if DISABLED allows script to run without connected controllers. Refer ED_ScriptDefines.ttm 
-				Abort();
-			}
-		}
-		else {
-			&MyThrottle = &Throttle;
-			printf("++	Connected throttle	is WARTHOG Replica A-10C Throttle\x0a");
-		}
-
-		// If no rudder is found the script will not abort.
-		// There are two Rudders compatible with this script...
-		
-		&MyRudder = &joy0;													// set to equivalent of 'nul' by default
-		
-		if (&TFRPRudder != &joy0) {
-			&MyRudder = &TFRPRudder;
-			printf("++	Connected rudder	is TFRPRudder.\x0a");
-			EnableMyRudder = ENABLED;			
-		}
-		else if (&TFRPHARudder != &joy0) {
-			&MyRudder = &TFRPHARudder;
-			printf("++	Connected rudder	is TFRPHARudder.\x0a");
-			EnableMyRudder = ENABLED;
-		}
-		else {
-			printf("++	No compatible rudder connected. Use alt YAW control.\x0a");
-			printf("	(Joystick S3 + Throttle Coolie Switch L & R)\x0a");
-			EnableMyRudder = DISABLED;
-		}
-
 		SetShiftButton(&MyJoystick, S3, &MyThrottle, PSF, PSB);					// ** DO NOT TOUCH **  Joystick Nosewheel Switch (S3) = IO, Throttle pinky switch (PSF/PSB) = UMD
 
 		SetKBRate(PulseTime, DelayTime);										// Base Settings 	(See ED_UserSettings.tmh)
 		SetKBLayout(KBLayout);													//					(See ED_ScriptDefines.ttm)
 	
-		fnPIPMode(RESET);														// Reset PIPMode
-
 		printf("\x0a\++	Load MyStates from file...\x0a");
 		stfnMyStates(LOAD);														// Load my status variables
 		
@@ -248,6 +168,8 @@ include "ED_JSMouseEmulation.tmh"		// NEW - Testing
 		initSliderAxis();
 		initSlewAxis();
 		initRudderAxis();
+
+		fnPIPMode(RESET);														// Reset PIPMode
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a");
 
