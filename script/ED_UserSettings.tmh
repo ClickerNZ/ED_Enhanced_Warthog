@@ -83,7 +83,7 @@
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//				Saves the script states after a game restart or relog. 
 	
-	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\MyStatusFile.json";
+	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\MyWarthogStatusFile.json";
 
 //----------------//
 // Text To Speech //
