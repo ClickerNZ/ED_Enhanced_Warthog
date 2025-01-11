@@ -83,7 +83,7 @@
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//				Saves the script states after a game restart or relog. 
 	
-	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\MyWarthogStatusFile.json";
+	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\MyWarthogStatusFile.json";
 
 //----------------//
 // Text To Speech //
@@ -102,7 +102,7 @@
 	int		EnableVoice			= ENABLED;				// ENABLED or DISABLED. Enable this if you wish to use "voice.exe". 
 														// Toggled via tgTxt2Speech();
 														
-	alias	VoicePath			= "C:\\Thrustmaster\\ED_TargetScript\\voice.exe";
+	alias	VoicePath			= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\voice.exe";
 	
 	int		VoiceVolume			= 75;					// Default Volume set at 75% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
@@ -146,8 +146,8 @@
 
 	int		EnableSoundFX		= ENABLED; 				// ENABLED or DISABLED. Enable this if you wish to use "sounder.exe"
 	
-	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript\\sounder.exe";
-	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript\\sounds\\";
+	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounder.exe";
+	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounds\\";
 	alias	SoundCMD			= "";
 
 
