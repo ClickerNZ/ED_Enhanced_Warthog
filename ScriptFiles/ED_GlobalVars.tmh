@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_GlobalVars.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_GlobalVars.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // NOTE:	All user related settings can be found in the ED_UserSettings.tmh file
 //			Changing any of the below global variables will have significant effect on the script
@@ -25,7 +25,6 @@
 
 // START
 
-
 //--------------------//
 // Connected Hardware //
 //--------------------//
@@ -41,7 +40,6 @@
 	int VoiceExists;					// Declared here and set in initTextToSpeech()
 	int SerialText			= 0;		// Default TextToSpeech action is Parallel (call voice.exe and immediately process next instruction)
 										// Set SerialText prior to calling fnVPOutput() or fnTextToSpeech() to call voice.exe and wait until complete
-//	int TTSDelay			= 0;		// Text To Speech Delay to assist with multiple calls with short timeframe
 	
 	int SounderExists;					// Declared here and set in initSoundFX()
 
@@ -56,7 +54,6 @@
 	
 	int	SetLED;							// SetLED determines LED brightness. Refer fnLEDBrightness()
 
-//	int Debug				= 0;		// Debug mode for testing. 0 = OFF, 1 = ON. Prints additional info to console and announces key flag settings
 	int StartupLock			= 1;		// Prevent triggering keystrokes during initialisation
 	int GameLoaded			= 0;		// Set in fnGameStarted() when game is detected as running
 	
@@ -78,8 +75,5 @@
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
-	
-//	int SCO					= 0;		// Supercruise Overcharge flag
-	
 			
 // END
