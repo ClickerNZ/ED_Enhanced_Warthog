@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Functions.tmh (v503) ... supports Elite Dangerous (Ascendancy)
+// This file: ED_Functions.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -23,6 +23,7 @@
 
 // Index:	Line		FUNCTION
 //			Line 69: 	int fnNotValid()
+//			Line 79:	int fnStartupMapKeyMode()
 //			Line 91: 	int fnSetCurves()
 //			Line 161: 	int fnSetSliderCurve()
 //			Line 192: 	int fnGetFlightMode()
@@ -55,7 +56,6 @@
 //			Line 1156: 	int fnStateDump()
 //			Line 1319: 	int fnDebug()
 //			Line 1344:	int fnGetTOD()
-//			Line 1362:	int fnGetDate()
 //			Line 1385:	int findstr()
 
 //------------------//
@@ -79,13 +79,31 @@
 		fnTextToSpeech(&fntxt);
 		printf("!!! Function: %s !!!\x0a", &fntxt);		
 	}
-	
 
+	// FUNCTION:	Sets Mapkey Mode on Script start
+
+	int fnStartupMapKeyMode() {
+	
+		if(MapKeyProfile==FULL) fnVPOutput("Running full key map"); else fnVPOutput("Running basic key map");
+		// Selects MapKey Assignment profile		
+		if (Flags == 0 & TrainingMode == ENABLED) {
+			if (AnnounceTraining) {
+				fnTextToSpeech("Training mode enabled, press a button or switch to hear what it does");
+			}
+			TrainingMap();										// Selects Training MapKey Profile
+		}
+		else {
+			if (AnnounceTraining) {
+				fnTextToSpeech("Training mode disabled. Enable this feature via E D User Settings file");
+			}
+			MainKeyMap();										// Selects Main Mapkey Profile if TrainingMode is disabled 
+		}
+	}
 	// FUNCTION:	Set Joystick and rudder curves according to Autopilot switch position.
 	// Parameters:	profile			=	0 - 5 (see JSProfile in EDGlobalVars)
 	// 				print			=	NO (default) to supress console print of Curve settings, YES to print
 	//				announce		=	NO to supress voice announcement at game start/restart, else YES (default) to announce
-	//				SaveCurveInfo	=	TRUE (default) when called by using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
+	//				SaveCurveInfo	=	TRUE (default) when called using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
 	//									...this saves last manually selected state for FA-ON
 	
 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
@@ -118,6 +136,15 @@
 			VoiceTxt = "Curves slowest";					
 		}
 		
+		// SetSCurve() Syntax:
+		// SetSCurve(&Device, axis name, left_deadzone%, center_deadzone%, right_deadzone%, curve, scale);
+		//		curve = -20 to +20. Negative values more sensitive around center, positive values better control in the center
+		//		scale = -20 to +20. Negative value limits travel on axis. Positive will reach minimum and maximum values quicker
+		// Refer: Values options set in ED_UserSettings.tmh
+		// SetCustomCurve() Syntax:
+		// SetCustomCurve(&device, axis name, LIST(Axis physical position 1, Axis output value 1, Axis physical position 2, Axis output value 2, …);
+		// values are %  
+
 		// Set Joystick curves and force re-read of axes
 		SetSCurve(&MyJoystick, JOYX,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
 		SetSCurve(&MyJoystick, JOYY,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
@@ -167,13 +194,15 @@
 			SliderProfile = "FSS Mode";
 		}
 		if (x == 1)	{													// Normal flight
-			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);
+//			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);
+			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Normal Flight";
 			
 		}
 		if (x == 2)	{													// Supercruise
-			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);
+//			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);
+			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Supercruise";
 		}
@@ -311,16 +340,18 @@
 	//				fnTextToSpeech(&VoiceTxt, 50);				//says the text at 50% volume 
 	//
 	// Usage4:		fnTextToSpeech("Test number 4", 0, &David);	//says the text at default volume using "David" voice
+	//
+//	// NOTE:		Default 'VoiceVolume' is 75% and can be increased or decreased by using Throttle TBTN4-U (Vol+) or TBTN4-D (Vol-)
 
 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
 		char volume; Dim (&volume, 4); volume[0] = NUL;
 		char TTSSysCmd; Dim(&TTSSysCmd, 255); TTSSysCmd[0] = NUL;			// Increase buffer size if required
 
 		if (VolumeOverride > 0) {
-			sprintf(&volume, "%d", VolumeOverride);
+			sprintf(&volume, "%d", VolumeOverride);							// Uses volume setting parsed when calling this function
 		}
 		else {
-			sprintf(&volume, "%d", VoiceVolume);
+			sprintf(&volume, "%d", VoiceVolume);							// Uses the VoiceVolume variable (Default = 75%). Can be changed via ??????
 		}
 		volume[3] = NUL;													// terminate char array 
 		if (EnableVoice) {
@@ -364,7 +395,7 @@
 				VolTxt = "at maximum,";
 			}
 			else {
-				VolTxt = "Increased to";
+				VolTxt = "increased to";
 			}
 		}
 		else {														// DECREASE Volume
@@ -375,7 +406,7 @@
 				VolTxt = "at minimum,";
 			}
 			else {
-				VolTxt = "Decreased to";
+				VolTxt = "decreased to";
 			}
 		}
 		sprintf(&c, "Voice volume %s %d percent", VolTxt, VoiceVolume);
@@ -410,6 +441,7 @@
 		
 		if (EnableSoundFX) {
 			if (vol != 100) SFXVol = vol;										// set SFXVol if vol is parsed
+			if (wavfile == "beep") SFXVol = 75;									// Vol parameter for reverse beep cannot be sent, so we set this manually here 
 			if (loops != 1) SFXLoops = loops;									// set SFXLoops if loops is parsed
 			
 			sprintf(&SFXSysCmd, "start %s %s /vol %d /loop %d %s%s", &SoundPath, &SoundCMD, SFXVol, SFXLoops, &WAVPath, wavfile);
@@ -458,16 +490,6 @@
 			ConnectionStatus = ON;										// tracks if above has already been turned on
 		}
 		
-		if (CommsModule) {
-			if (CommsInitialised == NO) {
-				initCommsChannels();									// Initialise Voice Communications 
-				CommsInitialised = YES;
-			}
-		}
-		else {
-			printf("\x0a\- ED_CommsControl.tmh not loaded -\x0a\x0a");
-		}
-		
 		if(EnableVoice) {
 			VoiceStatus = "Enabled";
 		}
@@ -488,18 +510,18 @@
 		SerialText = 1;
 		fnTextToSpeech("Welcome back Commander");
 		
-		Flags2 = stfnGetKeyValue("Flags2", INTEGER);					// Check if running Odyssey or Horizons
+		Flags2 = stfnGetKeyValue("Flags2", INTEGER);					// Check if running Odyssey or Legacy Horizons
 		if (Flags2 == -1) {												// That is, keyname not found 
 			Odyssey = 0;												// Therefore, Odyssey is not running 
 			printf("\x0a\GAME:		HORIZONS\x0a");
 			SerialText = 1;
-			DeferCall(3000, &fnTextToSpeech, "Running Horizons");
+			DeferCall(2000, &fnTextToSpeech, "Running Legacy Horizons");
 		}
 		else {
 			Odyssey = 1;
 			printf("\x0a\GAME:		ODYSSEY\x0a");
-			SerialText = 1;
-			DeferCall(3000, &fnTextToSpeech, "Running Odyssey");			
+//			SerialText = 1;
+			DeferCall(2000, &fnTextToSpeech, "Running Odyssey");			
 		}
 						
 		fnPrintState();
@@ -508,7 +530,7 @@
 		MainKeyMap();													// MapKey profile for 'Game Running'
 		
 		if (SwapRoll4Yaw) {
-			DeferCall(1500, &tgXAxis, 0);								// Give 'MainKeyMap()' call a chance to finish
+			DeferCall(1500, &tgXAxis, RESET);								// Give 'MainKeyMap()' call a chance to finish
 		}				
 	}
 
@@ -558,7 +580,7 @@
 		}
 		if (StartupLock == OFF) {
 			fnTextToSpeech(VoiceTxt);
-			printf("PIPMode(%d):		%s	>>\x0a", PIPMode, PIPTxt);
+			printf("PIPMode(%d):		%s\x0a", PIPMode, PIPTxt);
 		}
 	}
 
@@ -601,7 +623,7 @@
 	}
 
 
-	// FUNCTION: Sets Auto-PIP Mapping & then Sends Keystrokes.
+	// FUNCTION: Sets Auto-PIP Mapping & then Sends Keystrokes
 	// Parameters:  (Max, Min, Bal). Valid = SYS, ENG, WEP, MID (refer EDGlabalVars.tmh)
 
 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
@@ -717,8 +739,8 @@
 	//				Camera Mode:		Zoom IN function
 	// Parameter:	x = 0 (1xSCB, 0xHS), 1 (1xSCB, 1xHS) or 2 (2xSCB, 1xHS)
 
-	int fnAdvancedSCB(int x) {
-		if (!fSupercruise & fMainShip) {
+	int fnAdvancedSCB(int x=0) {
+		if (!fSupercruise & fMainShip & !fDocked & !fLanded) {
 			if (x == 0) {
 				ActKey(PULSE+KEYON+UseShieldCell);
 				printf("!!!    SCB  Fired    !!!\x0a");
@@ -743,6 +765,9 @@
 				ActKey(PULSE+KEYON+FSSZoomIN);
 				printf("FSS Zoom:	IN\x0a");					
 			}
+			else {
+				fnVPOutput("Shield Cell bank cannot be fired at this time");
+			}
 		}
 	}
 
@@ -750,7 +775,7 @@
 	// FUNCTION: Deploy Heatsink / FSS Zoom
 	
 	int fnHeatsink() {
-		if (fMainShip) {
+		if (fMainShip & !fDocked & !fLanded) {
 			if(FSSMode) {
 				ActKey(PULSE+KEYON+FSSZoomOUT);
 				printf("FSS Zoom:	OUT\x0a");
@@ -760,6 +785,9 @@
 				printf("!!!  Heatsink Fired  !!!\x0a");
 			}
 		}
+		else {
+			fnVPOutput("Heat sink may not be fired at this time");
+		}
 	}
 
 
@@ -767,14 +795,21 @@
 	
 	int fnChaff() {
 		int fnName = "Chaff";
-		int reason;
+		int reason = 0;
 		
-		if(!fSupercruise) {
+		if(!fSupercruise & fMainShip & !fDocked & !fLanded) {
 			ActKey(PULSE+KEYON+FireChaff);
 			printf("!!!   Chaff  Fired   !!!\x0a");
 		}
 		else {
-			reason = "we are in supercruise";
+			if (fSupercruise) reason = "we are in supercruise";
+			if (fDocked) reason = "we are docked";
+			if (fLanded) reason = "we are landed";	
+			if (fSRV) reason = "we are in the SRV";
+			if (fFighter) reason = "I don't think the fighter has chaff";
+			if (fOnFoot) reason = "we are on foot";
+		}
+		if (reason != 0) {
 			fnNotValid(fnName, reason);
 		}
 	}
@@ -785,7 +820,7 @@
 
 	int fnDeploySRV(int x) {
 		int fnName;
-		int reason;
+		int reason = 0;
 
 		if (!StartupLock) {
 			if (x == DEPLOY) {
@@ -793,23 +828,23 @@
 				if (!fSRV) {				
 					if (fLanded & fMainShip) {									// DEPLOY
 						ActKey(PULSE+KEYON+m_DeploySRV);
-						printf("SRV:				DEPLOYED	>>\x0a");
+						printf("SRV:				DEPLOYED\x0a");
 					}
 					else {
-						reason = "we are not landed";
-						fnNotValid(fnName, reason);
+						if (!fLanded) reason = "we are not landed";
+						if (fOnFoot) reason = "we are on foot";
 					}
 				}
 				else {
 					fnVPOutput("SRV already Deployed");				
 				}
 			}
-			else {																// RECOVER
+			else {																// RECOVER and set PIPs to shields in case we're under fire 
 				fnName = "Recover SRV";
 				if (fSRV & fSRVTurretRetracted) {	
 					ActKey(PULSE+KEYON+m_BoardShip);
-					printf("SRV:				RECOVERED	<<\x0a");
-					DeferCall(14000, &fnPIPMapper, SYS);						// PIPs to Shields 
+					printf("SRV:				RECOVERED\x0a");
+					DeferCall(14000, &fnPIPMapper, SYS);						// PIPs to Shields ... is 14 seconds too long?
 				}
 				else {
 					if (!fSRV) {
@@ -818,14 +853,16 @@
 					if (!fSRVTurretRetracted) {
 						reason = "turret not retracted";
 					}
-					fnNotValid(fnName, reason);
 				}
 			}
+			if (reason !=0) fnNotValid(fnName, reason);
 		}
 	}
 	
 	
 	// FUNCTION: 	Dismiss/Recall Ship
+	// NOTE:		1. Use to manually dismiss/recall the ship from SRV or on-foot 
+	//				2. Console messages may be wrong if ship leaves automatically
 	
 	int fnDRShip() {
 		int fnName = "Dismiss or Recall Ship";
@@ -839,11 +876,11 @@
 			else {
 				VoiceTxt = "Ship dismissed";
 			}
-			ActKey(PULSE+KEYON+SRVRecallDismissShip);
+			ActKey(PULSE+KEYON+SRVRecallDismissShip);							// 'LeftALT+x'
 			
 			printf("Ship Status: ");
-			fnVPOutput(VoiceTxt);
-			
+//			fnVPOutput(VoiceTxt);												// Let COVAS announce as we don't always use this function?
+	
 			ShipDismissed = !ShipDismissed;
 			stfnMyStates(SAVE);													// saves my status variables 			
 		}
@@ -858,25 +895,30 @@
 
 	int fnRequestDock() {
 		int fnName = "Docking request";
-		int reason;
-		if (!fSupercruise) {
+		int reason = 0;
+		if (!fSupercruise & fMainShip & !fDocked & !fLanded) {
 			ActKey(PULSE+KEYON+m_RequestDock);
-			fnPIPMapper(SYS,ENG);
+			printf("\x0a=	Docking request sent	=\x0a");
 			if (AutoGearDOWN & !fLandingGear) {
 				ActKey(PULSE+KEYON+LandingGear);
+				printf("=	    Landing Gear deployed	=\x0a");
 			}
-			printf("\x0a=	Docking request sent	=\x0a");
+			fnPIPMapper(SYS,ENG);		
 			printf("=	    Power to shields	=\x0a\x0a");
 		}
 		else {
-			reason = "we are in no position to request docking";
-			fnNotValid(fnName, reason);
+			if(fSupercruise) 		reason = "Supercruise";
+			else if (!fMainShip)	reason = "we are not in the ship";
+			else if (fDocked)		reason = "we are already docked";
+			else if (fLanded)		reason = "we are already landed";
+			else 					reason = "we are in no position to request docking";
 		}
+		if (reason !=0) fnNotValid(fnName, reason);
 	}
 
 
 	// FUNCTION: Enter/Exit Hanger
-	// Parameter: x = EXIT, ENTER
+	// Parameter: x = 0 (EXIT), 1 (ENTER)
 	
 	int fnHangerServices(int x) {
 		int fnName = "Hanger Services";
@@ -924,7 +966,7 @@
 
 	int fnIdleLock(int x) {
 		int VoiceTxt;
-		int fName = "Idle Lock";
+		int fnName = "Idle Lock";
 		
 		if (fMainShip) {
 			fnHangerServices(x);
@@ -940,7 +982,7 @@
 			ActKey(PULSE+KEYON+SRVHandbrake);		// Toggle SRV Handbrake
 		}
 		else {
-			fnNotValid(fName);		
+			fnNotValid(fnName);		
 		}
 	}
 
@@ -963,7 +1005,7 @@
 			if(chkcounter > 6) {
 				reason = "FSD charge failed";
 				fnNotValid(EngineText, reason);
-				printf("%s:	DISENGAGED	<<\x0a", EngineText);
+				printf("%s:	DISENGAGED\x0a", EngineText);
 				chkcounter = 0;
 				StopAutoRepeat(hFSDCharge);				// Stop AutoRepeat once threshold has been breached
 				InitWarpDrive = DISABLED;
@@ -982,28 +1024,24 @@
 	// PARAMETER:	EngineText - Supercruise or Warpdrive selection 
 	// NOTE:		Check every 0.5 sec and punch FSD if cleared
 
-	// GLOBAL VARIABLES
-	
-	int MLCount = 0;
-	
 	int fnCheckFSDMasslocked(int EngineText) {
 		int reason;
 		
-		MLCount = MLCount + 1;
+		RetryCounter = RetryCounter + 1;
 		
 		if(fMassLocked) {
-			printf("%s	MASSLOCKED	... Retry #%d of 4\x0a", EngineText, MLCount);
-			if(MLCount >= 4) {
+			printf("%s	MASSLOCKED	... Retry #%d of 4\x0a", EngineText, RetryCounter);
+			if(RetryCounter >= 4) {
 				reason = "we are currently masslocked";
 				fnNotValid(EngineText, reason);
-				printf("%s:	DISENGAGED	<<\x0a", EngineText);
-				MLCount = 0;
+				printf("%s:	DISENGAGED\x0a", EngineText);
+				RetryCounter = 0;
 				StopAutoRepeat(hMassLocked);				// Stop AutoRepeat that called this function
 				InitWarpDrive = DISABLED;
 			}
 		}
 		else {
-			MLCount = 0;
+			RetryCounter = 0;
 			StopAutoRepeat(hMassLocked);
 			InitWarpDrive = DISABLED;
 			tgWarpDrive(EngineText); 
@@ -1012,8 +1050,7 @@
 
 
 	// FUNCTION:	Clears the chat boxes
-	// Parameter:	'mode'. Valid = 0 or 1
-	//				mode 0 clears current selected chatbox. mode 1 clears all chatbaxes
+	// Parameter:	'mode' - '0' clears current selected chatbox. '1' clears all chatbaxes
 	
 	int fnClearChatBox(int mode = 0) {
 		int loop = 1;
@@ -1025,7 +1062,7 @@
 		ActKey(PULSE+KEYON+										// MACRO: Open chat panel
 			CHAIN(
 				LOCK,
-				PULSE+QuickCommsPanel, D(500),
+				PULSE+QuickCommsPanel, D(500),					// 'QuickCommsPanel' = 'ENTER' key
 				PULSE+QuickCommsPanel, D(500),
 				PULSE+CommsPanel, D(500),
 				PULSE+UILeft, D(),
@@ -1065,53 +1102,59 @@
 	
 
 	// FUNCTION:	Menulog
-	// Parameter:	'mode' = 0, 1 or 2
-	// NOTE:		Is not designed for nor should be used to 'Console Log' (CLOG) whilst being attacked
+	// Parameter:	'mode' = 0 (Open), 1 (Private Group) or 2 (Solo)
+	// NOTE:		1. Is not designed for nor should be used to 'Console Log' (CLOG) whilst being attacked
+	//				2. Private Group #1 (Top option) will be selected. This can be changed in the m_FastModeSwitch1 macro within ED_Macros.tmh
 	
 	// WARNING:		Only works if menu selection is at home position, otherwise unpredicatable result!
 
 	int fnModeSwitch(int mode) {
 	
-		int fName = "Mode Switch";
+		int fnName = "Mode Switch";
 		int reason;
 		
 		int GUIMode;
 		int counter = 0;
-		int ReloadDelay;		
+		int ReloadDelay = 11;			// Set default reload delay in seconds
 		
 		if (fMainShip) {
+			printf("Menulog from Ship\x0a");
 			ReloadDelay = 11;
 		}
 		if (fSRV) {
-			ReloadDelay = 22;
+			printf("Menulog from SRV\x0a");
+			ReloadDelay = 15;
 		}
 		if (fOnFoot){
+			printf("Menulog on foot\x0a");
 			ReloadDelay = 35;			// untested
 		}
-
-		printf("Mode Switch Triggered\x0a");
-
+		Sleep(1000);
+		printf("Menulog Triggered\x0a");
+	
 		if (fDanger | fInterdicted) {		
 			reason = "clogging is not allowed";
-			fnNotValid(fName, reason);
+			fnNotValid(fnName, reason);
 		}
 		else {
 			if (mode == 0) {
-				fnVPOutput("Mode switch to open selected.. please wait for game reload\x0a");			
+				fnVPOutput("Menu log to open selected.. please wait for game reload\x0a");			
 				ActKey(PULSE+KEYON+m_FastModeSwitch0);												// Selects OPEN mode
 			}
 			else if (mode == 1) {
-				fnVPOutput("Mode switch to private group selected.. please wait for game reload\x0a");			
+				fnVPOutput("Menu log to private group selected.. please wait for game reload\x0a");			
 				ActKey(PULSE+KEYON+m_FastModeSwitch1);												// Selects PRIVATE mode
 			}
 			else {
-				fnVPOutput("Mode switch to solo selected.. please wait for game reload\x0a");			
+				fnVPOutput("Menu log to solo selected.. please wait for game reload\x0a");			
 				ActKey(PULSE+KEYON+m_FastModeSwitch2);												// Selects SOLO mode
 			}
 
 			if (ReverseThrust == ON) {																// Game always resets Reverse Thrust
 				ReverseThrust = OFF;
 			}
+
+			printf("Waiting for game to reload\x0a");
 			
 			while (counter < ReloadDelay) {															// Wait for game to finish reloading
 				printf(".");
@@ -1120,14 +1163,14 @@
 			}
 			
 			printf("\x0a\x0a\- Game has reloaded -\x0a");
-			fnGameStarted();
+			fnGameStarted();																		// We're still guessing when game has actually retsrated as Flags and Flags2 do not change 
 		}
 	}
 
 
 	// FUNCTION:	Voice + Print output
 	// Parameter:	VPOutput: string to send to fnTextToSpeech() and printf
-	//				VolumeOverride: integer, 0 = no override, 1 - 100 = Volume. Default Volume = 75
+	//				VolumeOverride: integer, 0 = no override, 1 - 100 = Volume. (Default Volume = 75)
 
 	int fnVPOutput(int VPOutput, int VolumeOverride=0) {
 		printf("%s\x0a", VPOutput);		
@@ -1135,16 +1178,16 @@
 	}
 
 
-//----------------------//
-// REPORT SCRIPT STATES //										// (Optimised Formatting for TARGET GUI)
-//----------------------//
+	//----------------------//
+	// REPORT SCRIPT STATES //										// (Optimised Formatting for TARGET GUI)
+	//----------------------//
 
 	// FUNCTION: Display header for the status of the macro toggles & user preferences at script start
 
 	int fnPrintState() {
 
 		printf("\x0a");
-		printf("SCRIPT LOADED:	v%d%d%d.%s     TARGET Mappings, Macros & Functions Loaded \x0a", VMajor, VMinor, VPoint, VBranch);
+		printf("SCRIPT LOADED:	v%d.%d.%d.%s     TARGET Mappings, Macros & Functions Loaded \x0a", VMajor, VMinor, VPoint, VBranch);
 		printf("==================================================================================\x0a");
 		printf("USER PREFERENCES: JS-Curves: %s     DX-Slider Curve: %d     PIPMode(%d): %s     LED Level: %d\x0a\x0a", JSCurveSetting, DXCurveSetting, PIPMode, PIPTxt, LEDLevel);
 		fnStateDump();
@@ -1198,14 +1241,14 @@
 				LN = stfnGetKeyValue("Longitude", FLOAT);			// get fp value
 			}
 
-				HD = stfnGetKeyValue("Heading", INTEGER);			// get as integer
-				if(HD == -1) {
-					HD = "N/A";
-				}
-				AL = stfnGetKeyValue("Altitude", INTEGER);			// get as integer
-				if (AL == -1) {
-					AL = "N/A"; 
-				}
+			HD = stfnGetKeyValue("Heading", INTEGER);			// get as integer
+			if(HD == -1) {
+				HD = "N/A";
+			}
+			AL = stfnGetKeyValue("Altitude", INTEGER);			// get as integer
+			if (AL == -1) {
+				AL = "N/A"; 
+			}
 
 			if (!fSupercruise & !fFSDJump) WD = "DISENGAGED";
 			else if (fFSDJump) WD = "Hyperjump";
@@ -1251,94 +1294,66 @@
 				printf("FIGHTER:\x0a");
 				printf("Fighter states not yet coded in this version\x0a\x0a");
 			}
-			else {
-				stfnDumpFlags();
-			}
 		}
 		
 		if (Odyssey & Flags2 != 0) {
-		
-			stfnProcessFlags2();			// refresh Flags2 bits or else we'll get unpredictable results below (???)
 
-			Body2 = "Normal";
-			
-			if (fOnFoot)				Locn1 		= "On Foot";	else Locn1 			= "fOnFoot Not Set";
-			if (fInTaxi)				Locn2		= "in Taxi";
-			if (fInMultiCrew)			MC 			= "Multicrew";	else MC 			= "Alone";
-			if (fOnFootInStation)		Locn2		= "in Station";
-			if (fOnFootOnPlanet)		Locn2		= "on Planet";
-			if (fAimDownSight)			Perspective = "Sights"; 	else Perspective	= "Normal";
-			if (fLowOxygen)				O2Lvl 		= "LOW"; 		else O2Lvl 			= "Fine";
-			if (fLowHealth)				Body1 		= "Injured";	else Body1 			= "Healthy";
-			if (fCold)					Body2 		= "Cold";
-			if (fHot)					Body2 		= "Hot";
-			if (fVeryCold)				Body2 		= "Very Cold";
-			if (fVeryHot)				Body2 		= "Very Hot";
-			if (fGlideMode)				Glide 		= "YES"; 		else Glide 			= "NO";
-			if (fOnFootInHanger)		Locn2 		= "in Hanger";
-			if (fOnFootSocialSpace)		Locn2 		= "in Social Space";
-			if (fOnFootExterior)		Locn2 		= "outside";
-			if (fBreathableAtmosphere)	Atmos 		= "Breathable"; else Atmos 			= "Unbreathable";
-			
-			Temp 	= stfnGetKeyValue("Temperature", FLOAT);
-			O2		= stfnGetKeyValue("Oxygen", FLOAT);
-			Health	= stfnGetKeyValue("Health", FLOAT);
-			Gravity	= stfnGetKeyValue("Gravity", FLOAT);
-			
-			stfnGetKeyValue("SelectedWeapon_Localised", STRING);
-			Dim(&Weapon, strlen(&keyvalue)+1);
-			Weapon[0] = 0;
-			strcat(&Weapon, &keyvalue);			
+			if (!fFSDJump) {					// Avoid the below printout if calling this function whilst in Witchspace			
+				stfnProcessFlags2();			// refresh Flags2 bits or else we'll get unpredictable results below (???)
+				Body2 = "Normal";
+				
+				if (fOnFoot)				Locn1 		= "On Foot";	else Locn1 			= "fOnFoot Not Set";
+				if (fInTaxi)				Locn2		= "in Taxi";
+				if (fInMultiCrew)			MC 			= "Multicrew";	else MC 			= "Alone";
+				if (fOnFootInStation)		Locn2		= "in Station";
+				if (fOnFootOnPlanet)		Locn2		= "on Planet";
+				if (fAimDownSight)			Perspective = "Sights"; 	else Perspective	= "Normal";
+				if (fLowOxygen)				O2Lvl 		= "LOW"; 		else O2Lvl 			= "Fine";
+				if (fLowHealth)				Body1 		= "Injured";	else Body1 			= "Healthy";
+				if (fCold)					Body2 		= "Cold";
+				if (fHot)					Body2 		= "Hot";
+				if (fVeryCold)				Body2 		= "Very Cold";
+				if (fVeryHot)				Body2 		= "Very Hot";
+				if (fGlideMode)				Glide 		= "YES"; 		else Glide 			= "NO";
+				if (fOnFootInHanger)		Locn2 		= "in Hanger";
+				if (fOnFootSocialSpace)		Locn2 		= "in Social Space";
+				if (fOnFootExterior)		Locn2 		= "outside";
+				if (fBreathableAtmosphere)	Atmos 		= "Breathable"; else Atmos 			= "Unbreathable";
+				
+				Temp 	= stfnGetKeyValue("Temperature", FLOAT);
+				O2		= stfnGetKeyValue("Oxygen", FLOAT);
+				Health	= stfnGetKeyValue("Health", FLOAT);
+				Gravity	= stfnGetKeyValue("Gravity", FLOAT);
+				
+				stfnGetKeyValue("SelectedWeapon_Localised", STRING);
+				Dim(&Weapon, strlen(&keyvalue)+1);
+				Weapon[0] = 0;
+				strcat(&Weapon, &keyvalue);			
 
-			printf("\x0aPersonal States @ %s       JSON-Timestamp: %s       Flags2: %u\x0a", fnGetTOD(), &TimeStamp, Flags2);
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+				printf("\x0aPersonal States @ %s       JSON-Timestamp: %s       Flags2: %u\x0a", fnGetTOD(), &TimeStamp, Flags2);
+				printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+				printf("Location:	%s %s\x0a", Locn1, Locn2);
+				if (fLatLong) {
+					printf("Lat/Long:	%0.3f, %0.3f\x0a", LT, LN);
+				}			
+				printf("Atmosphere:	%s	Temp: %0.2f degrees\x0a", Atmos, Temp);
+				printf("Gravity:		%0.2f\x0a", Gravity);
+				printf("Situation:	%s\x0a", MC);
+				printf("Health:		%s,		%0.2f\x0a", Body1, Health);
+				printf("Environment:	%s\x0a", Body2);
+				printf("Oxygen Level:	%s%,		%0.2f\x0a", O2Lvl, O2);
+				printf("Weapon:		%s,	Perspective:	%s\x0a", &Weapon, Perspective);
+			}
 
-			printf("Location:	%s %s\x0a", Locn1, Locn2);
-			if (fLatLong) {
-				printf("Lat/Long:	%0.3f, %0.3f\x0a", LT, LN);
-			}			
-			printf("Atmosphere:	%s	Temp: %0.2f degrees\x0a", Atmos, Temp);
-			printf("Gravity:		%0.2f\x0a", Gravity);
-			printf("Situation:	%s\x0a", MC);
-			printf("Health:		%s,		%0.2f\x0a", Body1, Health);
-			printf("Environment:	%s\x0a", Body2);
-			printf("Oxygen Level:	%s%,		%0.2f\x0a", O2Lvl, O2);
-			printf("Weapon:		%s,	Perspective:	%s\x0a", &Weapon, Perspective);
-		}
-
-		if (strlen(&myJson) > 68) {
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+			if (strlen(&myJson) > 68) {
+				printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+			}
 		}
 	}
-
-
-	// FUNCTION:	Turn Debug and ShowFlags ON/OFF 
-	// Parameter:	x = 0 - 3. Refer MapKey EFLNORM
-
-	int fnDebug(int x) {
-	
-		if (x == 0) {
-			Debug = DISABLED;
-			ShowFlags = DISABLED;
-			fnVPOutput("Debug OFF");
-		}
-		if (x == 1) {
-			Debug = ENABLED;
-			fnVPOutput("Debug ON");
-		}
-		if (x == 2) {
-			ShowFlags = ENABLED;
-			fnVPOutput("ShowFlags ON");			
-		}
-		if (x == 3) {
-			Debug = ENABLED;
-			ShowFlags = ENABLED;
-			fnVPOutput("Debug and Showflags ON");
-		}	
-	}
-	
 
 	// FUNCTION:	Get Time of Day
+	// Usage1:		"int variablename = fnGetTOD();"
+	// Usage2:		"printf("The local PC time is %s", fnTOD());"
 
 	int fnGetTOD() {
 
@@ -1355,28 +1370,6 @@
 		}	
 	}
 	
-	
-	// FUNCTION:	Get Today's Date
-	
-	int fnGetDate() {
-		char date;
-		Dim(&date, 14);
-		date[0]=0;
-		
-		int today = "00/00";							// Set type and format
-		
-		system("date /T > C:\\today.txt");				// Create local date stamp
-		
-		int fp = fopen("c:\\today.txt", "r");
-		if (fp) {
-			fread(&date, 1, 13, fp);					// Read local date stamp
-			fclose(fp);
-			strsub(today, &date, 4, 8);
-			return today;
-		}	
-	}
-
-
 	//	FUNCTION:	Find substring within a string and return first char position or -1 if not found
 	//	NOTE:		sys.tmh has strstr() listed to provide this functionality, however it seems to always
 	//				return a '0' no matter what you plug in. So, I decided to write my own.

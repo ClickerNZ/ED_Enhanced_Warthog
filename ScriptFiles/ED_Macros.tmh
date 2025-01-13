@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Macros.ttm (v503) ... supports Elite Dangerous (Ascendancy)
+// This file: ED_Macros.ttm (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -45,35 +45,19 @@
 	int	m_RequestDock, m_DeploySRV, m_ShowGameStats, m_ReportCrimesToggle, m_NAVBeaconWing, m_NAVBeaconOff;
 	int	m_FastModeSwitch0, m_FastModeSwitch1, m_FastModeSwitch2, m_BoardShip, m_EnterHanger, m_Launch, m_ChangeColours;
 
-//---------------//			// MACROS Include a series of automated key presses to perform a specific task.
-// CUSTOM MACROS //			// The actual keys pressed can be found within the 'ED_Defines.ttm' file.
+//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
+// CUSTOM MACROS //			// The action identifiers (keystroke labels) used below can be found within the 'ED_Defines.ttm' file.
 //---------------//			// NOTE: Keys pressed are also defined within the game's bind file and MUST match what we're using here. 
 
 	int fnCustomCommands() {
-
-		// Being lazy...I've put this here rather than create yet another function
-		// Selects MapKey Assignment profile
-		
-		if (Flags == 0 & TrainingMode == ENABLED) {
-			if (AnnounceTraining) {
-				fnTextToSpeech("Training mode enabled, press a button or switch to hear what it does");
-			}
-			TrainingMap();										// Selects Training MapKey Profile
-		}
-		else {
-			if (AnnounceTraining) {
-				fnTextToSpeech("Training mode disabled. Enable this feature via E D User Settings file");
-			}
-			MainKeyMap();										// Selects Main Mapkey Profile if TrainingMode is disabled 
-		}
 		
 		// Define macros...
 
 		// MACRO: Auto-Docking Request
 		m_RequestDock = CHAIN(
-			LOCK+PULSE+TargetPanel, D(500),						// 1, e, e, left, right, spc, left, q, q, 1
+			LOCK+PULSE+TargetPanel, D(500),						// Keystroke sequence = 1, e, e, left, right, spc, left, q, q, 1
 			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in
-			PULSE+UINextPanel, D(),								//			   default/orig position, else will be misaligned.
+			PULSE+UINextPanel, D(),								//			   default/orig position, else will produce spurious result.
 			PULSE+UILeft, D(),
 			PULSE+UIRight, D(),
 			PULSE+UISelect, D(500),
@@ -84,7 +68,7 @@
 
 		// MACRO: SRV - Deploy
 		m_DeploySRV = CHAIN(
-			LOCK+PULSE+RolePanel, D(500),						// 3, down, spc, down, down, up, up, spc
+			LOCK+PULSE+RolePanel, D(500),						// Keystroke sequence = 3, down, spc, down, down, up, up, spc
 			PULSE+UIDown, D(),
 			PULSE+UISelect, D(500),
 			PULSE+UIDown, D(),
@@ -96,7 +80,7 @@
 
 		// MACRO: SRV - Board Ship								// Sometimes scrolling down past the "back" option wraps back to top and sometimes it doesn't
 		m_BoardShip = CHAIN(									// This needs further testing as previously, the menu pointer occassionally started at a different place
-			LOCK+PULSE+RolePanel, D(250),						// 3, spc, down, down, down, down, down, up, up, spc
+			LOCK+PULSE+RolePanel, D(250),						// Keystroke sequence = 3, spc, down, down, down, down, down, up, up, spc
 			PULSE+UISelect, D(1500),
 			PULSE+UIDown, D(200),
 			PULSE+UIDown, D(200),
@@ -110,18 +94,18 @@
 			PULSE+UIDown, D(200),
 			PULSE+UIUp, D(200),
 			PULSE+UIUp, D(200),									// should now be positioned at 'Board Ship'
-//			PULSE+UISelect, D(500),								// remove comment if macro is reliable for you
+		//	PULSE+UISelect, D(500),								// remove comment if macro is reliable for you
 			LOCK);
 
-		// MACRO: Display the combined OSD FPS & Bandwidth meters
-		m_ShowGameStats = CHAIN(
-			PULSE+ShowFramerate, D(500),						// L_CTRL+F
+		// MACRO: Display the combined On Screen Display FPS & Bandwidth meters
+		m_ShowGameStats = CHAIN(								// Keystroke sequence = 
+			PULSE+ShowFramerate, D(750),						// L_CTRL+F
 			PULSE+ShowConnectionStatus);						// L_CTRL+B
 
 		// MACRO: Menulog to OPEN
 		m_FastModeSwitch0 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0)		
-			PULSE+MenuLog, D(500),								// p, up, spc, spc, <wait>, spc, spc
+			PULSE+MenuLog, D(500),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, spc
 			PULSE+UIUp, D(500),
 			PULSE+UISelect, D(600),
 			PULSE+UISelect, D(6500),							// ** Depending on the load times of your PC, this value may need to be
@@ -132,21 +116,27 @@
 		// MACRO: Menulog to PRIVATE GROUP
 		m_FastModeSwitch1 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0) <-- Required???
-			PULSE+MenuLog, D(600),								// p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
+			PULSE+MenuLog, D(600),								//  Keystroke sequence = p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
 			PULSE+UIUp, D(600),
 			PULSE+UISelect, D(650),
 			PULSE+UISelect, D(8500),							// ** Depending on the load times of your PC, this value may need to be
 			PULSE+UISelect, D(650),								//    changed/increased
 			PULSE+UIRight, D(650),
 			PULSE+UISelect, D(650),
-			PULSE+UIRight, D(650),
-			PULSE+UISelect, D(650),								// Selects Private Group
+			PULSE+UIRight, D(650),								// Top option selected by default 
+		//	PULSE+UIDown, D(650),								// Remove comment to highlight 2nd option in list...
+		//	PULSE+UISelect, D(650),								// ...and select it 
+		//	PULSE+UIDown, D(650),								// Remove comment to highlight 3rd option in list
+		//	PULSE+UISelect, D(650),								// ...and select it 
+		//	PULSE+UIDown, D(650),								// etc. ... and so on 
+		//	PULSE+UISelect, D(650),								// ...and select it 
+			PULSE+UISelect, D(1000),							// Selects Private Group
 			LOCK);
 
 		// MACRO: Menulog to SOLO
 		m_FastModeSwitch2 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0)		
-			PULSE+MenuLog, D(500),								// p, up, spc, spc, <wait>, spc, right, right, spc
+			PULSE+MenuLog, D(500),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, right, right, spc
 			PULSE+UIUp, D(500),
 			PULSE+UISelect, D(600),
 			PULSE+UISelect, D(6500),							// ** Depending on the load times of your PC, this value may need to be
@@ -158,7 +148,7 @@
 
 		// MACRO: Toggle 'Report Crimes' on/off
 		m_ReportCrimesToggle = CHAIN(
-			LOCK+PULSE+SystemPanel, D(500),						// 4, e, e, e, down, down, right, right, spc, left, left, up, up, q, q, q, 4
+			LOCK+PULSE+SystemPanel, D(500),						// Keystroke sequence = 4, e, e, e, down, down, right, right, spc, left, left, up, up, q, q, q, 4
 			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in
 			PULSE+UINextPanel, D(),								//			   default/orig position, else will be misaligned.
 			PULSE+UINextPanel, D(),
@@ -179,7 +169,7 @@
 
 		// MACRO: Toggle 'Wingman Beacon' - TEAM				// Under additional testing for Odyssey
 		m_NAVBeaconWing = CHAIN(
-			LOCK+PULSE+SystemPanel, D(500),						// 4, e, e, e, right, down, down, down, down, spc, down, spc, up, up, up, up, left, q, q, q, 4
+			LOCK+PULSE+SystemPanel, D(500),						// Keystroke sequence = 4, e, e, e, right, down, down, down, down, spc, down, spc, up, up, up, up, left, q, q, q, 4
 			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in
 			PULSE+UINextPanel, D(),								//			   default/orig position, else will be misaligned.
 			PULSE+UINextPanel, D(),
@@ -205,7 +195,7 @@
 
 		// MACRO: Toggle 'Wingman Beacon' - OFF					// Under additional testing for Odyssey
 		m_NAVBeaconOff = CHAIN(
-			LOCK+PULSE+SystemPanel, D(500),						// 4, e, e, e, right, down, down, down, down, spc, spc, up, up, up, up, left, q, q, q, 4
+			LOCK+PULSE+SystemPanel, D(500),						// Keystroke sequence = 4, e, e, e, right, down, down, down, down, spc, spc, up, up, up, up, left, q, q, q, 4
 			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in
 			PULSE+UINextPanel, D(),								//			   default/orig position, else will be misaligned.
 			PULSE+UINextPanel, D(),
@@ -230,23 +220,23 @@
 
 		// MACRO: Enter hanger then facilities + refuel/repair/restock >>> NOTE: Works for Robigo Mines. Need to test for stations and carriers
 		m_EnterHanger = CHAIN(
-			LOCK,
+			LOCK,												// Keystroke sequence = up, spc, right, spc, right, spc, right, spc, down, spc 
 			PULSE+UIUp, D(),
-			PULSE+UISelect, D(1500),							//Refuel >>> Note delay shortened to 1500 from 2000
+			PULSE+UISelect, D(1500),							// Refuel >>> Note delay shortened to 1500 from 2000
 			PULSE+UIRight, D(),
-			PULSE+UISelect, D(1500),							//Repair
+			PULSE+UISelect, D(1500),							// Repair
 			PULSE+UIRight, D(),
-			PULSE+UISelect, D(1500),							//Restock
+			PULSE+UISelect, D(1500),							// Restock
 			PULSE+UIRight, D(),
-			PULSE+UISelect, D(1500),							//Enter Hanger		
+			PULSE+UISelect, D(1500),							// Enter Hanger		
 			PULSE+UIDown, D(),
-			PULSE+UISelect, D(),								//Market			
+			PULSE+UISelect, D(),								// Market			
 			LOCK);
 			
 		// MACRO: Launch the ship (from Launchpad screen)
 		// Issue: Rise time varies between ships and thruster power.
 		m_Launch = CHAIN(
-			LOCK+PULSE+UIDown, D(500),							// down, down, spc, (wait 20), R (hold for 1.5), L
+			LOCK+PULSE+UIDown, D(500),							// Keystroke sequence = down, down, spc, (wait 20), R (hold for 1.5), L
 			PULSE+UIDown, D(500),
 			PULSE+UISelect, D(20000),
 			DOWN+ThrustUp, D(1500),								// Hold for 1.5
@@ -257,8 +247,8 @@
 			
 		// MACRO: Change Engine and Weapon Colours	
 		m_ChangeColours = CHAIN(
-			PULSE+EngineColour, D(250),
-			PULSE+WeaponColour, D(250)
+			PULSE+EngineColour, D(250),							// 'LeftALT+e'
+			PULSE+WeaponColour, D(250)							// 'LeftAlt+w'
 			);
 			
 	}	// End of fnCustomCommands()

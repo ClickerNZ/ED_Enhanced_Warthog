@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Initialise.tmh (v503) ... supports Elite Dangerous (Ascendancy)
+// This file: ED_Initialise.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -34,8 +34,13 @@
 // START
 
 //--------------------------//
-// INITIALISATION FUNCTIONS //			// Define All Axis Curves/Trim/Deadzones for Included Devices
+// INITIALISATION FUNCTIONS //
 //--------------------------//
+
+// Check what controllers we have connected
+// Define All Axis Curves/Trim/Deadzones for Included Devices
+
+//   !!!   THE SCRIPT WILL ABORT IF NO COMPATIBLE JOYSTICK OR THROTTLE IS FOUND   !!!
 
 	int CheckControllers() {
 	
@@ -46,7 +51,10 @@
 		//   !!!   THE SCRIPT WILL ABORT IF NO COMPATIBLE JOYSTICK OR THROTTLE IS FOUND   !!!
 		
 		// There are 4 Joystick combos compatible with this script...
-		
+
+		printf("\x0a++	Start Hardware Check\x0a");
+
+
 		&MyJoystick = &joy0;													// set to equivalent of 'nul' by default
 		
 		if (&Joystick != &joy0) {
@@ -59,7 +67,7 @@
 		}
 		else if (&AVA_F16 != &joy0) {
 			&MyJoystick = &AVA_F16;		
-			printf("++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
+			printf("\x0a++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
 		}
 		else if (&AVA_F18 != &joy0) {
 			&MyJoystick = &AVA_F18;
@@ -80,6 +88,8 @@
 			}
 		}
 
+//===================================================================================================
+
 		// There is only one Throttle compatible with this script...
 		
 		&MyThrottle = &joy0;													// set to equivalent of 'nul' by default
@@ -97,6 +107,8 @@
 			&MyThrottle = &Throttle;
 			printf("++	Connected throttle	is WARTHOG Replica A-10C Throttle\x0a");
 		}
+
+//===================================================================================================
 
 		// If no rudder is found the script will not abort.
 		// There are two Rudders compatible with this script...
@@ -117,13 +129,21 @@
 			printf("++	No compatible rudder connected. Use alt YAW control.\x0a");
 			printf("	(Joystick S3 + Throttle Coolie Switch L & R)\x0a");
 			EnableMyRudder = DISABLED;
-		}	
+		}
 	}
+
+//----------------------//
+// End CheckControllers //
+//----------------------//
+
+// ------------------- //
+// INITIALISE all AXES //
+// ------------------- //
 
 	// FUNCTION: Initialise Joystick Axes 
 	int initJoystickAxis() { 																	// Set Default Joystick Axis
 		if (StartupLock) {
-			printf("\x0a\Initialising: v%d%d%d.%s\x0a", VMajor, VMinor, VPoint, VBranch);
+			printf("\x0a\Initialising: v%d.%d.%d.%s\x0a", VMajor, VMinor, VPoint, VBranch);
 			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
 		}	
 
@@ -170,17 +190,17 @@
 	int initSlewAxis() {
 	
 		// Slew Control Mapping...
-		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control X Axis (UP/DOWN)	
-		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control Y Axis (LEFT/RIGHT)
+		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control X Axis (LEFT/RIGHT)	
+		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control Y Axis (UP/DOWN)
 
-//		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control X Axis (UP/DOWN)	
-//		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control Y Axis (LEFT/RIGHT)
+//		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control X Axis (LEFT/RIGHT)	
+//		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control Y Axis (UP/DOWN)
 
 		if (StartupLock) {
 			printf("Slew Axis	... done		");
 		}
 		else {
-			printf("Slew Axis	... re set\x0aa");
+			printf("Slew Axis	... re set\x0a");
 		}
 	}	
 
@@ -210,8 +230,8 @@
 		else {
 			EnableVoice = DISABLED;
 			printf("\x0a\Voice.exe not present at %s\x0a", &VoicePath);
-			printf("Set correct path in ED_UserSettings.tmh\x0a");
-			printf("\x0a\Voice feedback via 'fnTextToSpeech()' not available\x0a");
+			printf("Set correct path in ED_UserSettings.tmh if you have installed voice packs.\x0a");
+			printf("\x0a\Voice feedback via 'fnTextToSpeech()' not available until this is fixed\x0a");
 		}
 	}
 
@@ -228,8 +248,8 @@
 		else {
 			EnableSoundFX = DISABLED;
 			printf("\x0a\Sounder.exe not present at %s\x0a", &SoundPath);
-			printf("Set correct path in ED_UserSettings.tmh\x0a");
-			printf("\x0a\Sound Effects via 'fnSoundFX()' not available\x0a");
+			printf("Set correct path in ED_UserSettings.tmh if you want this script to use the fnSoundFX() function\x0a");
+			printf("\x0a\Sound Effects via fnSoundFX() not available\x0a");
 		}
 	}
 
