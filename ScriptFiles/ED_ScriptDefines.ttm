@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_ScriptDefines.ttm (v503) ... supports Elite Dangerous (Ascendancy)
+// This file: ED_ScriptDefines.ttm (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Below are the global, static, state and boolean definitions used within the script package
 // Also contains global status.json integer variable flags for ease of maintenance and readability
@@ -45,7 +45,7 @@
 	define VMajor		 						5						// Script Version Major Value			ie. 2xx
 	define VMinor		 						0						// Script Version Minor Value			ie. x3x
 	define VPoint								3						// Script Version Point Update			ie. xx4
-	define VBranch								"main"					// Script Version Branch				ie. xxx.01
+	define VBranch								"dev"					// Script Version Branch				ie. xxx.01
 
 
 //---------//
@@ -135,8 +135,10 @@
 	define MEDIUM								2						// used for fnSetCurves()
 	define SLOW									3						// used for fnSetCurves()
 	define SLOWEST								4						// used for fnSetCurves()
+
 	define NOPRINT								0						// suppress console message, or...
 	define PRINT								1						// ...don't
+
 	define SAVE									1						// used in stfnMyStates()
 	define LOAD									0						// used in stfnMyStates()	
 
@@ -144,16 +146,16 @@
 // DEBUG DEFINES //
 //---------------//
 
-	define ControllerCheck						DISABLED				// DISABLED will not abort script if compatible Joystick or Throttle not found in ED_Main.tmc
+	define ControllerCheck						ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
+																		// DISABLED:	Won't abort script if compatible Joystick or Throttle not found
 
-
-//----------------------------------------------------------------------------------------------------------//
-//                                                                                                          //
-//    The following defines align to the FLAGS and FLAGS2 masks as defined in the Journal Documentation     //
-//                                                                                                          //
-// STATUS.JSON : Refer Section 14 in http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf //
-//                                                                                                          //
-//----------------------------------------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------------------------------------------------//
+//                                                                                                                             //
+//    The following defines align to the FLAGS and FLAGS2 masks within status.json as defined in the Journal Documentation     //
+//                                                                                                                             //
+//        STATUS.JSON : Refer Section 14 in http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf             //
+//                                                                                                                             //
+//-----------------------------------------------------------------------------------------------------------------------------//
 
 //-------------//
 // FLAGS MASKS //
@@ -202,6 +204,8 @@
 //---------------------------------//
 //  Corresponding Flags Variables  //
 //---------------------------------//
+
+	// These variables are used to check state of each of the above flags whilst game is running
 
 	int Flags 					=	0;		// contains the Flags key value integer
 	int OldFlags				=	0;		// track when Flags key value changes
@@ -268,7 +272,7 @@
 	define ED_PhysicalMulticrew    	0x0000000000040000
 	define ED_FSDHyperdriveChg     	0x0000000000080000
 
-//	define ED_RESERVED          	0x0000000000100000
+//	define ED_RESERVED          	0x0000000000100000			// No Flags2 bits currently allocated by Frontier
 //	define ED_RESERVED           	0x0000000000200000
 //	define ED_RESERVED           	0x0000000000400000
 //	define ED_RESERVED     			0x0000000000800000
