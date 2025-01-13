@@ -2,7 +2,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_MapKeyAssignment.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Contains MapKey Statements for all button and switch actions
 // Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
@@ -23,15 +23,17 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 45: 	int MainKeyMap()
-//			Line 57:		Joystick Triggers
-//			Line 257:		Throttle Lever Switches
-//			Line 408:		Throttle Base Switches
-//			Line 639: 	int TrainingMap()
-//			Line 648:		Joystick Triggers
-//			Line 824:		Throttle Lever Switches
-//			Line 975:		Throttle Base Switches
+/*
+	Index:		FUNCTION
+	Line   46: 	int MainKeyMap()
+	Line   49:		Joystick Triggers
+	Line  257:		Throttle Lever Switches
+	Line  404:		Throttle Base Buttons
+	Line  640: 	int TrainingMap()
+	Line  643:		Joystick Triggers
+	Line  823:		Throttle Lever Switches
+	Line  969:		Throttle Base Buttons 
+*/
 
 // START
 
@@ -1153,12 +1155,10 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
-				EXEC("fnVPOutput(\"Debug, OFF, Showflags ON\");"),
-				EXEC("fnVPOutput(\"Debug, ON, Showflags OFF\");"),
-				EXEC("fnVPOutput(\"Debug, ON, Showflags ON\");")
-				);
-	
-			MapKeyR(&MyThrottle, EFLNORM, EXEC("fnVPOutput(\"Debug, OFF, Showflags OFF\");"));				// RELEASE
+				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Not mapped\");")
+				);	
 		}
 
 //		(Engine Idle - Left)
