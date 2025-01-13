@@ -3,10 +3,10 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_GameBindings.ttm (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_GameBindings.ttm ... supports Elite Dangerous (Odyssey - Cobra V)
+
 // 1 - By default, each individual controller (Joystick and Throttle) can generate up to 56 DX buttons, 8 DX Axes and 8 DX POV directions per device
 // 2 - Using TARGET script or configuring via the TARGET GUI combines the controllers into a single virtual device resulting in a limit of 56 DX buttons, 8 Axes and 8 DX POV total.
-
 // 3 - Elite Dangerous game only allows 32 DX buttons   !!!!!!!
 // 4 - There are many more keyboard combinations available to mitigate this limit
 // 5 - You can therefore use a combination of DX and/or keyboard key combinations - this is a matter of personal choice
@@ -22,7 +22,7 @@
 // 2. Not all of these defines are used within the script. However they are all present within the game's binding file.
 // 3. If you change any defines below, you MUST ensure you also change the Control bindings within the game itself and vice-versa.
 
-				// -- DEFINING 'MODIFIER+KEY' ISSUE -- //
+				// -- 'MODIFIER+KEY' DEFINE ISSUE -- //
 // Example: 
 //		- Define PrimaryFire USB[0xE1]+USB[0x1E] ( = SHIFT+1)
 //		- When used as a macro in the script will press LSHIFT then '1' as expected
