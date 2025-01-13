@@ -3,12 +3,10 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_ScriptDefines.ttm (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Below are the global, static, state and boolean definitions used within the script package
 // Also contains global status.json integer variable flags for ease of maintenance and readability
-
-// Refer Change Log.txt in parent folder
 
 // LEGEND: 
 // ========================================================================
@@ -39,14 +37,13 @@
 	define KBLayout 							KB_ENG					// Default Keyboard Layout. Options = KB_FR or KB_GER
 
 //----------------------------------------------------------------------//
-// SCRIPT VERSION VARIABLES                                             //
+// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
 //----------------------------------------------------------------------//
 
 	define VMajor		 						5						// Script Version Major Value			ie. 2xx
-	define VMinor		 						0						// Script Version Minor Value			ie. x3x
-	define VPoint								3						// Script Version Point Update			ie. xx4
+	define VMinor		 						1						// Script Version Minor Value			ie. x3x
+	define VPoint								0						// Script Version Point Update			ie. xx4
 	define VBranch								"dev"					// Script Version Branch				ie. xxx.01
-
 
 //---------//
 // Timings //
@@ -60,8 +57,7 @@
 	define 	DelayTime 			100						// D() Delay time 	 (ms) - Used in macros as the time between releasing one key and pressing the next. Increase from 75 for Odyssey
 	define 	LongPress	 		500						// Tempo Delay 		 (ms) - Used in Tempos. ie hold switch/button for 0.5 seconds for alternate function
 	
-	define 	DiscoDelay			6100					// Discovery scanner 'hold-trigger' timer (6.1 seconds)
-	
+	define 	DiscoDelay			6100					// Discovery scanner 'hold-trigger' timer (6.1 seconds)	
 
 //-------------------//
 // PIPMAPPER DEFINES //
