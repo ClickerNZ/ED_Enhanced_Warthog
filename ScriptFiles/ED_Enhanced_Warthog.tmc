@@ -3,11 +3,11 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog & TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file:	ED_Main.tmc 		v503
-// Supports:	Elite Dangerous 	v4.0.0.1904
-// Requires:	TARGET 				v3.0.24.618_rev1		https://support.thrustmaster.com/en/product/t-16000m-fcs-flight-pack-en/
-//				Joystick firmware	v12
-//				Throttle firmware 	v23
+// This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
+// Supports:	Elite Dangerous 				v4.0.0.1904
+// Requires:	TARGET 							v3.0.24.618_rev1		https://support.thrustmaster.com/en/product/t-16000m-fcs-flight-pack-en/
+//				Joystick firmware				v12
+//				Throttle firmware 				v23
 
 // LEGEND: This script calls functions within the support files with the following naming formats
 // ==============================================================================================
@@ -23,11 +23,13 @@
 // User Configuration Settings			refer to ED_UserSettings file
 // ==============================================================================================
 
-// Index:	Line		FUNCTION
-//			Line 62:	include statements
-//			Line 99: 	int main()
-//			Line 139:	initialise hardware
-//			Line 252:	int EventHandle()
+/*
+	Index:		FUNCTION
+	Line  60:	include statements
+	Line  92: 	int main()
+	Line 123:	initialise hardware
+	Line 176: 	int EventHandle(int type, alias o, int x)
+*/
 
 // PREFACE
 //
