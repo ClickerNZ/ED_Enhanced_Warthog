@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_UserSettings.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -30,7 +30,6 @@
 	define	MapKeyProfile		FULL					// Valid Settings are FULL or BASIC 
 														// FULL uses all the advanced functions available for Axis, Switches, Triggers and Buttons
 														// BASIC sends simple, plain keystrokes...no macro or function calls, no smarts...great for beginners
-
 
 //-------------------//
 // Hardware settings //
@@ -62,9 +61,9 @@
 	//				The below path is usually where the Elite Dangerous journal files can be found.
 	//				Just replace '<username>' with your Windows username, NOT your CMDR Name!!!
 	
-//	alias	JournalFolder		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
-//	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
-//	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
+	alias	JournalFolder		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
+	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
+	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
 	
 	define	StatusReadRate		500		// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
 										// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
@@ -120,8 +119,7 @@
 	// alias	Ravi				= "-n \"Microsoft Ravi\"";				// Adult, Female,	en-IN 
 	// alias 	Susan				= "-n \"Microsoft Susan\"";				// Adult, Female,	en-GB
 	// alias	George				= "-n \"Microsoft George\"";			// Adult, Male,		en-GB	
-	// alias	James				= "-n \"Microsoft James\"";				// Adult, Male,		en-AU
-																			
+	// alias	James				= "-n \"Microsoft James\"";				// Adult, Male,		en-AU																			
 	// alias	Sean				= "-n \"Microsoft Sean\"";				// Adult, Male,		en-IE
 	// alias	Richard				= "-n \"Microsoft Richard\"";			// Adult, Male,		en-CA
 	// alias	Linda				= "-n \"Microsoft Linda\"";				// Adult, Female,	en-CA
@@ -130,17 +128,11 @@
 	// Set your preferred voice below by removing // at start of line.
 	// Be sure to add // at start of all other 'int DefaultVoice = &voicename;' lines
 	// The voice MUST BE installed by following the instructions in the links provided above.
+	
 	int		DefaultVoice		= &Catherine;			// Set your preferred (installed) voice here
-//	int		DefaultVoice		= &Hazel;				// Set your preferred (installed) voice here
-//	int		DefaultVoice		= &Mark;				// Set your preferred (installed) voice here
-//	int		DefaultVoice		= &Zira;				// Set your preferred (installed) voice here
 
 	alias	VoiceCMD			= "-r 1";				// Command options used by voice.exe ... "-r 0" = normal rate. "-r 2" = 20% faster
-
 	
-	define	TrainingMode		ENABLED					// ENABLED or DISABLED. When game is not running, pressing a button/switch announces basic function
-	define	AnnounceTraining	DISABLED				// DISABLED = Do not announce training mode, ENABLED = Announce training mode
-
 //------------------//
 // WAV Sound Player //
 //------------------//
@@ -157,6 +149,13 @@
 	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounder.exe";
 	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounds\\";
 	alias	SoundCMD			= "";
+
+//------------------//
+//  Training  Mode  //
+//------------------//	
+	
+	define	TrainingMode		ENABLED					// ENABLED or DISABLED. When game is not running, pressing a button/switch announces basic function
+	define	AnnounceTraining	DISABLED				// DISABLED = Do not announce training mode, ENABLED = Announce training mode
 
 
 //----------//
@@ -182,8 +181,6 @@
 // General Status Variables //
 //--------------------------//
 
-//	int 	ShowFlags			= DISABLED;				// Set/Reset in fnDebug() and used in stfnProcessFlags()
-	
 	define	AutoHanger			DISABLED				// !! TESTING !!	// ENABLED = Initiate Hanger+Station Services automatically when docked, DISABLED = don't
 														// !! TESTING !!	// Hanger services on Carrier is completely different to stations in Horizons and we cannot yet
 																			// dynamically determine if docked in station versus carrier
