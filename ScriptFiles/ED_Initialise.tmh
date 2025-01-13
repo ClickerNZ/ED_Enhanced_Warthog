@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Initialise.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_Initialise.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -21,15 +21,17 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 43:	int CheckControllers()
-//			Line 124: 	int initJoystickAxis()
-//			Line 143: 	int initThrottleAxis()
-//			Line 156:	int initSliderAxis()
-//			Line 169:	int initSlewAxis()
-//			Line 188: 	int initRudderAxis()
-//			Line 200: 	int initTextToSpeech()
-//			Line 218: 	int initSoundFX()
+/*
+	Index:		FUNCTION
+	Line  47:	int CheckControllers()
+	Line 146: 	int initJoystickAxis()
+	Line 165: 	int initThrottleAxis()
+	Line 179: 	int initSliderAxis()
+	Line 192: 	int initSlewAxis()
+	Line 211: 	int initRudderAxis()
+	Line 224: 	int initTextToSpeech()
+	Line 242: 	int initSoundFX()
+*/
 
 // START
 

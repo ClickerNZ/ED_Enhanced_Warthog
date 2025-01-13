@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Toggles.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_Toggles.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -21,24 +21,25 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 51: 	int tgTxt2Speech()
-//			Line 73: 	int tgEnhancedFAOFF()
-//			Line 108: 	int tgTriggerMode()
-//			Line 149: 	int tgLights()
-//			Line 198: 	int tgSilentRunning()
-//			Line 243: 	int tgCargoScoop()
-//			Line 269: 	int tgLandingGear()
-//			Line 312: 	int tgReverseThrust()
-//			Line 354:	int tgBoost()
-//			Line 382: 	int tgHardpoints()
-//			Line 419: 	int tgHUDMode()
-//			Line 434: 	int tgFSSMode()
-//			Line 460: 	int tgPlanetView()
-//			Line 483: 	int tgWarpDrive()
-//			Line 557: 	int tgExtCamera()
-//			Line 572:	int tgXAxis()
-	
+/*
+	Index:		FUNCTION
+	Line  52: 	int tgTxt2Speech()
+	Line  75: 	int tgEnhancedFAOFF(int dummy = 0)
+	Line 122: 	int tgTriggerMode(int x)
+	Line 163: 	int tgLights(int x)
+	Line 214: 	int tgSilentRunning(int x)
+	Line 259: 	int tgCargoScoop(int x)
+	Line 323: 	int tgLandingGear(int Speedbrake)
+	Line 369: 	int tgReverseThrust(int EnableSpeedBrake)
+	Line 448: 	int tgBoost()
+	Line 466: 	int tgHardpoints()
+	Line 505: 	int tgHUDMode(int delayannounce=0)
+	Line 531: 	int tgFSSMode()
+	Line 557: 	int tgPlanetView()
+	Line 582: 	int tgWarpDrive(int JumpType)
+	Line 654: 	int tgExtCamera()
+	Line 673: 	int tgXAxis(int param = RESET) 
+*/
 	
 // START
 

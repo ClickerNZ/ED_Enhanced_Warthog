@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_StateTracker.tmh (v503) ... supports Elite Dangerous (Odessey - Cobra V)
+// This file: ED_StateTracker.tmh ... supports Elite Dangerous (Odessey - Cobra V)
 
 // Refer Change Log.txt parent folder
 
@@ -21,15 +21,17 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 53: 	int stfnReadStatusJson()
-//			Line 155:	int stfnWriteMaxJson()
-//			Line 196: 	int stfnGetKeyValue()
-//			Line 304: 	int stfnProcessFlags()
-//			Line 836:	int stfnProcessFlags2()
-//			Line 1113: 	int stfnProcessGuiFocus()
-//			Line 1138: 	int stfnStartCheck()
-//			Line 1211:	int stfnMyStates()
+/*
+	Index:		FUNCTION
+	Line   53: 	int stfnReadStatusJson()
+	Line  155: 	int stfnWriteMaxJson()
+	Line  196: 	int stfnGetKeyValue(alias pattern, int vtype)
+	Line  303: 	int stfnProcessFlags(int UpdateLEDs = NO)
+	Line  803: 	int stfnProcessFlags2()
+	Line 1076: 	int stfnProcessGuiFocus()
+	Line 1103: 	int stfnStartCheck()
+	Line 1178: 	int stfnMyStates(int action)
+*/
 	
 // START
 
@@ -1173,7 +1175,7 @@
 	
 	// -------------------
 
-	int stfnMyStates(int action)	{
+	int stfnMyStates(int action) {
 
 		int fnName = "MyStates";
 		int reason;

@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Functions.tmh (v503) ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_Functions.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
 
 // Refer Change Log.txt in parent folder
 
@@ -21,42 +21,42 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 69: 	int fnNotValid()
-//			Line 79:	int fnStartupMapKeyMode()
-//			Line 91: 	int fnSetCurves()
-//			Line 161: 	int fnSetSliderCurve()
-//			Line 192: 	int fnGetFlightMode()
-//			Line 210:	int fnLEDBrightness()
-//			Line 230: 	int fnFlashLED()
-//			Line 247: 	int fnSetLEDs()
-//			Line 278: 	int fnFlashStart()
-//			Line 316: 	int fnTextToSpeech()
-//			Line 348: 	int fnVoiceVolume()
-//			Line 408: 	int fnSoundFX()
-//			Line 426: 	int fnGameStarted()
-//			Line 520: 	int fnPIPMode()
-//			Line 571: 	int fnPIPManager()
-//			Line 608: 	int fnPIPMapper()
-//			Line 648: 	int fnAdvFireControl()
-//			Line 721: 	int fnAdvancedSCB()
-//			Line 753: 	int fnHeatsink()
-//			Line 769: 	int fnChaff()
-//			Line 787: 	int fnDeploySRV()
-//			line 831:	int fnDRShip()
-//			Line 860: 	int fnRequestDock()
-//			Line 882: 	int fnHangerServices()
-//			Line 926:	int fnIdleLock()
-//			Line 958:	int fnCheckFSDCharge()
-//			Line 990:	int fnCheckFSDMassLocked()
-//			Line 1019:	int fnClearChatBox()
-//			Line 1074: 	int fnModeSwitch()
-//			Line 1133:	int fnVPOutput()
-//			Line 1145: 	int fnPrintState()
-//			Line 1156: 	int fnStateDump()
-//			Line 1319: 	int fnDebug()
-//			Line 1344:	int fnGetTOD()
-//			Line 1385:	int findstr()
+/*
+	Index:		FUNCTION
+	Line   69: 	int fnNotValid(int fnName, int reason=0)
+	Line   86: 	int fnStartupMapKeyMode()
+	Line  110: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE)
+	Line  188: 	int fnSetSliderCurve(int x)
+	Line  221: 	int fnGetFlightMode()
+	Line  239: 	int fnLEDBrightness(int x = NOCHANGE)
+	Line  259: 	int fnFlashLED(int x)
+	Line  276: 	int fnSetLEDs(int dummy=NUL)
+	Line  307: 	int fnFlashStart()
+	Line  347: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
+	Line  379: 	int fnVoiceVolume(int x)
+	Line  439: 	int fnSoundFX(int wavfile, int vol=100, int loops=1)
+	Line  458: 	int fnGameStarted()
+	Line  542: 	int fnPIPMode(int x)
+	Line  593: 	int fnPIPManager(int PwrPriority)
+	Line  630: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0)
+	Line  670: 	int fnAdvFireControl(int x)
+	Line  743: 	int fnAdvancedSCB(int x=0)
+	Line  778: 	int fnHeatsink()
+	Line  797: 	int fnChaff()
+	Line  822: 	int fnDeploySRV(int x)
+	Line  868: 	int fnDRShip()
+	Line  897: 	int fnRequestDock()
+	Line  924: 	int fnHangerServices(int x)
+	Line  968: 	int fnIdleLock(int x)
+	Line 1000: 	int fnCheckFSDCharge(int EngineText)
+	Line 1028: 	int fnCheckFSDMasslocked(int EngineText)
+	Line 1056: 	int fnClearChatBox(int mode = 0)
+	Line 1112: 	int fnModeSwitch(int mode)
+	Line 1176: 	int fnVPOutput(int VPOutput, int VolumeOverride=0)
+	Line 1188: 	int fnPrintState()
+	Line 1199: 	int fnStateDump()
+	Line 1359: 	int fnGetTOD()
+*/
 
 //------------------//
 // CUSTOM FUNCTIONS //
@@ -1394,6 +1394,5 @@
 		}
 		return -1;
 	}
-
 
 // END
