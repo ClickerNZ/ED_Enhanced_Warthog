@@ -1390,6 +1390,9 @@
 				if (strcmp(HH, "10") == 0) HH = "22";		
 				if (strcmp(HH, "11") == 0) HH = "23";		
 			}
+			else {										// AM 
+				if (strcmp(HH, "12") == 0) HH = "00";		
+			}
 
 			sprintf(&TOD24, "%s%s", HH, MM);			// Reconstruct TOD as TOD24
 			return &TOD24;								// Return the result
