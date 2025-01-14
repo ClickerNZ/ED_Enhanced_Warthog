@@ -346,7 +346,7 @@
 			MapKey(&MyThrottle, MSL, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSR, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSP, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
-			}
+		}
 		
 		
 //		(Speed Brake)		// Reverse Throttle function modifiers
