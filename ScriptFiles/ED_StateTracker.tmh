@@ -281,13 +281,8 @@
 				
 		// Return converted key-value...
 		
-		if (vtype == FLOAT) {											// convert string to float
-			return eval(&keyvalue);
-		}
-		if (vtype == INTEGER) {											// convert string to integer
-			return ieval(&keyvalue);
-		}
-
+		if (vtype == FLOAT)		return eval(&keyvalue);					// convert string to float
+		if (vtype == INTEGER)	return ieval(&keyvalue);				// return integer value 
 		if (vtype == STRING) {			
 			strdel(&keyvalue, 0, 0);									// Just remove leading quote and...
 			return 0;													// ...use the global &keyvalue on return
@@ -363,7 +358,7 @@
 				printf("\x0a");
 							
 				if (ReverseThrust) {
-					ReverseThrust = 0;									// Game always resets Reverse Thrust, so we should too
+					ReverseThrust = 0;									// Game always resets Reverse Thrust, so we should set our flag accordingly
 				}
 				
 				fnSetLEDs();															// Turn off Status LEDs, then...
@@ -432,7 +427,7 @@
 			if (fMainShip & (fDocked != lDocked)) {						// Framework - currently testing - may not be viable in current form without additional information from journal						
 				if (fDocked) {							
 					if (AutoHanger) {
-						DeferCall(2500, &fnHangerServices, 1);			// Cannot use 'Auto' feature until we can determine if Starport v Carrier v Surface Port
+						DeferCall(2500, &fnHangerServices, 1);			// Cannot use 'Auto' feature until we verify SAME PROCESS for Starport v Carrier v Surface Port
 					}
 					DeferCall(1000, &ActKey, PULSE+KEYON+BalancePower);
 					if (!StartupLock) printf("Docked @ %s\x0a", fnGetTOD());
@@ -537,10 +532,10 @@
 
 			if (fInWing != lInWing) {
 				if (fInWing) {
-					printf("Joined Wing\x0a");
+					printf("Joined Wing @ %s\x0a", fnGetTOD());
 				}
 				else {
-					printf("Left Wing\x0a");				
+					printf("Left Wing @ %s\x0a", fnGetTOD());				
 				}				
 			}
 
@@ -548,7 +543,7 @@
 				// NOTHING TO DO
 			}
 
-			if (fCargoScoop != lCargoScoop & ((fMainShip | fSRV) & !fSupercruise)) {					
+			if (fCargoScoop != lCargoScoop & ((fMainShip & !fSupercruise) | fSRV)) {					
 				if(fCargoScoop) {
 		//			printf("Cargo scoop:		DEPLOYED\x0a");			// Vocalised in game
 				}
@@ -559,9 +554,9 @@
 
 // TESTING  // Check and align switch with function
 //
-//			if ((MyThrottle[RDRNRM] & !fCargoScoop) | (MyThrottle[RDRDIS] & fCargoScoop)) {
-//				ActKey(PULSE+KEYON+CargoScoop);								// Fix misaligned switch?
-//			}
+			if ((MyThrottle[RDRNRM] & !fCargoScoop) | (MyThrottle[RDRDIS] & fCargoScoop)) {
+				ActKey(PULSE+KEYON+CargoScoop);								// Fix misaligned switch after menu log?
+			}
 //
 /////////////
 
@@ -576,9 +571,9 @@
 
 // TESTING	// Check and align switch with function
 //
-//			if ((MyThrottle[EACON] & !fSilentRunning) | (MyThrottle[EACOFF] & fSilentRunning)) {
-//				ActKey(PULSE+KEYON+SilentRunning);							// Fix misaligned switch?
-//			}
+			if ((MyThrottle[EACON] & !fSilentRunning) | (MyThrottle[EACOFF] & fSilentRunning)) {
+				ActKey(PULSE+KEYON+SilentRunning);							// Fix misaligned switch?
+			}
 //
 //////////////
 
@@ -600,7 +595,7 @@
 				}				
 			}
 
-			if (fSRVTurretView != lSRVTurretView) {										// CHECK THIS
+			if (fSRVTurretView != lSRVTurretView) {
 				if (fSRVTurretView) {
 					// printf("ENTER - SRV Turret View\x0a");   						// handled in tgHardpoints 
 				}
@@ -608,16 +603,16 @@
 					// printf("EXIT - SRV Turret View\x0a");				
 				}				
 			}
-
+// TEST THIS ==
 			if (fSRV & (fSRVTurretRetracted != lSRVTurretRetracted)) {
 				if (fSRVTurretRetracted ) {												// Detect turret deploy/retract
-					DeferCall(1000, &fnVPOutput, "Turret retracted");			
+					DeferCall(1000, &fnVPOutput, "Turret retracted");					// Why the DeferCall here...
 				}
 				else {
-					fnVPOutput("Turret deployed");
+					fnVPOutput("Turret deployed");										// ... but not here?
 				}
 			}
-
+// ===========
 			if (fSRVDriveAssist != lSRVDriveAssist & fSRV) {
 				if (fSRVDriveAssist) {
 					printf("SRV DriveAssist: ON\x0a");
@@ -628,11 +623,11 @@
 			}
 
 			if (fMassLocked != lMassLocked) {
-				if (fMassLocked & !lMassLocked & !fLanded  & !fDocked) {				// Detect when Mass Locked when flying
+				if (fMassLocked & !lMassLocked & !fLanded & !fDocked) {					// Detect when Mass Locked during flight 
 					fnVPOutput("Mass Locked!");
 				}
 				
-				if (!fMassLocked & lMassLocked & fMainShip & !fDocked & !fLanded) {		// Detect when no longer Mass Locked
+				if (!fMassLocked & lMassLocked & !fLanded & !fDocked) {					// Detect when no longer Mass Locked
 					fnVPOutput("Masslock cleared");
 				}
 			}
@@ -664,9 +659,9 @@
 				}				
 			}
 
-			if (fOverHeating != lOverHeating) {											// Detect when we start overheation
+			if (fOverHeating != lOverHeating) {											// Detect when we start overheating
 				if (fMainShip & fOverHeating) {
-					if (AutoHeatsink) {													// If 'AutoHeatSink' is set, fire a heatsink if we have one
+					if (AutoHeatsink) {													// If 'AutoHeatSink' is set, fire a heatsink (assuming we have one)
 						fnVPOutput("OVERHEATING: Auto Heat sink engaged!");
 						ActKey(PULSE+KEYON+DeployHeatSink);
 					}
@@ -690,7 +685,7 @@
 
 			if (fDanger != lDanger) {
 				if (fDanger) {
-					fnVPOutput("DANGER!");
+					fnVPOutput("DANGER detected!");
 				}
 				else {
 					fnVPOutput("Danger now passed");
@@ -756,13 +751,14 @@
 			}
 
 			// Cannot select FSDJump when SCO is in Overcharge mode. This is announced in-game.
-			// There is currently no status.json flag for SCO 
+			// There is currently no status.json flag for SCO
+			
 			if (fFSDJump != lFSDJump) {										// Detect when Supercruise or Hyperjump has been toggled
 				if (!fFSDJump) {											// Detect when FSD Jump flag gets reset
-					printf("FSD Jump flag reset\x0a");
+		//			printf("FSD Jump flag reset\x0a");
 				}
 				else {														// Detect when FSD Jump flag gets set
-					printf("FSD Jump flag set\x0a");
+		//			printf("FSD Jump flag set\x0a");
 					
 					if (!fHUDAnalysis & AutoHUD) {							// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
 						tgHUDMode(1);										// Delays announcing change
@@ -895,19 +891,19 @@
 
 			if (fInTaxi != lInTaxi) {
 				if (fInTaxi) {
-					if (!StartupLock) printf("Taxi/Shuttle/Dropship:		BOARDED\x0a");
+					if (!StartupLock) printf("Taxi/Shuttle/Dropship:		BOARDED @ %s\x0a", fmGetTOD());
 				}
 				else {
-					printf("Taxi/Shuttle/Dropship:		DISEMBARKED\x0a");				
+					printf("Taxi/Shuttle/Dropship:		DISEMBARKED @ %s\x0a", fnGetTOD());				
 				}
 			}
 
 			if (fInMultiCrew != lInMultiCrew) {
 				if (fInMultiCrew) {
-					printf("Joined someone else's ship crew\x0a");
+					printf("Joined someone else's ship crew @ %s\x0a", fnGetTOD());
 				}
 				else {
-					printf("Left someone else's ship crew\x0a");				
+					printf("Left someone else's ship crew @ %s\x0a", fnGetTOD());				
 				}
 			}
 
@@ -958,7 +954,7 @@
 
 			if ((fCold != lCold) & !fVeryCold) {
 				if (fCold) {
-					DeferCall(1000, &fnVPOutput, "Its a bit nippie");					
+					DeferCall(1000, &fnVPOutput, "Its a bit nippie");				// using DeferCall while we clear the ship or SRV 	
 				}
 				else {
 					// nothing to do 								
@@ -1039,7 +1035,7 @@
 
 			if (fTelepresenceMulticrew != lTelepresenceMulticrew) {
 				if (fTelepresenceMulticrew) {
-					printf("Telepresence multi crew detected\x0a");						
+					printf("Telepresence multi crew detected @ %s\x0a", fnGetTOD());						
 				}
 				else {
 					// nothing to do 
@@ -1048,7 +1044,7 @@
 
 			if (fPhysicalMulticrew != lPhysicalMulticrew) {
 				if (fPhysicalMulticrew) {
-					printf("Physical multi crew detected\x0a");	
+					printf("Physical multi crew detected @ %s\x0a", fnGetTOD());	
 				}
 				else {
 					// nothing to do 
