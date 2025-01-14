@@ -1,8 +1,28 @@
 // CMDR Clicker Thrustmaster TARGET Script Change Log //
 
-v503	- New point release
-		-
-		
+v510	- 	New minor release
+		- 	Renamed repo to ED_Enhanced_Warthog
+		-	Remove debug code
+		-	Remove no longer needed functions
+		-	Removed Commented code
+		-	Recode tgLights()
+		-	Recode tgCargoScoop()
+		-	Recode tgLandingGear()
+		-	Recode tgReverseThrust()
+		-	Recode tgHUDMode()
+		-	Testing different slider curves
+		-	Fix typo for "fnName" variables
+		-	Supress Cargo Scoop console printouts in ED_Statetracker
+		-	Re-add drive assist and flight assist announcements
+		-	Enabled Heatsinks in Supercruise
+		-	Re-add cargo scoop announcements
+		-	Minor console formatting changes
+		-	Expanded fnChaff checks
+		-	Minor syntax changes
+		-	Additional comments in ED_Initialise.tmh
+		-	fnGetTOD() now returns 24hr formatted time
+		-	Re index 
+
 
 =======
 		
