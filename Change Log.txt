@@ -21,6 +21,9 @@ v510	- 	New minor release
 		-	Minor syntax changes
 		-	Additional comments in ED_Initialise.tmh
 		-	fnGetTOD() now returns 24hr formatted time
+		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
+		-	Re-enable SliderCurves for Warthog
+		-	Fix typo on WingmanNavLock variable
 		-	Re index 
 
 
