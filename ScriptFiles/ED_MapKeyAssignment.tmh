@@ -186,7 +186,7 @@
 			MapKeyUMD(&MyJoystick, H2R,
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
 				PULSE+SelectNextHostileShip,																// M - default - Cycle selection of Next Hostile
-				PULSE+WingmanNavlock																		// D - Select currently selected wing-man's NAV target
+				PULSE+WingmanNavLock																		// D - Select currently selected wing-man's NAV target
 				);
 		}
 	
