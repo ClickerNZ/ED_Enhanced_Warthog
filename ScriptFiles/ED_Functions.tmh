@@ -21,42 +21,43 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-// Index:	Line		FUNCTION
-//			Line 69: 	int fnNotValid()
-//			Line 79:	int fnStartupMapKeyMode()
-//			Line 91: 	int fnSetCurves()
-//			Line 161: 	int fnSetSliderCurve()
-//			Line 192: 	int fnGetFlightMode()
-//			Line 210:	int fnLEDBrightness()
-//			Line 230: 	int fnFlashLED()
-//			Line 247: 	int fnSetLEDs()
-//			Line 278: 	int fnFlashStart()
-//			Line 316: 	int fnTextToSpeech()
-//			Line 348: 	int fnVoiceVolume()
-//			Line 408: 	int fnSoundFX()
-//			Line 426: 	int fnGameStarted()
-//			Line 520: 	int fnPIPMode()
-//			Line 571: 	int fnPIPManager()
-//			Line 608: 	int fnPIPMapper()
-//			Line 648: 	int fnAdvFireControl()
-//			Line 721: 	int fnAdvancedSCB()
-//			Line 753: 	int fnHeatsink()
-//			Line 769: 	int fnChaff()
-//			Line 787: 	int fnDeploySRV()
-//			line 831:	int fnDRShip()
-//			Line 860: 	int fnRequestDock()
-//			Line 882: 	int fnHangerServices()
-//			Line 926:	int fnIdleLock()
-//			Line 958:	int fnCheckFSDCharge()
-//			Line 990:	int fnCheckFSDMassLocked()
-//			Line 1019:	int fnClearChatBox()
-//			Line 1074: 	int fnModeSwitch()
-//			Line 1133:	int fnVPOutput()
-//			Line 1145: 	int fnPrintState()
-//			Line 1156: 	int fnStateDump()
-//			Line 1319: 	int fnDebug()
-//			Line 1344:	int fnGetTOD()
-//			Line 1385:	int findstr()
+/*
+	Index:		FUNCTION
+	Line   70: 	int fnNotValid(int fnName, int reason=0)
+	Line   87: 	int fnStartupMapKeyMode()
+	Line  111: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE)
+	Line  189: 	int fnSetSliderCurve(int x)
+	Line  222: 	int fnGetFlightMode()
+	Line  240: 	int fnLEDBrightness(int x = NOCHANGE)
+	Line  260: 	int fnFlashLED(int x)
+	Line  277: 	int fnSetLEDs(int dummy=NUL)
+	Line  308: 	int fnFlashStart()
+	Line  348: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
+	Line  380: 	int fnVoiceVolume(int x)
+	Line  440: 	int fnSoundFX(int wavfile, int vol=100, int loops=1)
+	Line  459: 	int fnGameStarted()
+	Line  543: 	int fnPIPMode(int x)
+	Line  594: 	int fnPIPManager(int PwrPriority)
+	Line  631: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0)
+	Line  671: 	int fnAdvFireControl(int x)
+	Line  744: 	int fnAdvancedSCB(int x=0)
+	Line  779: 	int fnHeatsink()
+	Line  798: 	int fnChaff()
+	Line  823: 	int fnDeploySRV(int x)
+	Line  869: 	int fnDRShip()
+	Line  898: 	int fnRequestDock()
+	Line  925: 	int fnHangerServices(int x)
+	Line  969: 	int fnIdleLock(int x)
+	Line 1001: 	int fnCheckFSDCharge(int EngineText)
+	Line 1029: 	int fnCheckFSDMasslocked(int EngineText)
+	Line 1057: 	int fnClearChatBox(int mode = 0)
+	Line 1113: 	int fnModeSwitch(int mode)
+	Line 1177: 	int fnVPOutput(int VPOutput, int VolumeOverride=0)
+	Line 1189: 	int fnPrintState()
+	Line 1200: 	int fnStateDump()
+	Line 1360: 	int fnGetTOD()
+	Line 1406:	int findstr()
+*/
 
 //------------------//
 // CUSTOM FUNCTIONS //
@@ -1377,7 +1378,7 @@
 			strsub(MM, TOD, 2, 4);						// Extract ":MM'
 			strsub(AmPm, TOD, 6, 7); 					// Extract 'AM' or 'PM'
 
-			if (strcmp(AmPm, "PM") == 0) {				// If so...convert 'HH' to 24hr equivalent
+			if (strcmp(AmPm, "PM") == 0) {				// If so...convert 'HH' to 24hr equivalent. No need to check/convert 12PM
 				if (strcmp(HH, "01") == 0) HH = "13";		
 				if (strcmp(HH, "02") == 0) HH = "14";		
 				if (strcmp(HH, "03") == 0) HH = "15";		
