@@ -466,28 +466,28 @@
 		GameLoaded = YES;
 		StartupLock = OFF;
 
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);			// Forces re-read of slider axis								
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);					// Forces re-read of slider axis								
 		
-		fnFlashStart();													// Flash LEDs on Throttle Base to alert user game has started
+		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
 		
 		if (MyThrottle[EACON] | MyThrottle[RDRNRM] | MyThrottle[SPDF]) {
-			// Align toggle switches and internal status flags if required
-			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		//MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
-			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	//MAYBE NOT NEEDED now checked in stfnProcessFlags()	
-			if (MyThrottle[SPDF])		DeferCall(2500, &tgReverseThrust,	OFF);       //Cannot avoid this one as there is no FLAGS bit for this
+			// Align toggle switches and internal status flags if required			// DeferCall used so voice announcements don't overlap 
+//			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		// MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
+//			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	// MAYBE NOT NEEDED now checked in stfnProcessFlags()	
+			if (MyThrottle[SPDF])	DeferCall(2500, &tgReverseThrust,	OFF);		// Cannot avoid this one as there is no FLAGS bit for this
 		}
 		else DeferCall(1100, &fnSetLEDs, NUL);
 	
 		// Align Joystick curves
-		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);		// Don't print to console or announce curve setting
-		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);		// Don't print to console or announce curve setting
-		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);		// Don't print to console or announce curve setting
+		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);					// Don't print to console or announce curve setting
+		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);				// Don't print to console or announce curve setting
+		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);					// Don't print to console or announce curve setting
 		
 		if (fDocked) 			InHanger = YES;
 		
 		if (!ConnectionStatus) {
-			ActKey(PULSE+KEYON+ShowConnectionStatus);					// ...turn on connection status. Alternate="m_ShowGameStats"
-			ConnectionStatus = ON;										// tracks if above has already been turned on
+			ActKey(PULSE+KEYON+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats"
+			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
 		
 		if(EnableVoice) {
