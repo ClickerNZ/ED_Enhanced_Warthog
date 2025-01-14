@@ -21,42 +21,42 @@
 // User Config Settings					refer to ED_UserSettings file
 // ========================================================================
 
-/*
-	Index:		FUNCTION
-	Line   69: 	int fnNotValid(int fnName, int reason=0)
-	Line   86: 	int fnStartupMapKeyMode()
-	Line  110: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE)
-	Line  188: 	int fnSetSliderCurve(int x)
-	Line  221: 	int fnGetFlightMode()
-	Line  239: 	int fnLEDBrightness(int x = NOCHANGE)
-	Line  259: 	int fnFlashLED(int x)
-	Line  276: 	int fnSetLEDs(int dummy=NUL)
-	Line  307: 	int fnFlashStart()
-	Line  347: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
-	Line  379: 	int fnVoiceVolume(int x)
-	Line  439: 	int fnSoundFX(int wavfile, int vol=100, int loops=1)
-	Line  458: 	int fnGameStarted()
-	Line  542: 	int fnPIPMode(int x)
-	Line  593: 	int fnPIPManager(int PwrPriority)
-	Line  630: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0)
-	Line  670: 	int fnAdvFireControl(int x)
-	Line  743: 	int fnAdvancedSCB(int x=0)
-	Line  778: 	int fnHeatsink()
-	Line  797: 	int fnChaff()
-	Line  822: 	int fnDeploySRV(int x)
-	Line  868: 	int fnDRShip()
-	Line  897: 	int fnRequestDock()
-	Line  924: 	int fnHangerServices(int x)
-	Line  968: 	int fnIdleLock(int x)
-	Line 1000: 	int fnCheckFSDCharge(int EngineText)
-	Line 1028: 	int fnCheckFSDMasslocked(int EngineText)
-	Line 1056: 	int fnClearChatBox(int mode = 0)
-	Line 1112: 	int fnModeSwitch(int mode)
-	Line 1176: 	int fnVPOutput(int VPOutput, int VolumeOverride=0)
-	Line 1188: 	int fnPrintState()
-	Line 1199: 	int fnStateDump()
-	Line 1359: 	int fnGetTOD()
-*/
+// Index:	Line		FUNCTION
+//			Line 69: 	int fnNotValid()
+//			Line 79:	int fnStartupMapKeyMode()
+//			Line 91: 	int fnSetCurves()
+//			Line 161: 	int fnSetSliderCurve()
+//			Line 192: 	int fnGetFlightMode()
+//			Line 210:	int fnLEDBrightness()
+//			Line 230: 	int fnFlashLED()
+//			Line 247: 	int fnSetLEDs()
+//			Line 278: 	int fnFlashStart()
+//			Line 316: 	int fnTextToSpeech()
+//			Line 348: 	int fnVoiceVolume()
+//			Line 408: 	int fnSoundFX()
+//			Line 426: 	int fnGameStarted()
+//			Line 520: 	int fnPIPMode()
+//			Line 571: 	int fnPIPManager()
+//			Line 608: 	int fnPIPMapper()
+//			Line 648: 	int fnAdvFireControl()
+//			Line 721: 	int fnAdvancedSCB()
+//			Line 753: 	int fnHeatsink()
+//			Line 769: 	int fnChaff()
+//			Line 787: 	int fnDeploySRV()
+//			line 831:	int fnDRShip()
+//			Line 860: 	int fnRequestDock()
+//			Line 882: 	int fnHangerServices()
+//			Line 926:	int fnIdleLock()
+//			Line 958:	int fnCheckFSDCharge()
+//			Line 990:	int fnCheckFSDMassLocked()
+//			Line 1019:	int fnClearChatBox()
+//			Line 1074: 	int fnModeSwitch()
+//			Line 1133:	int fnVPOutput()
+//			Line 1145: 	int fnPrintState()
+//			Line 1156: 	int fnStateDump()
+//			Line 1319: 	int fnDebug()
+//			Line 1344:	int fnGetTOD()
+//			Line 1385:	int findstr()
 
 //------------------//
 // CUSTOM FUNCTIONS //
@@ -466,28 +466,28 @@
 		GameLoaded = YES;
 		StartupLock = OFF;
 
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);					// Forces re-read of slider axis								
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);			// Forces re-read of slider axis								
 		
-		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
+		fnFlashStart();													// Flash LEDs on Throttle Base to alert user game has started
 		
 		if (MyThrottle[EACON] | MyThrottle[RDRNRM] | MyThrottle[SPDF]) {
-			// Align toggle switches and internal status flags if required			// DeferCall used so voice announcements don't overlap 
-//			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		// MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
-//			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	// MAYBE NOT NEEDED now checked in stfnProcessFlags()	
-			if (MyThrottle[SPDF])	DeferCall(2500, &tgReverseThrust,	OFF);		// Cannot avoid this one as there is no FLAGS bit for this
+			// Align toggle switches and internal status flags if required
+			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		//MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
+			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	//MAYBE NOT NEEDED now checked in stfnProcessFlags()	
+			if (MyThrottle[SPDF])		DeferCall(2500, &tgReverseThrust,	OFF);       //Cannot avoid this one as there is no FLAGS bit for this
 		}
 		else DeferCall(1100, &fnSetLEDs, NUL);
 	
 		// Align Joystick curves
-		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);					// Don't print to console or announce curve setting
-		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);				// Don't print to console or announce curve setting
-		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);					// Don't print to console or announce curve setting
+		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);		// Don't print to console or announce curve setting
+		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);		// Don't print to console or announce curve setting
+		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);		// Don't print to console or announce curve setting
 		
 		if (fDocked) 			InHanger = YES;
 		
 		if (!ConnectionStatus) {
-			ActKey(PULSE+KEYON+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats"
-			ConnectionStatus = ON;													// tracks if above has already been turned on
+			ActKey(PULSE+KEYON+ShowConnectionStatus);					// ...turn on connection status. Alternate="m_ShowGameStats"
+			ConnectionStatus = ON;										// tracks if above has already been turned on
 		}
 		
 		if(EnableVoice) {
@@ -1357,16 +1357,42 @@
 
 	int fnGetTOD() {
 
-		int	TOD	= " NOW ";								// Set type and format
+		int	TOD	= "HH:MM PM";							// Set type and format
+		int AmPm = "XX";
+		int HH = "HH";
+		int MM = ":MM";
 
-		system("time /T > c:\\tod.txt");				// Create local timestamp
+		alias TOD24 = "HH:MM";
 
-		int fp = fopen("c:\\tod.txt", "r");
+
+		system("time /T > c:\\tod.txt");				// Create local timestamp and write to a file at C:\
+
+		int fp = fopen("c:\\tod.txt", "r");				// Open the file to read
 
 		if (fp) {
-			fread(TOD, 1, 5, fp);						// Read local timestamp
+			fread(TOD, 1, 8, fp);						// Reads contents of file into TOD
 			fclose(fp);
-			return TOD;
+
+			strsub(HH, TOD, 0, 1);						// Extract 'HH'
+			strsub(MM, TOD, 2, 4);						// Extract ":MM'
+			strsub(AmPm, TOD, 6, 7); 					// Extract 'AM' or 'PM'
+
+			if (strcmp(AmPm, "PM") == 0) {				// If so...convert 'HH' to 24hr equivalent
+				if (strcmp(HH, "01") == 0) HH = "13";		
+				if (strcmp(HH, "02") == 0) HH = "14";		
+				if (strcmp(HH, "03") == 0) HH = "15";		
+				if (strcmp(HH, "04") == 0) HH = "16";		
+				if (strcmp(HH, "05") == 0) HH = "17";		
+				if (strcmp(HH, "06") == 0) HH = "18";		
+				if (strcmp(HH, "07") == 0) HH = "19";		
+				if (strcmp(HH, "08") == 0) HH = "20";		
+				if (strcmp(HH, "09") == 0) HH = "21";		
+				if (strcmp(HH, "10") == 0) HH = "22";		
+				if (strcmp(HH, "11") == 0) HH = "23";		
+			}
+
+			sprintf(&TOD24, "%s%s", HH, MM);			// Reconstruct TOD as TOD24
+			return &TOD24;								// Return the result
 		}	
 	}
 	
@@ -1394,5 +1420,6 @@
 		}
 		return -1;
 	}
+
 
 // END
