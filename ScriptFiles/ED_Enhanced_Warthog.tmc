@@ -114,8 +114,6 @@ include "ED_Toggles.tmh"
 		Exclude(&FarmStickRight);
 		Exclude(&FarmStickLeft);
 
-		printf("++	Connect our controllers ... \x0a\x0a");
-
 		if(Init(&EventHandle)) return 1;
 				
 				
@@ -123,6 +121,7 @@ include "ED_Toggles.tmh"
 // Initialise Hardware, LEDs, variables and functions //
 // -------------------------------------------------- //
 
+		printf("++	Connect our controllers ... \x0a\x0a");
 		CheckControllers();														// Refer ED_Initialise.tmh
 		
 		SetShiftButton(&MyJoystick, S3, &MyThrottle, PSF, PSB);					// ** DO NOT TOUCH **  Joystick Nosewheel Switch (S3) = IO, Throttle pinky switch (PSF/PSB) = UMD
@@ -156,8 +155,10 @@ include "ED_Toggles.tmh"
 		initSlewAxis();
 		initRudderAxis();
 
-		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a");
+		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a\x0a");
 
+		fnStartupMapKeyMode();
+		
 // ----------------- //
 // Check Game State  //
 // ----------------- //
