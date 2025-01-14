@@ -194,15 +194,15 @@
 			SliderProfile = "FSS Mode";
 		}
 		if (x == 1)	{													// Normal flight
-//			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);
-			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
+			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);
+//			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Normal Flight";
 			
 		}
 		if (x == 2)	{													// Supercruise
-//			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);
-			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
+			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);
+//			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Supercruise";
 		}
