@@ -125,9 +125,9 @@
 			PULSE+UIRight, D(650),
 			PULSE+UISelect, D(650),
 			PULSE+UIRight, D(650),								// Top option selected by default 
-		//	PULSE+UIDown, D(650),								// Remove comment to highlight 2nd option in list...
+		//	PULSE+UIDown, D(650),								// Remove comment marks to highlight 2nd option in list...
 		//	PULSE+UISelect, D(650),								// ...and select it 
-		//	PULSE+UIDown, D(650),								// Remove comment to highlight 3rd option in list
+		//	PULSE+UIDown, D(650),								// Remove comment marks to highlight 3rd option in list
 		//	PULSE+UISelect, D(650),								// ...and select it 
 		//	PULSE+UIDown, D(650),								// etc. ... and so on 
 		//	PULSE+UISelect, D(650),								// ...and select it 
