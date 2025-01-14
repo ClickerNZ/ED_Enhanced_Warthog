@@ -363,7 +363,7 @@
 	// Parameter:	EnableSpeedBrake
 	// Valid:		0	Reverse, No Speedbrake 
 	//				1	Reverse, Use Speedbrake
-//	//				2	Align Switch - need to re-instate this (NUMPAD *)??
+	//				2	Align Switch - need to re-instate this (NUMPAD *)??
 	//				3	Forward Thrust
 
 	int tgReverseThrust(int EnableSpeedBrake) {				////////////// NEEDS FURTHER TESTING
@@ -371,7 +371,7 @@
 		int reason = 0;
 
 		if (EnableSpeedBrake == 3) {
-			ReverseThrust = 0;
+			ReverseThrust = 0;								// Alas there is no status.json flag for "Reverse", so we need to track 
 		}
 		else {
 			ReverseThrust = 1;
@@ -379,7 +379,7 @@
 
 		if (fMainShip) {
 			if (!fSupercruise & !fLanded & !fDocked) {
-				ActKey(PULSE+KEYON+ReverseThrottle);											// or press NUMPAD *
+				if (EnableSpeedBrake != 2) ActKey(PULSE+KEYON+ReverseThrottle);					// Align switch if '2' parsed. Or press NUMPAD *
 				if (ReverseThrust) {
 					printf("Throttle:			REVERSE\x0a");
 	
@@ -518,7 +518,7 @@
 		else {
 			printf("HUD Mode:		ANALYSIS\x0a");		// Switching to Analysis Mode
 			if (delayannounce) {
-				DeferCall(1000, &fnTextToSpeech, "Analysis mode");
+				DeferCall(2000, &fnTextToSpeech, "Analysis mode");
 			} 
 			else {
 				fnTextToSpeech("Analysis mode");
@@ -526,6 +526,7 @@
 		}
 		ActKey(PULSE+KEYON+HUDMode);							// Switch HUD Modes
 	}
+	
 	// TOGGLE: Enter/Exit FSS Mode
 
 	int tgFSSMode() {
