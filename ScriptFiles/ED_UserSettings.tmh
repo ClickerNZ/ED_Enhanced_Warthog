@@ -78,6 +78,26 @@
 	
 	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\MyWarthogStatusFile.json";
 
+//-------------------//
+// EDMC Output files //
+//-------------------//
+
+	// NOTE:		EDMC can output text files which can be used by this script
+	//				I use files written by an adapted version of the EDMC StreamSource plugin
+	//				Refer to the EDMC subfolder under the below for more details
+	
+	alias	EDMCOutput			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC CmdrName.txt";
+
+//----------//
+// Identity //
+//----------//
+
+	// 'CMDRName' alias is declared and set via fnMyName() via EDMC using the StreamSource Plugin (with my commander name mod) which supports multiple Elite Dangerous accounts
+	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
+	
+	define	CMDRNameOverride	DISABLED
+	int		MyName = "your commander name here";
+
 //----------------//
 // Text To Speech //
 //----------------//
