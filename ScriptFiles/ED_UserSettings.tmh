@@ -86,7 +86,7 @@
 	//				I use files written by an adapted version of the EDMC StreamSource plugin
 	//				Refer to the EDMC subfolder under the below for more details
 	
-	alias	EDMCOutput			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC CmdrName.txt";
+	alias	EDMCOutput			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC CmdrName.txt";
 
 //----------//
 // Identity //
