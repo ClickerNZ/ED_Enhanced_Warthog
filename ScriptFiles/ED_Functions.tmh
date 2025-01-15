@@ -57,6 +57,7 @@
 	Line 1200: 	int fnStateDump()
 	Line 1360: 	int fnGetTOD()
 	Line 1406:	int findstr()
+	Line 1434:	int fnMyName()
 */
 
 //------------------//
@@ -461,6 +462,7 @@
 		int VAStatus = "";
 		int VoiceStatus = "";
 		int SoundFXStatus = "";
+		char VoiceTxt; Dim(&VoiceTxt, 80); VoiceTxt[0] = 0;		
 		
 		printf("\x0a  !!! GAME STARTED @ %s !!!\x0a\x0a", fnGetTOD());
 		
@@ -508,8 +510,9 @@
 		}
 		printf("\x0a\SoundFXStatus = %s\x0a", SoundFXStatus);
 
+		sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());
 		SerialText = 1;
-		fnTextToSpeech("Welcome back Commander");
+		fnTextToSpeech(&VoiceTxt);
 		
 		Flags2 = stfnGetKeyValue("Flags2", INTEGER);					// Check if running Odyssey or Legacy Horizons
 		if (Flags2 == -1) {												// That is, keyname not found 
@@ -1365,7 +1368,6 @@
 
 		alias TOD24 = "HH:MM";
 
-
 		system("time /T > c:\\tod.txt");				// Create local timestamp and write to a file at C:\
 
 		int fp = fopen("c:\\tod.txt", "r");				// Open the file to read
@@ -1425,5 +1427,35 @@
 		return -1;
 	}
 
+	//	FUNCTION:	Uses EDMC output via StreamSource to read 'EDMC CmdrName.txt' and returns your Commander Name  
+	//	NOTE:		You can set your name manually in ED_UserSettings.tmh (default)
+	//				Otherwise you need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package)
+	
+	int fnMyName() {
 
+		int		fp;													// Declare FilePointer
+		int		buf = 51;
+		char	myName;
+		Dim(&myName, buf);
+		myName[0] = NUL;
+		
+		alias 	CMDRName = "                              ";		// Hopefully 50 chars is enough
+
+		if (CMDRNameOverride == ENABLED) {
+			sprintf(&CMDRName, "%s", MyName);						// int MyName set in ED_UserSettings.tmh
+		}
+		else {
+			fp = fopen(&EDMCOutput, "r");							// Open the file to read
+			if (fp) {
+				fread(&myName, 1, buf, fp);							// Reads contents of file into CMDRName 
+				fclose(fp);
+				sprintf(&CMDRName, "%s", &myName);					// Convert char to alias
+			}
+			else {
+				printf("\x0a\x0a++ No EDMC Output file found ++\x0a\x0a");
+			}
+		}
+		return &CMDRName;
+	}
+	
 // END
