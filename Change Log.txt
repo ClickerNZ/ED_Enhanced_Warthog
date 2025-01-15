@@ -24,6 +24,7 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
+		-	New feature added via fnMyName() function (uses EDMC w/StreamSource plugin)
 		-	Re index 
 
 
