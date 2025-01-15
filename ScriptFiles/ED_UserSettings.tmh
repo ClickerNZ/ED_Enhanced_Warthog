@@ -93,9 +93,10 @@
 //----------//
 
 	// 'CMDRName' alias is declared and set via fnMyName() via EDMC using the StreamSource Plugin (with my commander name mod) which supports multiple Elite Dangerous accounts
-	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
+	// If you wish to use this functionality, DISABLE CMDRNameOverride.
+	// Alternately you can leave it ENABLED and set your Commander name manually below.
 	
-	define	CMDRNameOverride	DISABLED
+	define	CMDRNameOverride	ENABLED 
 	int		MyName = "your commander name here";
 
 //----------------//
