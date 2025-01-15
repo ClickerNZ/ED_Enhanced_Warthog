@@ -117,9 +117,9 @@ include "ED_Toggles.tmh"
 		if(Init(&EventHandle)) return 1;
 				
 				
-// -------------------------------------------------- //
-// Initialise Hardware, LEDs, variables and functions //
-// -------------------------------------------------- //
+// ------------------------------------------------------------ //
+// Initialise Hardware, LEDs, Software, variables and functions //
+// ------------------------------------------------------------ //
 
 		printf("++	Connect our controllers ... \x0a\x0a");
 		CheckControllers();														// Refer ED_Initialise.tmh
