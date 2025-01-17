@@ -23,6 +23,8 @@
 
 // START
 
+	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one 
+
 //----------------//
 // MapKey Profile //
 //----------------//
@@ -30,7 +32,6 @@
 	define	MapKeyProfile		FULL					// Valid Settings are FULL or BASIC 
 														// FULL uses all the advanced functions available for Axis, Switches, Triggers and Buttons
 														// BASIC sends simple, plain keystrokes...no macro or function calls, no smarts...great for beginners
-
 //-------------------//
 // Hardware settings //
 //-------------------//
@@ -61,7 +62,6 @@
 	//				The below path is usually where the Elite Dangerous journal files can be found.
 	//				Just replace '<username>' with your Windows username, NOT your CMDR Name!!!
 	
-	alias	JournalFolder		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\";
 	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
 	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
 	
@@ -76,25 +76,29 @@
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//				Saves the script states after a game restart or relog. 
 	
-	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\MyWarthogStatusFile.json";
+	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\MyWarthogStatusFile.json";
 
 //-------------------//
 // EDMC Output files //
 //-------------------//
 
-	// NOTE:		EDMC can output text files which can be used by this script
-	//				I use files written by an adapted version of the EDMC StreamSource plugin
-	//				Refer to the EDMC subfolder under the below for more details
+	// NOTE:		EDMC plugin StreamSource outputs text files which can be used by this script
+	//				I use an adapted version of this EDMC StreamSource plugin to include the Commander Name.
+	//				Refer to the EDMC plugins subfolder under EDMC for more details
 	
-	alias	EDMCOutput			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC CmdrName.txt";
-
+	alias	EDMCCMDRName			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC CmdrName.txt";
+	alias	EDMCShipName			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC ShipName.txt";
+	alias	EDMCStation				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station.txt";
+	alias	EDMCStationBody			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station or Body.txt";
+	alias	EDMCStationBodySystem	= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station or Body or System.txt";
+	alias	EDMCSystem				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC System.txt";
+	
 //----------//
 // Identity //
 //----------//
 
 	// 'CMDRName' alias is declared and set via fnMyName() via EDMC using the StreamSource Plugin (with my commander name mod) which supports multiple Elite Dangerous accounts
-	// If you wish to use this functionality, DISABLE CMDRNameOverride.
-	// Alternately you can leave it ENABLED and set your Commander name manually below.
+	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
 	
 	define	CMDRNameOverride	ENABLED 
 	int		MyName = "your commander name here";
@@ -120,40 +124,51 @@
 	int		EnableVoice			= ENABLED;				// ENABLED or DISABLED. Enable this if you wish to use "voice.exe". 
 														// Toggled via tgTxt2Speech();
 														
-	alias	VoicePath			= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\voice.exe";
+	alias	VoicePath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\voice.exe";
 	
 	int		VoiceVolume			= 75;					// Default Volume set at 75% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
 
 	// Add or remove voices available on your PC.
-	// Run 'voice.exe -l" (lower case L) in a command line where you copied voice.exe to, to see which voices are installed.
-	// The below are the voices I've installed and tested on my PC...
+	// Run 'voice.exe -l" (lower case L) in a command line where you copied voice.exe to, to see which voices are installed
+	// I have installed all the English Language Voice options as per instructions from above links and merged all teh regscraps included in this package 
+	// The below are the voices available and tested on my PC...
 	
 	alias	Catherine			= "-n \"Microsoft Catherine\"";			// Adult, Female,	en-AU
-	alias	Hazel				= "-n \"Microsoft Hazel Desktop\"";		// Adult, Female,	en-GB
-	alias	Mark				= "-n \"Microsoft Mark Desktop\"";		// Adult, Male,		en-US
+	alias	David				= "-n \"Microsoft David Desktop\"";		// Adult, Male,		en-US
 	alias	Zira				= "-n \"Microsoft Zira Desktop\"";		// Adult, Female,	en-US 
-	
-	// The below English language voices are available from Microsoft and can be installed by following the provided links above
-	
-	// alias	Heera				= "-n \"Microsoft Heera\"";				// Adult, Male,		en-IN
-	// alias	Ravi				= "-n \"Microsoft Ravi\"";				// Adult, Female,	en-IN 
-	// alias 	Susan				= "-n \"Microsoft Susan\"";				// Adult, Female,	en-GB
-	// alias	George				= "-n \"Microsoft George\"";			// Adult, Male,		en-GB	
-	// alias	James				= "-n \"Microsoft James\"";				// Adult, Male,		en-AU																			
-	// alias	Sean				= "-n \"Microsoft Sean\"";				// Adult, Male,		en-IE
-	// alias	Richard				= "-n \"Microsoft Richard\"";			// Adult, Male,		en-CA
-	// alias	Linda				= "-n \"Microsoft Linda\"";				// Adult, Female,	en-CA
-	// alias	David				= "-n \"Microsoft David Desktop\"";		// Adult, Male,		en-US
-
+	alias	Heera				= "-n \"Microsoft Heera\"";				// Adult, Male,		en-IN
+	alias	Ravi				= "-n \"Microsoft Ravi\"";				// Adult, Female,	en-IN 
+	alias 	Susan				= "-n \"Microsoft Susan\"";				// Adult, Female,	en-GB
+	alias	George				= "-n \"Microsoft George\"";			// Adult, Male,		en-GB	
+	alias	Hazel				= "-n \"Microsoft Hazel Desktop\"";		// Adult, Female,	en-GB
+	alias	James				= "-n \"Microsoft James\"";				// Adult, Male,		en-AU
+	alias	Mark				= "-n \"Microsoft Mark Desktop\"";		// Adult, Male,		en-US																			
+	alias	Sean				= "-n \"Microsoft Sean\"";				// Adult, Male,		en-IE
+	alias	Richard				= "-n \"Microsoft Richard\"";			// Adult, Male,		en-CA
+	alias	Linda				= "-n \"Microsoft Linda\"";				// Adult, Female,	en-CA
 	// Set your preferred voice below by removing // at start of line.
-	// Be sure to add // at start of all other 'int DefaultVoice = &voicename;' lines
 	// The voice MUST BE installed by following the instructions in the links provided above.
 	
 	int		DefaultVoice		= &Catherine;			// Set your preferred (installed) voice here
-
-	alias	VoiceCMD			= "-r 1";				// Command options used by voice.exe ... "-r 0" = normal rate. "-r 2" = 20% faster
+	int		AltVoice			= &James;				// Secondary Voice
+	int		UseAltVoice			= NO;					// Set to 'YES' prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used 
 	
+	// NOTE:	I have used two or more voices in this script
+	//			I recommend that you search the script looking for 'fnTextToSpeech' to check which voices I have used and change if required
+	//			Sending a non-installed voice is not a critical error and simply results in TTS not saying anything
+
+	alias	VoiceCMD			= "-r 1";				// Command options used by voice.exe ... "-r 0" = normal rate. "-r 1" = speaks 10% faster
+	
+//------------------------//
+// Voice Enabled Training //
+//------------------------//
+	
+	define	TrainingMode		ENABLED					// ENABLED	= When game is not running, pressing a button/switch announces its function and prints same to console.
+														// DISABLED	= Training mode announcements and printouts are not sent
+	define	AnnounceTraining	DISABLED				// DISABLED	= Do not announce when training mode becomes enabled 
+														// ENABLED	= Announce training mode when available 
+
 //------------------//
 // WAV Sound Player //
 //------------------//
@@ -167,17 +182,9 @@
 
 	int		EnableSoundFX		= ENABLED; 				// ENABLED or DISABLED. Enable this if you wish to use "sounder.exe"
 	
-	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounder.exe";
-	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript\\SupportFiles\\sounds\\";
+	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";
+	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";
 	alias	SoundCMD			= "";
-
-//------------------//
-//  Training  Mode  //
-//------------------//	
-	
-	define	TrainingMode		ENABLED					// ENABLED or DISABLED. When game is not running, pressing a button/switch announces basic function
-	define	AnnounceTraining	DISABLED				// DISABLED = Do not announce training mode, ENABLED = Announce training mode
-
 
 //----------//
 // PIP Mode //
