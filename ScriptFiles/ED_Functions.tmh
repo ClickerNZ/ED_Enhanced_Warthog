@@ -58,6 +58,8 @@
 	Line 1360: 	int fnGetTOD()
 	Line 1406:	int findstr()
 	Line 1434:	int fnMyName()
+	Line 1469:	int fnStation()
+	Line xxxx:	int fnGreetCMDR()
 */
 
 //------------------//
@@ -356,6 +358,12 @@
 			sprintf(&volume, "%d", VoiceVolume);							// Uses the VoiceVolume variable (Default = 75%). Can be changed via ??????
 		}
 		volume[3] = NUL;													// terminate char array 
+		
+		if (UseAltVoice == YES) {
+			Voice = AltVoice;												// AltVoice set in ED_UserSettings.tmh 
+			UseAltVoice = NO;												// Reset flag to use AltVoice
+		}
+		
 		if (EnableVoice) {
 			if (!GameLoaded) {	
 				SerialText = 1;
@@ -469,28 +477,28 @@
 		GameLoaded = YES;
 		StartupLock = OFF;
 
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);			// Forces re-read of slider axis								
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);					// Forces re-read of slider axis								
 		
-		fnFlashStart();													// Flash LEDs on Throttle Base to alert user game has started
+		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
 		
 		if (MyThrottle[EACON] | MyThrottle[RDRNRM] | MyThrottle[SPDF]) {
 			// Align toggle switches and internal status flags if required
 			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		//MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
 			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	//MAYBE NOT NEEDED now checked in stfnProcessFlags()	
-			if (MyThrottle[SPDF])		DeferCall(2500, &tgReverseThrust,	OFF);       //Cannot avoid this one as there is no FLAGS bit for this
+			if (MyThrottle[SPDF])		DeferCall(2500, &tgReverseThrust,	OFF);   //Cannot avoid this one as there is no FLAGS bit for this
 		}
 		else DeferCall(1100, &fnSetLEDs, NUL);
 	
 		// Align Joystick curves
-		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);		// Don't print to console or announce curve setting
-		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);		// Don't print to console or announce curve setting
-		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);		// Don't print to console or announce curve setting
+		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);					// Don't print to console or announce curve setting
+		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);				// Don't print to console or announce curve setting
+		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);					// Don't print to console or announce curve setting
 		
 		if (fDocked) 			InHanger = YES;
 		
 		if (!ConnectionStatus) {
-			ActKey(PULSE+KEYON+ShowConnectionStatus);					// ...turn on connection status. Alternate="m_ShowGameStats"
-			ConnectionStatus = ON;										// tracks if above has already been turned on
+			ActKey(PULSE+KEYON+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats"
+			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
 		
 		if(EnableVoice) {
@@ -524,7 +532,7 @@
 		else {
 			Odyssey = 1;
 			printf("\x0a\GAME:		ODYSSEY\x0a");
-//			SerialText = 1;
+			SerialText = 1;
 			DeferCall(2000, &fnTextToSpeech, "Running Odyssey");			
 		}
 						
@@ -535,7 +543,7 @@
 		
 		if (SwapRoll4Yaw) {
 			DeferCall(1500, &tgXAxis, RESET);								// Give 'MainKeyMap()' call a chance to finish
-		}				
+		}
 	}
 
 
@@ -1167,7 +1175,7 @@
 			}
 			
 			printf("\x0a\x0a\- Game has reloaded -\x0a");
-			fnGameStarted();																		// We're still guessing when game has actually retsrated as Flags and Flags2 do not change 
+			fnGameStarted();																		// We're still guessing when game has actually restarted as Flags and Flags2 do not change 
 		}
 	}
 
@@ -1430,32 +1438,108 @@
 	//	FUNCTION:	Uses EDMC output via StreamSource to read 'EDMC CmdrName.txt' and returns your Commander Name  
 	//	NOTE:		You can set your name manually in ED_UserSettings.tmh (default)
 	//				Otherwise you need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package)
+	//	RETURNS:	Contents of CMDRName as a string
+	//	USAGE:		1)	sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());
+	//					fnTextToSpeech(&VoiceTxt);
 	
 	int fnMyName() {
 
 		int		fp;													// Declare FilePointer
-		int		buf = 51;
-		char	myName;
-		Dim(&myName, buf);
-		myName[0] = NUL;
+
+		char	nextchar;											// use to read in text file one char at a time 
+		Dim(&nextchar, 2);
+		nextchar[0] = 0;											// clear it out...
+		nextchar[1] = 0;											// ...because we can 
 		
-		alias 	CMDRName = "                              ";		// Hopefully 50 chars is enough
+		char	myString;											// the char array we'll build using nextchar 
+		Dim(&myString, 50);
+		myString[0] = 0;											// clear out the first char in array...
+		myString[49] = 0;											// ...and  the last (why?)
+		
+		alias 	CMDRName = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";		// Hopefully 50 chars is enough
 
 		if (CMDRNameOverride == ENABLED) {
-			sprintf(&CMDRName, "%s", MyName);						// int MyName set in ED_UserSettings.tmh
+			sprintf(&CMDRName, "%s", MyName);						// Use MyName if set in ED_UserSettings.tmh
 		}
 		else {
-			fp = fopen(&EDMCOutput, "r");							// Open the file to read
+			fp = fopen(&EDMCCMDRName, "r");							// Open the file to read
 			if (fp) {
-				fread(&myName, 1, buf, fp);							// Reads contents of file into CMDRName 
-				fclose(fp);
-				sprintf(&CMDRName, "%s", &myName);					// Convert char to alias
+//				fread(&myString, 1, buf, fp);						// Reads contents of file into CMDRName 
+//				fclose(fp);
+				do {
+					fread(&nextchar, 1, 1, fp);						// Reads contents of file one char at a time  
+					strcat(&myString, &nextchar);					// Build myString char array 
+				}
+				while (feof(fp) == 0);								// Loop until end-of-file
+				
+				fclose(fp);											// Close the file 
+				myString[strlen(&myString)-2] = 0;					// Terminate the string by writing NUL to EOL and EOF chars 
+
+				sprintf(&CMDRName, "%s", &myString);				// Convert char to alias
 			}
 			else {
-				printf("\x0a\x0a++ No EDMC Output file found ++\x0a\x0a");
+				printf("\x0a\x0a++ EDMC Output file not found ++\x0a\x0a");
 			}
 		}
 		return &CMDRName;
+	}
+
+	//	FUNCTION:	EDMC StreamSource plugin writes 'EDMC Station.txt' each time it changes. This function reads that file for our use.   
+	//	NOTE:		You need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package
+	//	RETURNS:	Contents of Station as a string
+	//	USAGE:		1)	printf("Station Name = %s\x0a", fnStation());
+	//				2)	sprintf(&VoiceTxt, "Docked at station %s", fnStation());
+	//					fnTextToSpeech(&VoiceTxt);
+	
+	int fnStation() {
+
+		int		fp;													// Declare FilePointer
+
+		char	nextchar;											// use to read in text file one char at a time 
+		Dim(&nextchar, 2);
+		nextchar[0] = 0;											// clear it out...
+		nextchar[1] = 0;											// ...because we can 
+		
+		char	myString;											// the char array we'll build using nextchar 
+		Dim(&myString, 50);
+		myString[0] = 0;											// clear out the first char in array...
+		myString[49] = 0;											// ...and  the last (why?)
+		
+		alias 	Station = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";			// Our 'return' variable. Using dummy delimiters. Hopefully 50 chars is enough
+
+		fp = fopen(&EDMCStation, "r");								// Open the file to read
+		if (fp) {
+			do {
+				fread(&nextchar, 1, 1, fp);							// Reads contents of file one char at a time  
+				strcat(&myString, &nextchar);						// Build myString char array 
+			}
+			while (feof(fp) == 0);									// Loop until end-of-file
+			
+			fclose(fp);												// Close the file 
+			myString[strlen(&myString)-2] = 0;						// Terminate the string by writing NUL to EOL and EOF chars 
+			
+			sprintf(&Station, "%s", &myString);						// Convert char to alias			
+		}
+		else {
+			printf("\x0a\x0a++ EDMC Output file not found ++\x0a\x0a");
+		}
+		return &Station;											// Return the alias string value
+	}
+
+
+	//	FUNCTION:	Check if we're docked at our own Fleet Carrier and greet us if we are!
+	
+	int	fnGreetCMDR(int dummy = 0) {
+		alias VoiceTxt = "123456789012345678901234567890123456789012345678901234";
+		if (strcmp(&MyFC, fnStation()) == 0) {
+			UseAltVoice = YES;
+			sprintf(&VoiceTxt, "All hands on deck! , Commander %s on the bridge!", fnMyName()); 
+			fnTextToSpeech(&VoiceTxt, 100);
+		}
+		else {
+			// no greeting
+		}
+
 	}
 	
 // END
