@@ -293,14 +293,14 @@
 				}
 				else {
 					fnVPOutput("Cargo scoop malfunction!!");							// flags not aligned...try again, once only in 1.5 seconds!
-					if (RetryCounter == 0) {
-						RetryCounter = RetryCounter + 1;
-						DeferCall(1500, &tgCargoScoop, x);
-					}				
+					ActKey(PULSE+KEYON+CargoScoop);
+//					if (RetryCounter == 0) {
+//						RetryCounter = RetryCounter + 1;
+//						DeferCall(1500, &tgCargoScoop, x);
+//					}				
 				}
 			}	
-			RetryCounter = 0;
-		}
+		}		
 		else if (fOnFoot) {
 			reason = "we are on foot";
 		}
@@ -314,6 +314,8 @@
 			fnVPOutput("Cargo scoop:		DEPLOYED");
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
+
+		RetryCounter = 0;
 	}
 	
 	
