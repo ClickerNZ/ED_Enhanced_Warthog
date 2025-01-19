@@ -533,7 +533,7 @@
 			Odyssey = 1;
 			printf("\x0a\GAME:		ODYSSEY\x0a");
 			SerialText = 1;
-			DeferCall(2000, &fnTextToSpeech, "Running Odyssey");			
+			DeferCall(1000, &fnTextToSpeech, "Running Odyssey");			
 		}
 						
 		fnPrintState();
@@ -542,7 +542,17 @@
 		MainKeyMap();													// MapKey profile for 'Game Running'
 		
 		if (SwapRoll4Yaw) {
-			DeferCall(1500, &tgXAxis, RESET);								// Give 'MainKeyMap()' call a chance to finish
+			DeferCall(1500, &tgXAxis, RESET);							// Give 'MainKeyMap()' call a chance to finish
+		}
+		
+		if (strcmp(&MyFC, fnStation()) == 0) {							// Issue personalised greeting when docked at Clicker's Folly
+			printf("Clicker's Folly\x0a");
+//			DeferCall(11000, &fnGreetCMDR, 0);							// 11 seconds?
+			fnGreetCMDR();
+		}
+		else {
+			printf("NOT Clicker's Folly\x0a");
+			printf("Station: %s\x0a", fnStation());
 		}
 	}
 
@@ -1462,10 +1472,8 @@
 			sprintf(&CMDRName, "%s", MyName);						// Use MyName if set in ED_UserSettings.tmh
 		}
 		else {
-			fp = fopen(&EDMCCMDRName, "r");							// Open the file to read
+			fp = fopen(&MyCMDRName, "r");								// Open the file to read
 			if (fp) {
-//				fread(&myString, 1, buf, fp);						// Reads contents of file into CMDRName 
-//				fclose(fp);
 				do {
 					fread(&nextchar, 1, 1, fp);						// Reads contents of file one char at a time  
 					strcat(&myString, &nextchar);					// Build myString char array 
@@ -1478,13 +1486,15 @@
 				sprintf(&CMDRName, "%s", &myString);				// Convert char to alias
 			}
 			else {
-				printf("\x0a\x0a++ EDMC Output file not found ++\x0a\x0a");
+				printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyCMDRName);
+				fnSoundFX("fail", 100);
+
 			}
 		}
 		return &CMDRName;
 	}
 
-	//	FUNCTION:	EDMC StreamSource plugin writes 'EDMC Station.txt' each time it changes. This function reads that file for our use.   
+	//	FUNCTION:	EDMC StreamSource plugin writes 'EDMC StationName.txt' each time it changes. This function reads that file for our use.   
 	//	NOTE:		You need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package
 	//	RETURNS:	Contents of Station as a string
 	//	USAGE:		1)	printf("Station Name = %s\x0a", fnStation());
@@ -1507,7 +1517,7 @@
 		
 		alias 	Station = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";			// Our 'return' variable. Using dummy delimiters. Hopefully 50 chars is enough
 
-		fp = fopen(&EDMCStation, "r");								// Open the file to read
+		fp = fopen(&MyStationName, "r");							// Open the file to read
 		if (fp) {
 			do {
 				fread(&nextchar, 1, 1, fp);							// Reads contents of file one char at a time  
@@ -1521,7 +1531,8 @@
 			sprintf(&Station, "%s", &myString);						// Convert char to alias			
 		}
 		else {
-			printf("\x0a\x0a++ EDMC Output file not found ++\x0a\x0a");
+			printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyStationName);
+			fnSoundFX("fail", 100);
 		}
 		return &Station;											// Return the alias string value
 	}
@@ -1530,14 +1541,20 @@
 	//	FUNCTION:	Check if we're docked at our own Fleet Carrier and greet us if we are!
 	
 	int	fnGreetCMDR(int dummy = 0) {
-		alias VoiceTxt = "123456789012345678901234567890123456789012345678901234";
-		if (strcmp(&MyFC, fnStation()) == 0) {
+		Dim(&TTSVoice, (48+strlen(fnMyName())));
+		TTSVoice[0] = 0;
+
+		if (strcmp(&FCOwner, fnMyName()) == 0) {
 			UseAltVoice = YES;
-			sprintf(&VoiceTxt, "All hands on deck! , Commander %s on the bridge!", fnMyName()); 
-			fnTextToSpeech(&VoiceTxt, 100);
+			sprintf(&TTSVoice, "All hands announcement, Commander %s on the bridge!", fnMyName());
+			fnTextToSpeech(&TTSVoice, 100);
+			printf("TTSVoice = %s\x0a", &TTSVoice);
 		}
 		else {
-			// no greeting
+			UseAltVoice = YES;
+			sprintf(&TTSVoice, "Welcome aboard commander %s", fnMyName());
+			fnTextToSpeech(&TTSVoice, 100);
+			printf("TTSVoice = %s\x0a", &TTSVoice);
 		}
 
 	}
