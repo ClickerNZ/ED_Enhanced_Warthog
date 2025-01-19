@@ -25,6 +25,8 @@
 
 // START
 
+	char	TTSVoice;					// TESTING: prefer we Dim this based on usecase rather than an alias string staticly set within each function 
+
 //--------------------//
 // Connected Hardware //
 //--------------------//
