@@ -24,9 +24,10 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
-		-	New feature added - integration with EDMC with a modified version of the StreamSource plugin
-			-	New function fnMyName() returns Commander Name string
-			-	New function fnStation() returns Station string (uses EDMC w/StreamSource plugin)
+//		-	New feature added - integration with EDMC with a modified version of the StreamSource plugin
+			New feature added - using powershell script to write text files from particular Journalfile key values 
+			-	New function fnMyName() returns Commander name string
+			-	New function fnStation() returns Station name string
 		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech
 		-	Re index 
 
