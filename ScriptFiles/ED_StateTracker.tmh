@@ -297,7 +297,8 @@
 
 	int stfnProcessFlags(int UpdateLEDs = NO) {
 
-		int VoiceTxt;
+		int TTS;
+		alias VoiceTxt			= "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
 		
 		// "lFlagName" is "Last" or previous flag value					// Allows us to track each time a flag is toggled 
 		int lDocked 			= fDocked;								// Track when we dock in station or star port
@@ -345,16 +346,16 @@
 				GameLoaded = NO;										// Reset GameLoaded flag 
 				Odyssey = 0;											// Turn off Flags2 processing
 
-				VoiceTxt = "Game halted -";
+				TTS = "Game halted -";
 				if(TrainingMode == ENABLED){
 					TrainingMap();										// Load KeyMap profile for training
 					if (AnnounceTraining) {
-						VoiceTxt = "Game halted. Training mode enabled -";
+						TTS = "Game halted. Training mode enabled -";
 					}
 				}
 				
 				printf("\x0a- ");
-				fnVPOutput(VoiceTxt);
+				fnVPOutput(TTS);
 				printf("\x0a");
 							
 				if (ReverseThrust) {
@@ -430,7 +431,15 @@
 						DeferCall(2500, &fnHangerServices, 1);			// Cannot use 'Auto' feature until we verify SAME PROCESS for Starport v Carrier v Surface Port
 					}
 					DeferCall(1000, &ActKey, PULSE+KEYON+BalancePower);
-					if (!StartupLock) printf("Docked @ %s\x0a", fnGetTOD());
+					if (!StartupLock) {
+						printf("Docked: %s @ %s\x0a", fnGetTOD(), fnStation());		// May be a timing issue between when we detect a status.json change and when EDSM/StreamSource writes a file
+						if (strcmp(&MyFC, fnStation()) == 0) {						// Issue personalised greeting when docked at Clicker's Folly
+//							UseAltVoice = YES;
+//							sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName()); 
+//							DeferCall(7000, &fnTextToSpeech, &VoiceTxt);			// WORKS IF &VoiceTxt is an alias and not a char array 
+							DeferCall(11000, &fnGreetCMDR, 0);								// 11 seconds?
+						}
+					}
 				}
 				else	{	
 					InHanger = NO;
@@ -483,12 +492,12 @@
 					printf("Supercruise flag reset\x0a");
 					if (SelectDrop == NO) {													// Uninitiated drop				
 						if (OrbitalCruise & !fInterdicted) {
-							VoiceTxt = "Entering Glide Mode";
+							TTS = "Entering Glide Mode";
 						}
 						else { 
-							VoiceTxt = "Drop detected";
+							TTS = "Drop detected";
 						}
-						fnVPOutput(VoiceTxt);												//  Announce drop type
+						fnVPOutput(TTS);													//  Announce drop type
 						if (fInterdicted | fDanger) {
 							if (fHUDAnalysis) {	
 								tgHUDMode(1);												// Select Combat HUD
@@ -553,10 +562,11 @@
 			}
 
 // TESTING  // Check and align switch with function
+//			// I suspect this was just making things work and I ran out of F's trying to fix
 //
-			if ((MyThrottle[RDRNRM] & !fCargoScoop) | (MyThrottle[RDRDIS] & fCargoScoop)) {
-				ActKey(PULSE+KEYON+CargoScoop);								// Fix misaligned switch after menu log?
-			}
+//			if ((MyThrottle[RDRNRM] & !fCargoScoop) | (MyThrottle[RDRDIS] & fCargoScoop)) {
+//				ActKey(PULSE+KEYON+CargoScoop);								// Fix misaligned switch after menu log?
+//			}
 //
 /////////////
 
@@ -570,10 +580,11 @@
 			}
 
 // TESTING	// Check and align switch with function
+//			// As with Cargo Scoop switch, I've disabled this as well, just in case (ie not tested)
 //
-			if ((MyThrottle[EACON] & !fSilentRunning) | (MyThrottle[EACOFF] & fSilentRunning)) {
-				ActKey(PULSE+KEYON+SilentRunning);							// Fix misaligned switch?
-			}
+//			if ((MyThrottle[EACON] & !fSilentRunning) | (MyThrottle[EACOFF] & fSilentRunning)) {
+//				ActKey(PULSE+KEYON+SilentRunning);							// Fix misaligned switch?
+//			}
 //
 //////////////
 
@@ -1097,15 +1108,20 @@
 	// FUNCTION: Initial check to see if game is already running after we've restarted the script.
 	
 	int stfnStartCheck() {
+
+////	For TEST AREA (below)
+//		alias VoiceTxt = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+////
+	
 		int fp;								// file pointer (handle)
 		int json100;						// status.json string length - Most Significant Bit (Hundreds) 
 		int json10;							// status.json string length - Middle Significant Bit (Tens)
-		int json1;							// status.json string length - Least Significant Bit (Ones) 
+		int json1;							// status.json string length - Least Significant Bit (Ones)
 		
 		char jason; 
 		Dim(&jason, 16);
 		jason[0] = 0;		
-		
+
 		fp = fopen(&StatusFile, "r");		// Open status.json if found, otherwise throw an error and abort script 
 		if (fp) {
 			fclose(fp);
@@ -1148,6 +1164,53 @@
 				fnTextToSpeech("Waiting for game to load");
 			}
 			fnSoundFX("tada");																	// Script has started successfully 
+
+////	TEST AREA --- Copy code here to test at end of script start
+//
+//			//Testing here...move solution up to Line 435
+//
+//			if (strcmp(&MyFC, fnStation()) == 0) {
+//				printf("Clicker's Folly\x0a");
+//				UseAltVoice = YES;
+//				sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName()); 
+//				DeferCall(2000, &fnTextToSpeech, &VoiceTxt);									// WORKS IF &VoiceTxt is an alias and not a char array 
+//			}
+//			else {
+//				printf("NOT Clicker's Folly\x0a");
+//			}
+/*			
+			if (strcmp(fnMyName(), &FCOwner) == 0) {
+				printf("Commander Clicker\x0a\x0a");
+				DeferCall(2000, &fnGreetCMDR, 0);								// <- this is the solution 
+			}
+			else {
+				printf("NOT Commander Clicker\x0a\x0a");
+				DeferCall(2000, &fnGreetCMDR, 0);
+			}
+*/			
+//			UseAltVoice = YES;
+//			if (strcmp(&MyFC, fnStation()) == 0) { 
+//				sprintf(&VoiceTxt, "Currently docked at Clicker's Folly"); 
+//			}
+//			else {
+//				sprintf(&VoiceTxt, "Currently docked at %s ", fnStation()); 
+//			}
+//			printf("RTN: %s\x0a", fnStation());
+//			printf("TTS: %s\x0a", &VoiceTxt);
+//			SerialText = 1;
+//			fnTextToSpeech(&VoiceTxt, 100);			
+//			
+//			Sleep(3000);
+//			
+//			UseAltVoice = YES;
+//			sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName());
+//			printf("RTN: %s\x0a", fnMyName());
+//			printf("TTS: %s\x0a", &VoiceTxt);
+//			SerialText = 1;
+//			fnTextToSpeech(&VoiceTxt, 100);			
+//
+////	TEST AREA
+			
 		}
 	}
 
