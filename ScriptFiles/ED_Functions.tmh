@@ -59,7 +59,7 @@
 	Line 1406:	int findstr()
 	Line 1434:	int fnMyName()
 	Line 1469:	int fnStation()
-	Line xxxx:	int fnGreetCMDR()
+	Line 1543:	int fnGreetCMDR()
 */
 
 //------------------//
@@ -546,13 +546,12 @@
 		}
 		
 		if (strcmp(&MyFC, fnStation()) == 0) {							// Issue personalised greeting when docked at Clicker's Folly
-			printf("Clicker's Folly\x0a");
-//			DeferCall(11000, &fnGreetCMDR, 0);							// 11 seconds?
-			fnGreetCMDR();
+			printf("Clicker's Folly\x0a");					// DEBUG 
+			fnGreetCMDR();									// DEBUG
 		}
 		else {
-			printf("NOT Clicker's Folly\x0a");
-			printf("Station: %s\x0a", fnStation());
+			printf("NOT Clicker's Folly\x0a");				// DEBUG
+			printf("Station: %s\x0a", fnStation());			// DEBUG
 		}
 	}
 
@@ -1470,6 +1469,7 @@
 
 		if (CMDRNameOverride == ENABLED) {
 			sprintf(&CMDRName, "%s", MyName);						// Use MyName if set in ED_UserSettings.tmh
+			return &CMDRName;
 		}
 		else {
 			fp = fopen(&MyCMDRName, "r");								// Open the file to read
@@ -1484,14 +1484,19 @@
 				myString[strlen(&myString)-2] = 0;					// Terminate the string by writing NUL to EOL and EOF chars 
 
 				sprintf(&CMDRName, "%s", &myString);				// Convert char to alias
+				
+				if (strcmp(&CMDRName, "none") == 0) {
+					// do nothing....Commander name not set
+				}
+				else {
+					return &CMDRName;
+				}
 			}
 			else {
 				printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyCMDRName);
 				fnSoundFX("fail", 100);
-
 			}
 		}
-		return &CMDRName;
 	}
 
 	//	FUNCTION:	EDMC StreamSource plugin writes 'EDMC StationName.txt' each time it changes. This function reads that file for our use.   
@@ -1528,34 +1533,48 @@
 			fclose(fp);												// Close the file 
 			myString[strlen(&myString)-2] = 0;						// Terminate the string by writing NUL to EOL and EOF chars 
 			
-			sprintf(&Station, "%s", &myString);						// Convert char to alias			
+			sprintf(&Station, "%s", &myString);						// Convert char to alias
+
+			if (strcmp(&Station, "none") == 0) {
+				// do nothing, StationName not set
+			}
+			else {
+				return &Station;
+			}
 		}
 		else {
 			printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyStationName);
 			fnSoundFX("fail", 100);
 		}
-		return &Station;											// Return the alias string value
 	}
 
 
 	//	FUNCTION:	Check if we're docked at our own Fleet Carrier and greet us if we are!
 	
 	int	fnGreetCMDR(int dummy = 0) {
-		Dim(&TTSVoice, (48+strlen(fnMyName())));
+	
+		alias part1 = "All hands announcement, Commander ";
+		alias part2 = " on board!";
+		
+		Dim(&TTSVoice, (strlen(&part1)+strlen(fnMyName())+strlen(&part2)+1));
 		TTSVoice[0] = 0;
 
-		if (strcmp(&FCOwner, fnMyName()) == 0) {
+		if (strcmp(&FCOwner, fnMyName())==0) {
 			UseAltVoice = YES;
-			sprintf(&TTSVoice, "All hands announcement, Commander %s on the bridge!", fnMyName());
+			sprintf(&TTSVoice, "%s%s%s", &part1, fnMyName(), &part2);		// no spaces between each %s 
+			TTSVoice[strlen(&TTSVoice)] = NUL;
 			fnTextToSpeech(&TTSVoice, 100);
-			printf("TTSVoice = %s\x0a", &TTSVoice);
 		}
 		else {
 			UseAltVoice = YES;
 			sprintf(&TTSVoice, "Welcome aboard commander %s", fnMyName());
+			TTSVoice[strlen(&TTSVoice)] = NUL;
 			fnTextToSpeech(&TTSVoice, 100);
-			printf("TTSVoice = %s\x0a", &TTSVoice);
 		}
+		
+//		DEBUG
+		printf("TTSVoice = %s\x0a", &TTSVoice);
+//
 
 	}
 	
