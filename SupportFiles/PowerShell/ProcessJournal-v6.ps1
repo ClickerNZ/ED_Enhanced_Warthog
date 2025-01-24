@@ -1,3 +1,5 @@
+# This version continuously monitors for updates and changes rather than periodically
+
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
     [string]$outputFolderPath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Output"  # Output folder to save the text files
@@ -30,14 +32,27 @@ function Process-LatestLogFile {
         $loadoutData = @{
             ShipName  = $null        
         }
+		
+		$shipyardswapData = @{
+			ShipType  = $null
+		}
 
         $loadGameFound = $false
         $dockedFound = $false
         $loadoutFound = $false
+		$shipyardswapFound = $false
+        $shutdownFound = $false
 
         # Read the file line by line
         Get-Content -Path $latestFile.FullName | ForEach-Object {
             $line = $_
+
+            # Check for "event: Shutdown" and exit if found
+            if ($line -match '"event":\s*"Shutdown"') {
+                Write-Host "Shutdown event found. Exiting script."
+                $shutdownFound = $true
+                return
+            }
 
             # Look for the latest "event: LoadGame" entry
             if ($line -match '"event":\s*"LoadGame"') {
@@ -67,7 +82,22 @@ function Process-LatestLogFile {
                 if ($line -match '"ShipName":\s*"([^"]+)"') {
                     $loadoutData.ShipName = $matches[1]
                 }
+            } 
+
+            # Look for the latest "event: ShipyardSwap" entry
+            if ($line -match '"event":\s*"ShipyardSwap"') {
+                $shipyardswapFound = $true
+                if ($line -match '"ShipType_Localised":\s*"([^"]+)"') {
+                    $shipyardswapData.ShipType = $matches[1]
+                }
             }        
+			
+        }
+
+        # If Shutdown event is found, exit the script
+        if ($shutdownFound) {
+            Write-Host "Exiting due to Shutdown event."
+            exit
         }
 
         # Write the data to output text files
@@ -80,10 +110,11 @@ function Process-LatestLogFile {
                 $loadGameData.ShipType | Out-File -FilePath "$outputFolderPath\ShipType.txt" -Encoding ascii
                 Write-Host "ShipType written to ShipType.txt"
             }
-            if ($loadoutData.ShipName) {
-                $loadoutData.ShipName | Out-File -FilePath "$outputFolderPath\ShipName.txt" -Encoding ascii
-                Write-Host "ShipName written to ShipName.txt"
-            }
+			 # Don't use this as the name may be obfuscated
+#            if ($loadoutData.ShipName) {
+#                $loadoutData.ShipName | Out-File -FilePath "$outputFolderPath\ShipName.txt" -Encoding ascii
+#                Write-Host "ShipName written to ShipName.txt"
+#            }
         } else {
             Write-Host "No 'LoadGame' event found in the file."
         }
@@ -110,6 +141,15 @@ function Process-LatestLogFile {
             Write-Host "No 'Loadout' event found in the file."
         }
 
+        if ($shipyardswapFound) {
+            if ($shipyardswapData.ShipType) {
+                $shipyardswapData.ShipType | Out-File -FilePath "$outputFolderPath\ShipType.txt" -Encoding ascii
+                Write-Host "ShipType written to ShipName.txt"
+            }
+        } else {
+            Write-Host "No 'ShipyardSwap' event found in the file."
+        }
+
     } else {
         Write-Host "No Journal*.log file found in the specified folder."
     }
@@ -132,8 +172,8 @@ Register-ObjectEvent -InputObject $fsWatcher -EventName Changed -Action {
     Process-LatestLogFile
 }
 
-# Keep the script running to monitor for file changes
+# Keep the script running to monitor for file changes indefinitely
 Write-Host "Monitoring folder for changes..."
 while ($true) {
-    Start-Sleep -Seconds 1  # Check every 5 seconds
+    Wait-Event  # Wait for events indefinitely
 }

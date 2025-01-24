@@ -1,3 +1,5 @@
+# v7 - Includes checks for Event: Location looking for StationName and StationType 
+
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
     [string]$outputFolderPath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Output"  # Output folder to save the text files
@@ -30,14 +32,44 @@ function Process-LatestLogFile {
         $loadoutData = @{
             ShipName  = $null        
         }
+		
+		$shipyardswapData = @{
+			ShipType  = $null
+		}
+
+        $locationData = @{
+            StationName  = $null
+            StationType  = $null
+        }
 
         $loadGameFound = $false
         $dockedFound = $false
         $loadoutFound = $false
+		$shipyardswapFound = $false
+        $locationFound = $false
+        $shutdownFound = $false
 
         # Read the file line by line
         Get-Content -Path $latestFile.FullName | ForEach-Object {
             $line = $_
+
+            # Check for "event: Shutdown" and exit if found
+            if ($line -match '"event":\s*"Shutdown"') {
+                Write-Host "Shutdown event found. Exiting script."
+                $shutdownFound = $true
+                return
+            }
+
+            # Look for the "event: Location" entry
+            if ($line -match '"event":\s*"Location"') {
+                $locationFound = $true
+                if ($line -match '"StationName":\s*"([^"]+)"') {
+                    $locationData.StationName = $matches[1]
+                }
+                if ($line -match '"StationType":\s*"([^"]+)"') {
+                    $locationData.StationType = $matches[1]
+                }
+            }
 
             # Look for the latest "event: LoadGame" entry
             if ($line -match '"event":\s*"LoadGame"') {
@@ -67,10 +99,39 @@ function Process-LatestLogFile {
                 if ($line -match '"ShipName":\s*"([^"]+)"') {
                     $loadoutData.ShipName = $matches[1]
                 }
+            } 
+
+            # Look for the latest "event: ShipyardSwap" entry
+            if ($line -match '"event":\s*"ShipyardSwap"') {
+                $shipyardswapFound = $true
+                if ($line -match '"ShipType_Localised":\s*"([^"]+)"') {
+                    $shipyardswapData.ShipType = $matches[1]
+                }
             }        
+			
         }
 
-        # Write the data to output text files
+        # If Shutdown event is found, exit the script
+        if ($shutdownFound) {
+            Write-Host "Exiting due to Shutdown event."
+            exit
+        }
+
+        # Write the Location data to output text files (if found)
+        if ($locationFound) {
+            if ($locationData.StationName) {
+                $locationData.StationName | Out-File -FilePath "$outputFolderPath\StationName.txt" -Encoding ascii
+                Write-Host "StationName written to StationName.txt"
+            }
+            if ($locationData.StationType) {
+                $locationData.StationType | Out-File -FilePath "$outputFolderPath\StationType.txt" -Encoding ascii
+                Write-Host "StationType written to StationType.txt"
+            }
+        } else {
+            Write-Host "No 'Location' event found in the file."
+        }
+
+        # Write the LoadGame data to output text files (if found)
         if ($loadGameFound) {
             if ($loadGameData.CMDRName) {
                 $loadGameData.CMDRName | Out-File -FilePath "$outputFolderPath\CMDRName.txt" -Encoding ascii
@@ -80,14 +141,16 @@ function Process-LatestLogFile {
                 $loadGameData.ShipType | Out-File -FilePath "$outputFolderPath\ShipType.txt" -Encoding ascii
                 Write-Host "ShipType written to ShipType.txt"
             }
-            if ($loadoutData.ShipName) {
-                $loadoutData.ShipName | Out-File -FilePath "$outputFolderPath\ShipName.txt" -Encoding ascii
-                Write-Host "ShipName written to ShipName.txt"
-            }
+			 # Don't use this as the name may be obfuscated
+#            if ($loadoutData.ShipName) {
+#                $loadoutData.ShipName | Out-File -FilePath "$outputFolderPath\ShipName.txt" -Encoding ascii
+#                Write-Host "ShipName written to ShipName.txt"
+#            }
         } else {
             Write-Host "No 'LoadGame' event found in the file."
         }
 
+        # Write the Docked data to output text files (if found)
         if ($dockedFound) {
             if ($dockedData.StationName) {
                 $dockedData.StationName | Out-File -FilePath "$outputFolderPath\StationName.txt" -Encoding ascii
@@ -101,6 +164,7 @@ function Process-LatestLogFile {
             Write-Host "No 'Docked' event found in the file."
         }
         
+        # Write the Loadout data to output text files (if found)
         if ($loadoutFound) {
             if ($loadoutData.ShipName) {
                 $loadoutData.ShipName | Out-File -FilePath "$outputFolderPath\ShipName.txt" -Encoding ascii
@@ -108,6 +172,16 @@ function Process-LatestLogFile {
             }
         } else {
             Write-Host "No 'Loadout' event found in the file."
+        }
+
+        # Write the ShipyardSwap data to output text files (if found)
+        if ($shipyardswapFound) {
+            if ($shipyardswapData.ShipType) {
+                $shipyardswapData.ShipType | Out-File -FilePath "$outputFolderPath\ShipType.txt" -Encoding ascii
+                Write-Host "ShipType written to ShipName.txt"
+            }
+        } else {
+            Write-Host "No 'ShipyardSwap' event found in the file."
         }
 
     } else {
@@ -132,8 +206,8 @@ Register-ObjectEvent -InputObject $fsWatcher -EventName Changed -Action {
     Process-LatestLogFile
 }
 
-# Keep the script running to monitor for file changes
+# Keep the script running to monitor for file changes indefinitely
 Write-Host "Monitoring folder for changes..."
 while ($true) {
-    Start-Sleep -Seconds 1  # Check every 5 seconds
+    Wait-Event  # Wait for events indefinitely
 }

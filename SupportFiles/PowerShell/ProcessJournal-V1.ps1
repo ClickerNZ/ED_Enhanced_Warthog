@@ -3,7 +3,7 @@
 # 1) determine the newest json formatted Journal*.log file within a folder
 # 2) read the file line by line 
 # 3) look for an entry "Event: Commander" key pair then write a text file containing the string value of a key called "Name:"
-# 4) write a text file containing the string value for the latest entry of "event":"Docked", "StationName"
+# 4) write a text file containing the string value for the latest entry of "event":"Location", "StationName"
 
 
 # Define the folder where the Journal*.log files are located
@@ -33,8 +33,8 @@ if ($latestFile) {
             }
         }
         
-        # Look for "event": "Docked" and "StationName"
-        if ($line -match '"event":\s*"Docked"') {
+        # Look for "event": "Location" and "StationName"
+        if ($line -match '"event":\s*"Location"') {
             if ($line -match '"StationName":\s*"([^"]+)"') {
                 $stationName = $matches[1]
             }

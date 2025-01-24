@@ -2,5 +2,3 @@
 
 powershell -ExecutionPolicy Bypass -File "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\ProcessJournal.ps1"
 
-pause
-
