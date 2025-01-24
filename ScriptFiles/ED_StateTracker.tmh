@@ -434,9 +434,6 @@
 					if (!StartupLock) {
 						printf("Docked: %s @ %s\x0a", fnGetTOD(), fnStation());		// May be a timing issue between when we detect a status.json change and when EDSM/StreamSource writes a file
 						if (strcmp(&MyFC, fnStation()) == 0) {						// Issue personalised greeting when docked at Clicker's Folly
-//							UseAltVoice = YES;
-//							sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName()); 
-//							DeferCall(7000, &fnTextToSpeech, &VoiceTxt);			// WORKS IF &VoiceTxt is an alias and not a char array 
 							DeferCall(11000, &fnGreetCMDR, 0);								// 11 seconds?
 						}
 					}
