@@ -1,0 +1,14 @@
+Status.json is a JSON formatted file containing a single JSON entry.
+Write a powershell version 5.1 compliant script which;
+
+Sets input folder to "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous"
+Sets file to monitor to "status.json"
+Create a boolean variable called "GameRunning" and set it to false.
+
+If the file does not exist, use a loop which waits for 10 seconds then checks again until the file exists.
+
+Use FileSystemWatcher to monitor the file continuously for changes
+Set "GameRunning" to true when we encounter the "Flags" or "Flags2" key-values to be greater than zero.
+
+Ensure the script may be exited via a CTRL+C at any time.
+
