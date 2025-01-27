@@ -50,6 +50,7 @@
 	Line  969: 	int fnIdleLock(int x)
 	Line 1001: 	int fnCheckFSDCharge(int EngineText)
 	Line 1029: 	int fnCheckFSDMasslocked(int EngineText)
+	Line xxxx:	int fnCheckFiregroup()
 	Line 1057: 	int fnClearChatBox(int mode = 0)
 	Line 1113: 	int fnModeSwitch(int mode)
 	Line 1177: 	int fnVPOutput(int VPOutput, int VolumeOverride=0)
@@ -286,20 +287,35 @@
 		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED5)); 		// set LED 5 OFF
 
 		if (Flags != 0) {
-			if (fFAOff) {
-				fnFlashLED(LED1);												// [Flight Assist]		LED ON = FA-OFF
+			if (fFAOff & (fMainShip | fSRV)) {
+				fnFlashLED(LED1);													// [Flight Assist]		LED ON = FA-OFF
 			}
-			if (fLights) {
-				fnFlashLED(LED2);												// [Ship Lights]		LED ON = Lights ON
+			else {
+//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED1));	// set LED 1 OFF
 			}
-			if (fSilentRunning) {
-				fnFlashLED(LED3);												// [Silent Running]		LED ON = Silent Running active
+			if (fLights & (fMainShip | fSRV)) {
+				fnFlashLED(LED2);													// [Ship/SRV Lights]	LED ON = Lights ON
 			}
-			if (fCargoScoop) {
-				fnFlashLED(LED4);												// [Cargo Scoop]		LED ON = Cargo Scoop deployed
+			else {
+//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED21));	// set LED 2 OFF			
 			}
-			if (fLandingGear) {
-				fnFlashLED(LED5);												// [Landing Gear]		LED ON = Landing Gear deployed
+			if (fSilentRunning & fMainShip) {
+				fnFlashLED(LED3);													// [Silent Running]		LED ON = Silent Running active
+			}
+			else {
+//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED3));	// set LED 3 OFF
+			}
+			if (fCargoScoop & (fMainShip | fSRV)) {
+				fnFlashLED(LED4);													// [Cargo Scoop]		LED ON = Cargo Scoop deployed
+			}
+			else {
+//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED4));	// set LED 4 OFF
+			}
+			if (fLandingGear & (fMainShip | fSRV)) {
+				fnFlashLED(LED5);													// [Landing Gear]		LED ON = Landing Gear deployed
+			}
+			else {
+//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED5));	// set LED 5 OFF
 			}
 		}
 	}
@@ -545,13 +561,16 @@
 			DeferCall(1500, &tgXAxis, RESET);							// Give 'MainKeyMap()' call a chance to finish
 		}
 		
-		if (strcmp(&MyFC, fnStation()) == 0) {							// Issue personalised greeting when docked at Clicker's Folly
-			printf("Clicker's Folly\x0a");					// DEBUG 
+		// Issue personalised greeting when present at Clicker's Folly
+		if (strcmp(&MyFC, fnStation()) == 0 & ((fMainShip & fDocked) | fOnFootInStation | fOnFootInHanger | fOnFootSocialSpace)) {
 			fnGreetCMDR();									// DEBUG
+		}
+		if(strcmp(&MyFC, fnStation()) == 0) {
+			printf("Clicker's Folly\x0a");					// DEBUG
 		}
 		else {
 			printf("NOT Clicker's Folly\x0a");				// DEBUG
-			printf("Station: %s\x0a", fnStation());			// DEBUG
+			printf("Station: %s\x0a", fnStation());			// DEBUG		
 		}
 	}
 
@@ -994,10 +1013,10 @@
 		}
 		else if (fSRV) {
 			if (fSRVHandbrake) {
-				VoiceTxt = "Handbrake:	OFF";
+		//		VoiceTxt = "Handbrake:	OFF";		// Announced in ED_Statetracker.tmh 
 			}
 			else {
-				VoiceTxt = "Handbrake:	ON";
+		//		VoiceTxt = "Handbrake:	ON";		// Announced in ED_Statetracker.tmh 
 			}
 			fnVPOutput(VoiceTxt);
 			ActKey(PULSE+KEYON+SRVHandbrake);		// Toggle SRV Handbrake
@@ -1070,6 +1089,18 @@
 	}
 
 
+	// FUNCTION:	Checks which firegroup is currently selected
+	// PURPOSE:		Sets global variable 'Firegroup' to match the Firegroup key-value in status.json
+	// USED BY:		tgHUDMode() to set Firegroup to 0 (every ship to have Discovery Scanner on FG 0)
+
+	//GLOBAL - Move to GlobalVars after testing
+	int Firegroup;
+	
+	int fnCheckFiregroup() 	{
+		Firegroup = stfnGetKeyValue("Firegroup", INTEGER);		
+	}
+	
+	
 	// FUNCTION:	Clears the chat boxes
 	// Parameter:	'mode' - '0' clears current selected chatbox. '1' clears all chatbaxes
 	
