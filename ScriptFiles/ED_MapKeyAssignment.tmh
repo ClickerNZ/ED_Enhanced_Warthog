@@ -592,12 +592,12 @@
 //		-------------------------
 
 		if (MapKeyProfile == BASIC) {
-			MapKey(&MyThrottle, EFLNORM, 0);
+			MapKey(&MyThrottle, EFLNORM, PULSE+Screenshot);													// F10 - Take a screenshot
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,	
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// M -
+				PULSE+Screenshot,																			// M - Screen Capture
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
 				);	
 		}
@@ -1151,13 +1151,12 @@
 //		-------------------------
 
 		if (MapKeyProfile == BASIC) {
-			MapKey(&MyThrottle, EFLNORM, EXEC("fnVPOutput(\"Not mapped\");"));
-			MapKey(&MyThrottle, EFLOVER, EXEC("fnVPOutput(\"Not mapped\");"));
+			MapKey(&MyThrottle, EFLNORM, EXEC("fnVPOutput(\"Take screen shot\");"));
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
 				EXEC("fnVPOutput(\"Not mapped\");"),
-				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Take screen shot\");"),
 				EXEC("fnVPOutput(\"Not mapped\");")
 				);	
 		}
