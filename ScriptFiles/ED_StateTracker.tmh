@@ -770,6 +770,18 @@
 					
 					if (!fHUDAnalysis & AutoHUD) {							// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
 						tgHUDMode(1);										// Delays announcing change
+						// Set Firegroup to 0
+//						fnCheckFiregroup();									// Sets global Firegoup to match status.json 
+
+						printf("DEBUG: Firegroup selected  = %d\x0a", fnCheckFiregroup());		// DEBUG 
+						
+						while (Firegroup != 0) {							// Too fast?????
+							ActKey(PULSE+NextFireGroup);
+//							fnCheckFiregroup();
+							Firegroup = Firegroup + 1;
+							printf("DEBUG: Firegroup should be %d\x0a", Firegroup);				// DEBUG
+						}
+						printf("DEBUG: Current Firegroup  = %d\x0a", fnCheckFiregroup());		// DEBUG 						
 					}
 				}
 			}
