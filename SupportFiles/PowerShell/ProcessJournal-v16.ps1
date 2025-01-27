@@ -1,4 +1,5 @@
-# v14 - looks like it might be working.
+# v16 - Only write text files if contents have changed
+# Works
 
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
@@ -18,26 +19,13 @@ if (-not (Test-Path -Path $trackingFilePath)) {
 }
 
 # Function to write to a temporary file and then rename it after completion
+# May be defunct with introduction of the Write-IfChanged function 
+<#
 function Write-TextToFile {
     param(
         [string]$finalFilePath,
         [string]$content
     )
-
-# the write-texttotempfile was causing issues. keep the old code if we wish to re-implement
-#    $tempFilePath = "$finalFilePath.tmp"
-
-    # Write content to a temporary file
-#    $content | Out-File -FilePath $tempFilePath -Encoding ascii   # don't write temp file
-
-    # Rename the temporary file to the final file
-#    if (Test-Path -Path $tempFilePath) {
-#        Rename-Item -Path $tempFilePath -NewName $finalFilePath -Force
-#        Write-Host "Data written to $finalFilePath"
-#        Remove-Item -Path $tempFilePath -Force
-#    }
-
-# do this instead
 
     try {
         Write-Host "Writing to file: $finalFilePath with content: $content" -ForegroundColor Cyan
@@ -46,6 +34,7 @@ function Write-TextToFile {
         Write-Host "Error writing to file: $finalFilePath - $_" -ForegroundColor Red
     }
 }
+#>
 
 # Function to initialize placeholder files
 function Initialize-PlaceholderFiles {
@@ -91,7 +80,7 @@ function Update-LastTimestamp {
     try {
         $trackingData = @{ lastTimestamp = $newTimestamp }
         $trackingData | ConvertTo-Json | Set-Content -Path $trackingFilePath -Encoding utf8
-        Write-Host "Updated last timestamp to: $newTimestamp" -ForegroundColor Yellow
+        #Write-Host "Updated last timestamp to: $newTimestamp" -ForegroundColor Yellow
     } catch {
         Write-Host "Error updating tracking file: $_" -ForegroundColor Red
     }
@@ -117,83 +106,80 @@ function Process-LogFile {
                     "Commander" {
                         if ("Name" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "CMDRName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Name
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Name
                         }
                     }
                     "LoadGame" {
-                        if ("Ship_Localised" -in $entry.PSObject.Properties.Name) {
+                        if ("Ship" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship_Localised
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Ship
                         }
                     }
                     "Docked" {
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationName
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StationName
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationType
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StationType
                         }
                     }
                     "Loadout" {
                         if ("Ship" -in $entry.PSObject.Properties.Name) {
-							#Lookup-Shiptype -ship $entry.ship 
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Ship
                         }
                         if ("ShipName" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipName
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.ShipName
                         }
                     }
                     "ShipyardSwap" {
-                        if ("ShipType_Localised" -in $entry.PSObject.Properties.Name) {
+                        if ("ShipType" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipType_Localised
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.ShipType
                         }
                     }
                     "Location" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "SystemName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StarSystem
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StarSystem
                         }
                         if ("Body" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "BodyName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Body
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Body
                         }
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationName
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StationName
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationType
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StationType
                         }
                     }
                     "Touchdown" {
                         if ("Body" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "BodyName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Body
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Body
                         }
                     }
                     "FSDJump" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "SystemName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StarSystem
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.StarSystem
                         }
                     }
                     "ScanOrganic" {
                         if (("ScanType" -in $entry.PSObject.Properties.Name) -and $entry.ScanType -eq "Analyse" -and ("Variant_Localised" -in $entry.PSObject.Properties.Name)) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "OrganicFound.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Variant_Localised
+                            Write-TextIfDifferent -finalFilePath $filePath -content $entry.Variant_Localised
                         }
                     }
 					"Shutdown" {
-						Write-Host "Shutdown event encountered: Game Running is $GameRunning" -ForegroundColor Yellow -BackgroundColor Green
-						if ($GameRunning) {
-							#Write-Host "Exiting due to Shutdown event." -ForegroundColor Yellow -BackgroundColor Green
-							# Cleanup watchers on exit 
+						Write-Host "Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green
+						if ($Global:GameRunning) {
 							$watcher1.Dispose()
 							$watcher2.Dispose()
 							exit
@@ -209,6 +195,22 @@ function Process-LogFile {
     } catch {
         Write-Host "Error processing log file: $_" -ForegroundColor Red
     }
+}
+
+function Write-TextIfDifferent {
+    param (
+        [string]$finalFilePath,
+        [string]$content
+    )
+
+    if (Test-Path $finalFilePath) {
+        $existingContent = (Get-Content -Path $finalFilePath -Raw).Trim()
+        if ($existingContent -eq $content.Trim()) {
+            return
+        }
+    }
+    Write-Host "Writing to file: $finalFilePath with content: $content" -ForegroundColor Cyan
+    $content | Set-Content -Path $finalFilePath
 }
 
 # Function to get the newest log file
@@ -278,15 +280,15 @@ function Check-GameRunning {
 	$Flags2 = Get-KeyValue -JsonFilePath $filePath -Key "Flags2"	
 
 	if ($Flags2) {
-		$GameRunning = $true
+		$Global:GameRunning = $true
 	}
 	else {
 		if ($Flags) {
-			$GameRunning = $true
+			$Global:GameRunning = $true
 		}
 	}
 	# Should only trigger once...
-	if ($GameRunning){
+	if ($Global:GameRunning){
 		Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
 	}
 	# Should never see this...
@@ -296,7 +298,7 @@ function Check-GameRunning {
 }
 
 # Main script logic
-$GameRunning = $false
+$Global:GameRunning = $false
 Initialize-PlaceholderFiles
 Process-NewestLogFile
 
@@ -309,7 +311,7 @@ $watcher1.IncludeSubdirectories = $false
 
 Register-ObjectEvent -InputObject $watcher1 -EventName "Changed" -Action {
     param($sender, $eventArgs)
-    Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
+#    Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
     $newestFile = Get-NewestLogFile
     if ($eventArgs.FullPath -eq $newestFile.FullName) {
         $lastTimestamp = Get-LastTimestamp
@@ -329,7 +331,7 @@ Register-ObjectEvent -InputObject $watcher1 -EventName "Created" -Action {
             }
             Process-LogFile -filePath $newestFile.FullName -lastTimestamp $entries[0].timestamp
         } catch {
-            Write-Host "Error processing new log file: $_" -ForegroundColor Red
+            #Write-Host "Error processing new log file: $_" -ForegroundColor Red
         }
     }
 }
@@ -340,12 +342,12 @@ $watcher2.Filter = "status.json"
 $watcher2.EnableRaisingEvents = $true
 
 Register-ObjectEvent -InputObject $watcher2 -EventName "Changed" -Action {
-	if (-not $GameRunning) {	
+	#if (-not $Global:GameRunning) {	
 		param($sender, $eventArgs)
-		Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
+		#Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
 		$statusFilepath = Join-Path -Path $watcher2.Path -ChildPath $watcher2.Filter   
 		Check-GameRunning -filePath $statusFilepath	
-	}
+	#}
 }
 
 Write-Host "FileSystemWatcher is monitoring $inputFolderPath for changes..." -ForegroundColor Yellow 

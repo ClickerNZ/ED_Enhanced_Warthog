@@ -1,4 +1,10 @@
 @echo off
 
-powershell -ExecutionPolicy Bypass -File "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\ProcessJournal.ps1"
+powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\ProcessJournal-v17.ps1"
+
+echo ProcessJournal script has exited.
+rem pause to catch startup errors
+rem pause
+
+exit 
 

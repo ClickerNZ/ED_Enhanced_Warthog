@@ -1,4 +1,5 @@
-# v14 - looks like it might be working.
+# v15 - tweaked v14.
+# Change ShipType logic to use map table.
 
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
@@ -121,9 +122,9 @@ function Process-LogFile {
                         }
                     }
                     "LoadGame" {
-                        if ("Ship_Localised" -in $entry.PSObject.Properties.Name) {
+                        if ("Ship" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship_Localised
+                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship
                         }
                     }
                     "Docked" {
@@ -148,9 +149,9 @@ function Process-LogFile {
                         }
                     }
                     "ShipyardSwap" {
-                        if ("ShipType_Localised" -in $entry.PSObject.Properties.Name) {
+                        if ("ShipType" -in $entry.PSObject.Properties.Name) {
                             $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipType_Localised
+                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipType
                         }
                     }
                     "Location" {
