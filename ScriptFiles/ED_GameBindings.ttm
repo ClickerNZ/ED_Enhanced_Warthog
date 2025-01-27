@@ -300,6 +300,7 @@
 	define ShowConnectionStatus 				L_CTL+USB[0x05]			// LCTRL+B
 	define ShowCQCScoreboard 					L_ALT+USB[0x3E]			// LALT+F5
 	define HighResScreenshot 					L_ALT+USB[0x43]			// LALT+F10
+	define Screenshot							USB[0x43]				// F10 			
 	define WeaponColour		 					L_ALT+USB[0x1A]			// LALT+W
 	define EngineColour 						L_ALT+USB[0x08]			// LALT+E
 
