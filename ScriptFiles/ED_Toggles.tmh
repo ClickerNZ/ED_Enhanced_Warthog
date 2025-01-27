@@ -524,7 +524,7 @@
 			} 
 			else {
 				fnTextToSpeech("Analysis mode");
-			}			
+			}
 		}
 		ActKey(PULSE+KEYON+HUDMode);							// Switch HUD Modes
 	}
