@@ -25,7 +25,8 @@
 
 // START
 
-	char	TTSVoice;					// TESTING: prefer we Dim this based on usecase rather than an alias string staticly set within each function 
+	char	TTSVoice;					// TESTING: prefer we Dim this based on usecase rather than an alias string staticly set within each function
+	char 	CMDRName;					// Global CMDRName 
 
 //--------------------//
 // Connected Hardware //
@@ -77,5 +78,7 @@
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
+	
+	int TerrainFollow		= 0;		// Global Flag to track Terrain Following ON/OFF
 				
 // END

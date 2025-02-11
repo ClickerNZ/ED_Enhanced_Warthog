@@ -36,25 +36,25 @@
 	Line  969:		Throttle Base Buttons 
 */
 
-// START
+	// START
 
-// -------------------------- //
-//  KeyMaps for Running Game  //
-// -------------------------- //
+	// -------------------------- //
+	//  KeyMaps for Running Game  //
+	// -------------------------- //
 
 	// FUNCTION:	This MapKey set is called from fnGameStarted() when we detect Game is running
 	
 	int MainKeyMap() {
 	
-// ---------------------------------------- //
-// Map Joystick triggers, switches and hats //
-// ---------------------------------------- //
+	// ---------------------------------------- //
+	// Map Joystick triggers, switches and hats //
+	// ---------------------------------------- //
 
 		// Include MapKey for everything.
 		// Include MapKeyR only where used.
 				
-//		(Gun Trigger - Primary Fire)
-//		----------------------------
+	//	(Gun Trigger - Primary Fire)
+	//	----------------------------
 
 		if (MapKeyProfile == BASIC) {			// ...use BASIC profile settings							// MapKeyProfile is set within ED_UserSettings.tmh
 			MapKey(&MyJoystick, TG1, PrimaryFire);
@@ -75,8 +75,8 @@
 				
 		MapKey(&MyJoystick, TG2, 0);				// (Gun Trigger - Stage 2)								// <not currently used>
 
-//		(Master Mode Control Button)
-//		----------------------------
+	//	(Master Mode Control Button)
+	//	----------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S1, PULSE+DeployHardpoints);
@@ -89,8 +89,8 @@
 				);
 		}
 	
-//		(Weapons Release Button - Secondary Fire)
-//		-----------------------------------------
+	//	(Weapons Release Button - Secondary Fire)
+	//	-----------------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S2, SecondaryFire);
@@ -109,13 +109,13 @@
 				);
 		}
 	
-// 		(Nosewheel Steering Button)
-//		---------------------------
+	//	(Nosewheel Steering Button)
+	//	---------------------------
 
 		MapKey(&MyJoystick, S3, 0);																			//  ** DO NOT TOUCH ** Used as ShiftButton for IOUMD
 
-//		(Joystick Pinky Lever Switch)
-//		-----------------------------
+	//	(Joystick Pinky Lever Switch)
+	//	-----------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S4, PULSE+FlightAssist);
@@ -128,8 +128,8 @@
 				);
 		}
 
-//		China Hat (Trim Switch)
-//		-----------------------
+	//	China Hat (Trim Switch)
+	//	-----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H1U, PULSE+NextFireGroup);
@@ -155,8 +155,8 @@
 				);
 		}
 		
-//		(Target Management Switch)		// Target Designator
-//		--------------------------
+	//	(Target Management Switch)		// Target Designator
+	//	--------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H2U, PULSE+SelectTargetAhead);
@@ -190,8 +190,8 @@
 				);
 		}
 	
-//		(Data Management Switch)		// Power (PIP) Management
-//		------------------------
+	//	(Data Management Switch)		// Power (PIP) Management
+	//	------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H3U, PULSE+PowerEng);
@@ -206,8 +206,8 @@
 			MapKey(&MyJoystick, H3R, EXEC("fnPIPManager(WEP);"));											// Fire Weapon focussed PIP sequence
 		}
 
-//		(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
-//		-----------------------------------
+	//	(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
+	//	-----------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H4U, PULSE+UseShieldCell);
@@ -254,12 +254,12 @@
 				);
 		}
 			
-// ------------------------------------ //
-// Map Throttle LEVER switches and hats //
-// ------------------------------------ //
+	// ------------------------------------ //
+	// Map Throttle LEVER switches and hats //
+	// ------------------------------------ //
 
-//		(Slew Control Button)		// Miscellaneous
-//		---------------------
+	//	(Slew Control Button)		// Miscellaneous
+	//	---------------------
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, SC, PULSE+ResetHeadOrientation);
 		}
@@ -270,8 +270,8 @@
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D - 
 				);
 		}	
-// 		(Left Throttle Button)	// Headlook On/Off / External Camera
-//		----------------------
+	//	(Left Throttle Button)	// Headlook On/Off / External Camera
+	//	----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, LTB, PULSE+LookOnOff);
@@ -284,8 +284,8 @@
 				);
 		}
 	
-//		(Pinky Switch)		// Shift Modifier Switch
-//		--------------
+	//	(Pinky Switch)		// Shift Modifier Switch
+	//	--------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, PSF, 0);																	//  ** DO NOT TOUCH ** Used as ShiftButton for IOUMD
@@ -302,8 +302,8 @@
 			MapKeyR(&MyThrottle, PSB, EXEC("StopAutoRepeat(hSoundFX);"));		//RELEASE					//  Cancel reminder soundfx					
 		}
 
-//		(Coolie Switch)		// Frame Shift Drive functions and Alternate YAW
-//		---------------
+	//	(Coolie Switch)		// Frame Shift Drive functions and Alternate YAW
+	//	---------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, CSU, PULSE+Supercruise);
@@ -330,8 +330,8 @@
 				);
 		}
 		
-//		(Mike Switch)		// Usually used for Communications Control (not included in this release)
-//		-------------
+	//	(Mike Switch)		// Usually used for Communications Control (not included in this release)
+	//	-------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, MSU, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
@@ -349,10 +349,10 @@
 			}
 		
 		
-//		(Speed Brake)		// Reverse Throttle function modifiers
-//		-------------
-//
-//		// Forward is a 2 position switch. Backward is a momentary action switch 
+	//	(Speed Brake)		// Reverse Throttle function modifiers
+	//	-------------
+
+		// Forward is a 2 position switch. Backward is a momentary action switch 
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, SPDF, PULSE+ReverseThrottle);
@@ -371,8 +371,8 @@
 			MapKey(&MyThrottle, SPDB, EXEC("tgBoost();"));													// Boost and SCO Engage 
 		}
 		
-//		(Boat Switch)		//
-//		-------------
+	//	(Boat Switch)		//
+	//	-------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, BSF, 0); 
@@ -382,10 +382,12 @@
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
 				SEQ(PULSE+m_NAVBeaconWing, PULSE+m_NAVBeaconOff),											// U - NAV Beacon WING/OFF
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// M - 
+				EXEC("tgTerrainFollow(ON);"),																// M - Terrain following ON
 				EXEC("tgTxt2Speech();")																		// D - Toggle EnableVoice (TextToSpeech)
 				);
-				
+			
+			MapKeyR(&MyThrottle, BSF, EXEC("tgTerrainFollow(OFF);"));										// RELEASE				// Terrain following OFF
+			
 			MapKey(&MyThrottle, BSM, 0);																	// <not currently used>
 			
 			MapKeyUMD(&MyThrottle, BSB, 
@@ -395,18 +397,18 @@
 				);
 		}
 	
-//		(China Hat)			// Subsystem Targetting
-//		-----------
+	//	(China Hat)			// Subsystem Targetting
+	//	-----------
 
 		MapKey(&MyThrottle, CHF, PULSE+TargetNextSubsystem);
 		MapKey(&MyThrottle, CHB, PULSE+TargetPrevSubsystem);
 		
-// ---------------------------------------//
-// Map Throttle BASE buttons and switches //
-// ---------------------------------------//
+	// ---------------------------------------//
+	// Map Throttle BASE buttons and switches //
+	// ---------------------------------------//
 
-//		(AutoPilot Select)	// JoystickCurves Selector
-//		------------------
+	//	(AutoPilot Select)	// JoystickCurves Selector
+	//	------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APPAT, 0);
@@ -427,8 +429,8 @@
 				);
 		}
 		
-//		(Enhanced Attitude Control (EAC) Arm/Off)
-//		-----------------------------------------
+	//	(Enhanced Attitude Control (EAC) Arm/Off)
+	//	-----------------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EACON, PULSE+SilentRunning);
@@ -443,8 +445,8 @@
 			MapKey(&MyThrottle, EACOFF, EXEC("tgSilentRunning(OFF);"));
 		}
 		
-//		(Radar Altimeter)
-//		-----------------
+	//	(Radar Altimeter)
+	//	-----------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, RDRNRM, PULSE+CargoScoop);
@@ -463,8 +465,8 @@
 			MapKey(&MyThrottle, RDRDIS, EXEC("tgCargoScoop(RETRACT);"));
 		}
 
-//		(Landing Gear Horn)
-//		-------------------
+	//	(Landing Gear Horn)
+	//	-------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, LDGH, 0); 
@@ -476,21 +478,21 @@
 				);
 		}
 
-//		(Autopilot Engage)
-//		------------------
+	//	(Autopilot Engage)
+	//	------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APENG, 0); 
 		}
 		else {
-			MapKeyIO(&MyThrottle, APENG, 
+			MapKeyIO(&MyThrottle, APENG,
 				EXEC("fnHangerServices(1);"),																// I - Hanger Services
 				EXEC("fnRequestDock();")																	// O - Request Docking
 				);
 		}
 
-//		(Flaps)
-//		-------
+	//	(Flaps)
+	//	-------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, FLAPU, PULSE+GalMap);
@@ -529,8 +531,8 @@
 				);
 		}
 		
-//		(Auxiliary Power Unit)
-//		----------------------
+	//	(Auxiliary Power Unit)
+	//	----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APUON, 0);
@@ -541,8 +543,8 @@
 			MapKey(&MyThrottle, APUOFF, EXEC("fnDeploySRV(RECOVER);"));										// "AAPU OFF"	= Board Ship
 		}
 
-//		(Engine Operate - Right)
-//		------------------------
+	//	(Engine Operate - Right)
+	//	------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EORIGN, 0);
@@ -555,8 +557,8 @@
 		MapKey(&MyThrottle, EORNORM, 0);																	// Not Mapped
 		MapKeyR(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);	// RELEASE										// Toggle: Ship GUI ON
 
-//		(Engine Operate - Left)
-//		-----------------------
+	//	(Engine Operate - Left)
+	//	-----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EOLIGN, 0);
@@ -572,8 +574,8 @@
 		MapKey(&MyThrottle, EOLNORM, 0);																	// <not currently used>
 		MapKey(&MyThrottle, EOLMOTOR, PULSE+m_ChangeColours);												// Toggle Engine and Weapon Colours
 
-//		(Engine Fuel Flow - Right)
-//		--------------------------
+	//	(Engine Fuel Flow - Right)
+	//	--------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EFRNORM, 0);
@@ -581,15 +583,15 @@
 		else {
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnPrintState();"),																	// U - Print Status Page
-				EXEC("fnSetLEDs();"),																		// M - Reset Status LEDs
+				EXEC("fnSetLEDs();"),																		// M - Reset Status LEDs manually
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
 				);
 		}
 				
 		MapKey(&MyThrottle, EFROVER, 0);																	// <not currently used>
 
-//		(Engine Fuel Flow - Left)
-//		-------------------------
+	//	(Engine Fuel Flow - Left)
+	//	-------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EFLNORM, PULSE+Screenshot);													// F10 - Take a screenshot
@@ -604,8 +606,8 @@
 				
 		MapKey(&MyThrottle, EFLOVER, 0);																	// <not currently used>
 
-//		(Engine Idle - Left)
-//		--------------------
+	//	(Engine Idle - Left)
+	//	--------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, IDLELON, 0);
@@ -616,8 +618,8 @@
 			MapKey(&MyThrottle, IDLELOFF, EXEC("fnIdleLock(0);"));											// Exit Hanger, Lift off if in Ship, else Handbrake off if in SRV
 		}
 
-//		(Engine Idle - Right)																				// NOTE: You can use these if Throttles are decoupled
-//		---------------------
+	//	(Engine Idle - Right)																				// NOTE: You can use these if Throttles are decoupled
+	//	---------------------
 		
 		MapKey(&MyThrottle, IDLERON, 0);																	// <not currently used>
 		MapKey(&MyThrottle, IDLEROFF, 0);																	// <not currently used>
@@ -627,25 +629,25 @@
 	}	// end of MainKeyMap
 	
 
-// =============================================================================================================================================
-// =============================================================================================================================================
+	// =============================================================================================================================================
+	// =============================================================================================================================================
 
 
-// --------------------------- //
-//  KeyMaps for Training Mode  //
-// --------------------------- //
+	// --------------------------- //
+	//  KeyMaps for Training Mode  //
+	// --------------------------- //
 
 	// FUNCTION:	This MapKey set is called at startup if game is not running and user setting 'TrainingMode' is set to ENABLED in ED_UserSettings.tmh 
 	//				Also called from stfnProcessFlags() when we detect Game has halted
 
 	int TrainingMap() {
 
-// ---------------------------------------- //
-// Map Joystick triggers, switches and hats //
-// ---------------------------------------- //
+	// ---------------------------------------- //
+	// Map Joystick triggers, switches and hats //
+	// ---------------------------------------- //
 
-//		(Gun Trigger - Primary Fire)
-//		----------------------------
+	//	(Gun Trigger - Primary Fire)
+	//	----------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, TG1, EXEC("fnVPOutput(\"Primary Fire\");"));
@@ -660,8 +662,8 @@
 							
 		MapKey(&MyJoystick, TG2, EXEC("fnVPOutput(\"Not mapped\");"));	// (Gun Trigger - Stage 2)
 
-//		(Master Mode Control Button)
-//		----------------------------
+	//		(Master Mode Control Button)
+	//		----------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S1, EXEC("fnVPOutput(\"Toggle Hardpoints\");"));
@@ -674,8 +676,8 @@
 				);
 		}
 	
-//		(Weapons Release Button - Secondary Fire)
-//		-----------------------------------------
+	//		(Weapons Release Button - Secondary Fire)
+	//		-----------------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S2, EXEC("fnVPOutput(\"Secondary Fire\");"));
@@ -688,8 +690,8 @@
 				);
 		}
 				
-// 		(Nosewheel Steering Button)
-//		---------------------------
+	// 		(Nosewheel Steering Button)
+	//		---------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, S3, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -698,8 +700,8 @@
 			MapKey(&MyJoystick, S3, EXEC("fnVPOutput(\"I O layer button\");"));
 		}
 
-//		(Joystick Pinky Lever Switch)
-//		-----------------------------
+	//		(Joystick Pinky Lever Switch)
+	//		-----------------------------
 
 		MapKeyUMD(&MyJoystick, S4,
 			EXEC("fnVPOutput(\"Toggle Flight Assist with joystick mouse emulation\");"),
@@ -707,8 +709,8 @@
 			EXEC("fnVPOutput(\"Arrrr,ummmmm, no, Not mapped\");")
 			);
 
-//		China Hat (Trim Switch)
-//		-----------------------
+	//		China Hat (Trim Switch)
+	//		-----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H1U, EXEC("fnVPOutput(\"Select next fire group\");"));
@@ -735,8 +737,8 @@
 				);
 		}
 	
-//		(Target Management Switch)		// Target Designator
-//		--------------------------
+	//		(Target Management Switch)			// Target Designator
+	//		--------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H2U, EXEC("fnVPOutput(\"Select target ahead\");"));
@@ -770,16 +772,16 @@
 				);
 		}
 	
-//		(Data Management Switch)		// Power (PIP) Management
-//		------------------------
+	//		(Data Management Switch)				// Power (PIP) Management
+	//		------------------------
 
 		MapKey(&MyJoystick, H3U, EXEC("fnVPOutput(\"PIP Manager, Engine Focussed\");"));
 		MapKey(&MyJoystick, H3D, EXEC("fnVPOutput(\"PIP Manager, Balance PIPs\");"));
 		MapKey(&MyJoystick, H3L, EXEC("fnVPOutput(\"PIP Manager, System Focussed\");"));
 		MapKey(&MyJoystick, H3R, EXEC("fnVPOutput(\"PIP Manager, Weapon Focussed\");"));
 		
-//		(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
-//		-----------------------------------
+	//		(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
+	//		-----------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H4U, EXEC("fnVPOutput(\"Shield cell bank\");"));
@@ -820,12 +822,12 @@
 				);
 		}
 	
-// ------------------------------------ //
-// Map Throttle LEVER switches and hats //
-// ------------------------------------ //
+	// ------------------------------------ //
+	// Map Throttle LEVER switches and hats //
+	// ------------------------------------ //
 
-//		(Slew Control Button)		// Miscellaneous
-//		---------------------
+	//		(Slew Control Button)		// Miscellaneous
+	//		---------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, SC, EXEC("fnVPOutput(\"Re-centre Heeadlook\");"));
@@ -838,8 +840,8 @@
 				);
 		}
 	
-// 		(Left Throttle Button)	// Headlook On/Off / External Camera
-//		----------------------
+	// 		(Left Throttle Button)	// Headlook On/Off / External Camera
+	//		----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, LTB, EXEC("fnVPOutput(\"Toggle Headlook\");"));
@@ -852,8 +854,8 @@
 				);
 		}
 	
-//		(Pinky Switch)		// Modifier Switch
-//		--------------
+	//		(Pinky Switch)		// Modifier Switch
+	//		--------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, PSF, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -864,14 +866,14 @@
 			MapKey(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Forward and sound reminder every 3 seconds\");"));
 			MapKeyR(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\");"));
 			
-//			MapKey(&MyThrottle, PSM, EXEC("fnVPOutput(\"U M D Layer Middle\");"));
+	//		MapKey(&MyThrottle, PSM, EXEC("fnVPOutput(\"U M D Layer Middle\");"));
 			
 			MapKey(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Back and sound reminder every 3 seconds\");"));
 			MapKeyR(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\");"));
 		}
 	
-//		(Coolie Switch)		// Frame Shift Drive functions
-//		---------------
+	//		(Coolie Switch)		// Frame Shift Drive functions
+	//		---------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, CSU, EXEC("fnVPOutput(\"Toggle Supercruise\");"));
@@ -899,8 +901,8 @@
 		}
 
 
-//		(Mike Switch)		// Communications Controller functions
-//		-------------
+	//		(Mike Switch)		// Communications Controller functions
+	//		-------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, MSU, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -918,8 +920,8 @@
 		}
 		
 	
-//		(Speed Brake)		// Reverse Throttle function modifiers
-//		-------------
+	//		(Speed Brake)		// Reverse Throttle function modifiers
+	//		-------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, SPDF, EXEC("fnVPOutput(\"Reverse thrusters\");"));
@@ -938,8 +940,8 @@
 		MapKey(&MyThrottle, SPDB, EXEC("fnVPOutput(\"Engine Boost\");"));
 
 	
-//		(Boat Switch)		//
-//		-------------
+	//		(Boat Switch)		//
+	//		-------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, BSF, EXEC("fnVPOutput(\"Not mapped\");")); 
@@ -948,9 +950,10 @@
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
 				EXEC("fnVPOutput(\"Toggle Wingman Beacon between Wing and off\");"),
-				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Terrain following ON\");"),												// M -
 				EXEC("fnVPOutput(\"Toggle Text to speech function off and on\");")
 				);
+			MapKeyR(&MyThrottle, BSF, EXEC("fnVPOutput(\"Terrain following OFF\");"));						// RETURN 
 						
 			MapKeyUMD(&MyThrottle, BSB, 
 				EXEC("fnVPOutput(\"Toggle report crimes against me on and off\");"),
@@ -959,19 +962,19 @@
 				);
 		}
 	
-//		(China Hat)			// Subsystem Targetting
-//		-----------
+	//		(China Hat)			// Subsystem Targetting
+	//		-----------
 
 		MapKey(&MyThrottle, CHF, EXEC("fnVPOutput(\"Target Next Subsystem\");"));
 		MapKey(&MyThrottle, CHB, EXEC("fnVPOutput(\"Target Previous Subsystem\");"));
 		
 
-// ---------------------------------------//
-// Map Throttle BASE buttons and switches //
-// ---------------------------------------//
+	// ---------------------------------------//
+	// Map Throttle BASE buttons and switches //
+	// ---------------------------------------//
 
-//		(AutoPilot Select)	// JoystickCurves Selector
-//		------------------
+	//		(AutoPilot Select)	// JoystickCurves Selector
+	//		------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APPAT, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -992,8 +995,8 @@
 				);
 		}
 	
-//		(Enhanced Attitude Control (EAC) Arm/Off)
-//		-----------------------------------------
+	//		(Enhanced Attitude Control (EAC) Arm/Off)
+	//		-----------------------------------------
 		
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EACON, EXEC("fnVPOutput(\"Engage Silent running\");"));
@@ -1007,8 +1010,8 @@
 				
 		MapKey(&MyThrottle, EACOFF, EXEC("fnVPOutput(\"Disengage silent running\");"));
 		
-//		(Radar Altimeter)
-//		-----------------
+	//		(Radar Altimeter)
+	//		-----------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, RDRNRM, EXEC("fnVPOutput(\"Deploy cargo scoop\");"));
@@ -1026,8 +1029,8 @@
 			
 		MapKey(&MyThrottle, RDRDIS, EXEC("fnVPOutput(\"Retract cargo scoop\");"));
 
-//		(Landing Gear Horn)
-//		-------------------
+	//		(Landing Gear Horn)
+	//		-------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, LDGH, EXEC("fnVPOutput(\"Not mapped\");")); 
@@ -1039,21 +1042,21 @@
 				);
 		}
 	
-//		(Autopilot Engage)
-//		------------------
+	//		(Autopilot Engage)
+	//		------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APENG, EXEC("fnVPOutput(\"Not mapped\");")); 
 		}
 		else {
 			MapKeyIO(&MyThrottle, APENG,
-				EXEC("fnVPOutput(\"Enter Hanger services\");"),
-				EXEC("fnVPOutput(\"Request docking permission\");")
+				EXEC("fnVPOutput(\"Enter Hanger services\");"),												// IM - 
+				EXEC("fnVPOutput(\"Request docking permission\");")											// OM -
 				);
 		}
 	
-//		(Flaps)
-//		-------
+	//		(Flaps)
+	//		-------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, FLAPU, EXEC("fnVPOutput(\"Open Galaxy Map\");"));
@@ -1089,8 +1092,8 @@
 		}
 	
 
-//		(Auxiliary Power Unit)
-//		----------------------
+	//		(Auxiliary Power Unit)
+	//		----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, APUON, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -1101,8 +1104,8 @@
 			MapKey(&MyThrottle, APUOFF, EXEC("fnVPOutput(\"Recover SRV\");"));
 		}
 	
-//		(Engine Operate - Right)
-//		------------------------
+	//		(Engine Operate - Right)
+	//		------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EORIGN, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -1115,8 +1118,8 @@
 		MapKeyR(&MyThrottle, EORMOTOR, EXEC("fnVPOutput(\"Toggle ship GUI on\");"));						// RELEASE
 
 		
-//		(Engine Operate - Left)
-//		-----------------------
+	//		(Engine Operate - Left)
+	//		-----------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EOLIGN, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -1131,8 +1134,8 @@
 				 
 		MapKey(&MyThrottle, EOLMOTOR, EXEC("fnVPOutput(\"Toggle Engine and Weapon colours\");"));		
 
-//		(Engine Fuel Flow - Right)
-//		--------------------------
+	//		(Engine Fuel Flow - Right)
+	//		--------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EFRNORM, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -1147,8 +1150,8 @@
 				
 		MapKey(&MyThrottle, EFROVER, EXEC("fnVPOutput(\"Not mapped\");"));
 
-//		(Engine Fuel Flow - Left)
-//		-------------------------
+	//		(Engine Fuel Flow - Left)
+	//		-------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, EFLNORM, EXEC("fnVPOutput(\"Take screen shot\");"));
@@ -1161,8 +1164,8 @@
 				);	
 		}
 
-//		(Engine Idle - Left)
-//		--------------------
+	//		(Engine Idle - Left)
+	//		--------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyThrottle, IDLELON, EXEC("fnVPOutput(\"Not mapped\");"));
@@ -1173,8 +1176,8 @@
 			MapKey(&MyThrottle, IDLELOFF, EXEC("fnVPOutput(\"If in ship, Exit Hanger services and lift off. If in SRV release handbrake\");"));
 		}
 	
-//		(Engine Idle - Right)
-//		---------------------
+	//		(Engine Idle - Right)
+	//		---------------------
 		
 		MapKey(&MyThrottle, IDLERON, 0);				// <not used>
 		MapKey(&MyThrottle, IDLEROFF, 0);				// <not used>

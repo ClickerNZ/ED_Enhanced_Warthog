@@ -30,7 +30,7 @@
 	Line  222: 	int fnGetFlightMode()
 	Line  240: 	int fnLEDBrightness(int x = NOCHANGE)
 	Line  260: 	int fnFlashLED(int x)
-	Line  277: 	int fnSetLEDs(int dummy=NUL)
+	Line  281: 	int fnSetLEDs(int dummy=NUL)
 	Line  308: 	int fnFlashStart()
 	Line  348: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
 	Line  380: 	int fnVoiceVolume(int x)
@@ -61,6 +61,7 @@
 	Line 1434:	int fnMyName()
 	Line 1469:	int fnStation()
 	Line 1543:	int fnGreetCMDR()
+	Line xxxx:	int fnTerrainFollow()
 */
 
 //------------------//
@@ -291,31 +292,31 @@
 				fnFlashLED(LED1);													// [Flight Assist]		LED ON = FA-OFF
 			}
 			else {
-//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED1));	// set LED 1 OFF
+		//		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED1));	// set LED 1 OFF
 			}
 			if (fLights & (fMainShip | fSRV)) {
 				fnFlashLED(LED2);													// [Ship/SRV Lights]	LED ON = Lights ON
 			}
 			else {
-//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED21));	// set LED 2 OFF			
+		//		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED21));	// set LED 2 OFF			
 			}
 			if (fSilentRunning & fMainShip) {
 				fnFlashLED(LED3);													// [Silent Running]		LED ON = Silent Running active
 			}
 			else {
-//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED3));	// set LED 3 OFF
+		//		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED3));	// set LED 3 OFF
 			}
 			if (fCargoScoop & (fMainShip | fSRV)) {
 				fnFlashLED(LED4);													// [Cargo Scoop]		LED ON = Cargo Scoop deployed
 			}
 			else {
-//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED4));	// set LED 4 OFF
+		//		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED4));	// set LED 4 OFF
 			}
-			if (fLandingGear & (fMainShip | fSRV)) {
+			if (fLandingGear & fMainShip & !fSRV) {
 				fnFlashLED(LED5);													// [Landing Gear]		LED ON = Landing Gear deployed
 			}
 			else {
-//				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED5));	// set LED 5 OFF
+		//		ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED5));	// set LED 5 OFF
 			}
 		}
 	}
@@ -361,7 +362,7 @@
 	//
 	// Usage4:		fnTextToSpeech("Test number 4", 0, &David);	//says the text at default volume using "David" voice
 	//
-//	// NOTE:		Default 'VoiceVolume' is 75% and can be increased or decreased by using Throttle TBTN4-U (Vol+) or TBTN4-D (Vol-)
+	// NOTE:		Default 'VoiceVolume' is 75% and can be increased or decreased by using Throttle TBTN4-U (Vol+) or TBTN4-D (Vol-)
 
 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
 		char volume; Dim (&volume, 4); volume[0] = NUL;
@@ -501,13 +502,13 @@
 			// Align toggle switches and internal status flags if required
 			if (MyThrottle[EACON])	DeferCall(1000, &tgSilentRunning,	ON);		//MAYBE NOT NEEDED if moved to stfnProcessFlags() like CargoScoop code	
 			if (MyThrottle[RDRNRM])	DeferCall(1750, &tgCargoScoop,		DEPLOY);	//MAYBE NOT NEEDED now checked in stfnProcessFlags()	
-			if (MyThrottle[SPDF])		DeferCall(2500, &tgReverseThrust,	OFF);   //Cannot avoid this one as there is no FLAGS bit for this
+			if (MyThrottle[SPDF])	DeferCall(2500, &tgReverseThrust,	OFF);		//Cannot avoid this one as there is no FLAGS bit for this
 		}
 		else DeferCall(1100, &fnSetLEDs, NUL);
 	
 		// Align Joystick curves
 		if (MyThrottle[APPAT])	fnSetCurves(MILD, NOPRINT, FALSE);					// Don't print to console or announce curve setting
-		if (MyThrottle[APAH])		fnSetCurves(NONE, NOPRINT, FALSE);				// Don't print to console or announce curve setting
+		if (MyThrottle[APAH])	fnSetCurves(NONE, NOPRINT, FALSE);					// Don't print to console or announce curve setting
 		if (MyThrottle[APALT])	fnSetCurves(SLOW, NOPRINT, FALSE);					// Don't print to console or announce curve setting
 		
 		if (fDocked) 			InHanger = YES;
@@ -533,8 +534,9 @@
 			SoundFXStatus = "Disabled";
 		}
 		printf("\x0a\SoundFXStatus = %s\x0a", SoundFXStatus);
+		
+		sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());		// Set via stfnExtractMyJournalData()
 
-		sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());
 		SerialText = 1;
 		fnTextToSpeech(&VoiceTxt);
 		
@@ -562,16 +564,19 @@
 		}
 		
 		// Issue personalised greeting when present at Clicker's Folly
-		if (strcmp(&MyFC, fnStation()) == 0 & ((fMainShip & fDocked) | fOnFootInStation | fOnFootInHanger | fOnFootSocialSpace)) {
+		stfnGetKeyValue("StationName", STRING, 1);
+		if (strcmp(&MyFC, &keyvalue) == 0 & ((fMainShip & fDocked) | fOnFootInStation | fOnFootInHanger | fOnFootSocialSpace)) {
 			fnGreetCMDR();									// DEBUG
 		}
-		if(strcmp(&MyFC, fnStation()) == 0) {
-			printf("Clicker's Folly\x0a");					// DEBUG
+// DEBUG ++++++
+		if (strcmp(&MyFC, &keyvalue) == 0) {
+			printf("Clicker's Folly\x0a");
 		}
 		else {
-			printf("NOT Clicker's Folly\x0a");				// DEBUG
-			printf("Station: %s\x0a", fnStation());			// DEBUG		
+			printf("NOT Clicker's Folly\x0a");
+			printf("Station: %s\x0a", &keyvalue);
 		}
+// DEBUG ++++++
 	}
 
 
@@ -801,6 +806,7 @@
 			}		
 		}
 		else {
+			stfnProcessGuiFocus();
 			if(FSSMode) {
 				ActKey(PULSE+KEYON+FSSZoomIN);
 				printf("FSS Zoom:	IN\x0a");					
@@ -816,6 +822,7 @@
 	
 	int fnHeatsink() {
 		if (fMainShip & !fDocked & !fLanded) {
+			stfnProcessGuiFocus();		
 			if(FSSMode) {
 				ActKey(PULSE+KEYON+FSSZoomOUT);
 				printf("FSS Zoom:	OUT\x0a");
@@ -907,20 +914,10 @@
 	int fnDRShip() {
 		int fnName = "Dismiss or Recall Ship";
 		int reason;
-		int VoiceTxt;
 		
 		if(fSRV | fOnFoot) {
-			if(ShipDismissed) {
-				VoiceTxt = "Ship recalled";
-			}
-			else {
-				VoiceTxt = "Ship dismissed";
-			}
-			ActKey(PULSE+KEYON+SRVRecallDismissShip);							// 'LeftALT+x'
-			
+			ActKey(PULSE+KEYON+SRVRecallDismissShip);							// 'LeftALT+x'			
 			printf("Ship Status: ");
-//			fnVPOutput(VoiceTxt);												// Let COVAS announce as we don't always use this function?
-	
 			ShipDismissed = !ShipDismissed;
 			stfnMyStates(SAVE);													// saves my status variables 			
 		}
@@ -929,7 +926,6 @@
 			fnNotValid(fnName, reason);
 		}			
 	}
-
 
 	// FUNCTION: Calls Request Dock macro. Set power to shields
 
@@ -1265,9 +1261,11 @@
 		Dim(&TimeStamp, 20);
 		TimeStamp[0] = 0;
 
-		stfnGetKeyValue("timestamp", STRING);					     // sets &keyvalue
-		strcat(&TimeStamp, &keyvalue);
-
+		stfnGetKeyValue("timestamp", STRING);						// sets &keyvalue
+//		strcat(&TimeStamp, &keyvalue);
+//		sprintf(&TimeStamp, "%s", &keyvalue);
+		strcpy(&TimeStamp, &keyvalue);
+		
 		if (Flags != 0) {
 			if (fSilentRunning)			SR = "ON";			else	SR = "OFF";
 			if (fCargoScoop)			CR = "DEPLOYED";	else	CR = "RETRACTED";
@@ -1377,10 +1375,12 @@
 				Health	= stfnGetKeyValue("Health", FLOAT);
 				Gravity	= stfnGetKeyValue("Gravity", FLOAT);
 				
-				stfnGetKeyValue("SelectedWeapon_Localised", STRING);
+				stfnGetKeyValue("SelectedWeapon", STRING);
 				Dim(&Weapon, strlen(&keyvalue)+1);
 				Weapon[0] = 0;
-				strcat(&Weapon, &keyvalue);			
+//				strcat(&Weapon, &keyvalue);
+//				sprintf(&Weapon, "%s", &keyvalue);
+				strcpy(&Weapon, &keyvalue);								
 
 				printf("\x0aPersonal States @ %s       JSON-Timestamp: %s       Flags2: %u\x0a", fnGetTOD(), &TimeStamp, Flags2);
 				printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
@@ -1450,6 +1450,129 @@
 		}	
 	}
 	
+	//	FUNCTION:	Uses output via external Powershell app to read 'CmdrName.txt' and returns your Commander Name  
+	//	NOTE:		You can set your name manually in ED_UserSettings.tmh (default)
+	//				Otherwise you need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package)
+	//	RETURNS:	Contents of CMDRName as a string
+	//	USAGE:		1)	sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());
+	//					fnTextToSpeech(&VoiceTxt);
+	
+	int fnMyName() {
+
+		int		fp;													// Declare FilePointer
+
+		char	nextchar;											// use to read in text file one char at a time 
+		Dim(&nextchar, 2);
+		nextchar[0] = 0;											// clear it out...
+		
+		char	myString;											// the char array we'll build using nextchar 
+		Dim(&myString, 50);
+		myString[0] = 0;											// clears the char array
+		
+		if (CMDRNameOverride == ENABLED) {
+			Dim(&CMDRName, strlen(&MyName));
+			CMDRName[0] = 0;
+//			sprintf(&CMDRName, "%s", &MyName);						// Use MyName if set in ED_UserSettings.tmh
+			strcpy(&CMDRName, &MyName);								// Use MyName if set in ED_UserSettings.tmh
+		}
+		else {
+			stfnGetKeyValue("CMDRName", STRING, 1);					// Use Event:Commander Name:<name> found in Journal 
+//			Dim(&CMDRName, strlen(&keyvalue)+1);
+			Dim(&CMDRName, strlen(&keyvalue));
+			CMDRName[0] = 0;
+//			sprintf(&CMDRName, "%s", &keyvalue);
+			strcpy(&CMDRName, &keyvalue);
+//			do we need to specifically terminate &CMDRName???
+		
+		}
+		return &CMDRName;
+	}
+
+	//	FUNCTION:	Issue greeting each time we dock 
+	
+	int	fnGreetCMDR(int dummy = 0) {
+	
+		char ThisStation;
+		
+		alias part1 = "All hands announcement, Commander ";
+		alias part2 = " on board!";
+		
+		Dim(&TTSVoice, (strlen(&part1)+strlen(fnMyName())+strlen(&part2)+1));
+		TTSVoice[0] = 0;
+
+		stfnGetKeyValue("StationName", STRING, 1);								// sets global variable &keyvalue 
+		Dim(&ThisStation, strlen(&keyvalue)+1);
+		ThisStation[0] = 0;
+		
+		strcpy(&ThisStation, &keyvalue);
+		ThisStation[strlen(&ThisStation)] = 0;
+		
+		if (strcmp(&MyFC, &ThisStation) == 0) {
+			if (strcmp(&FCOwner, fnMyName())==0) {								// Issue personalised greeting to owner when docked at Clicker's Folly
+				UseAltVoice = YES;
+				sprintf(&TTSVoice, "%s%s%s", &part1, fnMyName(), &part2);		// no spaces between each %s 
+				TTSVoice[strlen(&TTSVoice)] = NUL;
+			}
+			else {																// Issue polite greeting to visitors
+				UseAltVoice = YES;
+				sprintf(&TTSVoice, "Welcome aboard Clicker's Folly commander %s", fnMyName());
+				TTSVoice[strlen(&TTSVoice)] = NUL;
+			}
+		}
+		else {																	// Greet CMDR at station 
+			UseAltVoice = YES;
+			sprintf(&TTSVoice, "Welcome to %s commander %s", &ThisStation, fnMyName());		// we use local char array to prevent clash with &keyvalue above and fnMyName()
+			TTSVoice[strlen(&TTSVoice)] = NUL;
+		}
+		fnTextToSpeech(&TTSVoice, 100);	
+	}
+	
+	// FUNCTION: 	Auto Pilot Terrain Following feature
+	// Parameters:	MinHeight	- Minimum altitude in meters we want to follow (sets MinHeight to 100 if not parsed
+	//				MaxHeight	- Max altitude in meters
+
+	// WARNING:		Using CHAIN inside a REXEC or AutoRepeat is forbidden!
+	
+	int fnTerrainFollow(int MinHeight = 100) {
+		int MaxHeight = MinHeight + 20;
+		int Altitude = stfnGetKeyValue("Altitude", INTEGER);
+
+// DEBUG		
+		printf("DEBUG: ALT = %d\x0a", Altitude);
+// DEBUG
+		
+		// Stay between MinHeight and MaxHeight
+		if (Altitude <= MinHeight-5) {
+			fnLowAltitude();
+		}
+		if (Altitude < MinHeight+6) {
+			fnAscend();
+		}
+		if (Altitude >= MaxHeight) {
+			fnDecend();
+		}
+		// maybe track rise/fall to smooth pitch and up/down?
+	}
+
+	int fnLowAltitude() {
+		fnSoundFX("AltWarning");					// Warning beep (duration 1 second) - may need tweaking
+		printf("^^^ Pull up ^^^\x0a");
+		// Increase altitude using PitchUp and ThrustUp
+		CHAIN(PULSE+PitchUp, D(), PULSE+PitchUp, D(), DOWN+ThrustUp, D(1000), UP+ThrustUp, D());	
+	}
+	
+	int fnAscend() {
+		printf("+++ Increase Altitude +++\x0a");
+		// Increase altitude using PitchUp and ThrustUp
+		CHAIN(PULSE+PitchUp, D(), DOWN+ThrustUp, D(750), UP+ThrustUp, D(), PULSE+PitchDown, D());	
+	}
+	
+	int fnDecend() {
+		printf("--- Decrease Altitude ---\x0a");
+		// Decrease altitude using PitchDown and ThrustDown
+		CHAIN(PULSE+PitchDown, D(), DOWN+ThrustDown, D(250), UP+ThrustDown, D(), PULSE+PitchUp, D());	
+	}
+	
 	//	FUNCTION:	Find substring within a string and return first char position or -1 if not found
 	//	NOTE:		sys.tmh has strstr() listed to provide this functionality, however it seems to always
 	//				return a '0' no matter what you plug in. So, I decided to write my own.
@@ -1475,138 +1598,11 @@
 		return -1;
 	}
 
-	//	FUNCTION:	Uses EDMC output via StreamSource to read 'EDMC CmdrName.txt' and returns your Commander Name  
-	//	NOTE:		You can set your name manually in ED_UserSettings.tmh (default)
-	//				Otherwise you need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package)
-	//	RETURNS:	Contents of CMDRName as a string
-	//	USAGE:		1)	sprintf(&VoiceTxt, "Welcome back Commander %s", fnMyName());
-	//					fnTextToSpeech(&VoiceTxt);
+	//	FUNCTION:	TARGET does not have a strcpy(){} mapped function in sys.tmh
+	//	
 	
-	int fnMyName() {
-
-		int		fp;													// Declare FilePointer
-
-		char	nextchar;											// use to read in text file one char at a time 
-		Dim(&nextchar, 2);
-		nextchar[0] = 0;											// clear it out...
-		nextchar[1] = 0;											// ...because we can 
-		
-		char	myString;											// the char array we'll build using nextchar 
-		Dim(&myString, 50);
-		myString[0] = 0;											// clear out the first char in array...
-		myString[49] = 0;											// ...and  the last (why?)
-		
-		alias 	CMDRName = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";		// Hopefully 50 chars is enough
-
-		if (CMDRNameOverride == ENABLED) {
-			sprintf(&CMDRName, "%s", MyName);						// Use MyName if set in ED_UserSettings.tmh
-			return &CMDRName;
-		}
-		else {
-			fp = fopen(&MyCMDRName, "r");								// Open the file to read
-			if (fp) {
-				do {
-					fread(&nextchar, 1, 1, fp);						// Reads contents of file one char at a time  
-					strcat(&myString, &nextchar);					// Build myString char array 
-				}
-				while (feof(fp) == 0);								// Loop until end-of-file
-				
-				fclose(fp);											// Close the file 
-				myString[strlen(&myString)-2] = 0;					// Terminate the string by writing NUL to EOL and EOF chars 
-
-				sprintf(&CMDRName, "%s", &myString);				// Convert char to alias
-				
-				if (strcmp(&CMDRName, "none") == 0) {
-					// do nothing....Commander name not set
-				}
-				else {
-					return &CMDRName;
-				}
-			}
-			else {
-				printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyCMDRName);
-				fnSoundFX("fail", 100);
-			}
-		}
+	int strcpy(alias dst, alias src) {
+		return sprintf(&dst, "%s", &src);
 	}
 
-	//	FUNCTION:	EDMC StreamSource plugin writes 'EDMC StationName.txt' each time it changes. This function reads that file for our use.   
-	//	NOTE:		You need to install and run EDMC with the StreamSource plugin (refer supportfiles\EDMC subfolder in this package
-	//	RETURNS:	Contents of Station as a string
-	//	USAGE:		1)	printf("Station Name = %s\x0a", fnStation());
-	//				2)	sprintf(&VoiceTxt, "Docked at station %s", fnStation());
-	//					fnTextToSpeech(&VoiceTxt);
-	
-	int fnStation() {
-
-		int		fp;													// Declare FilePointer
-
-		char	nextchar;											// use to read in text file one char at a time 
-		Dim(&nextchar, 2);
-		nextchar[0] = 0;											// clear it out...
-		nextchar[1] = 0;											// ...because we can 
-		
-		char	myString;											// the char array we'll build using nextchar 
-		Dim(&myString, 50);
-		myString[0] = 0;											// clear out the first char in array...
-		myString[49] = 0;											// ...and  the last (why?)
-		
-		alias 	Station = ";;;;;;;;;;;;;;;;;;;;;;;;;;;;;;";			// Our 'return' variable. Using dummy delimiters. Hopefully 50 chars is enough
-
-		fp = fopen(&MyStationName, "r");							// Open the file to read
-		if (fp) {
-			do {
-				fread(&nextchar, 1, 1, fp);							// Reads contents of file one char at a time  
-				strcat(&myString, &nextchar);						// Build myString char array 
-			}
-			while (feof(fp) == 0);									// Loop until end-of-file
-			
-			fclose(fp);												// Close the file 
-			myString[strlen(&myString)-2] = 0;						// Terminate the string by writing NUL to EOL and EOF chars 
-			
-			sprintf(&Station, "%s", &myString);						// Convert char to alias
-
-			if (strcmp(&Station, "none") == 0) {
-				// do nothing, StationName not set
-			}
-			else {
-				return &Station;
-			}
-		}
-		else {
-			printf("\x0a\x0a++ EDMC Output file not found: %s ++\x0a\x0a", &MyStationName);
-			fnSoundFX("fail", 100);
-		}
-	}
-
-
-	//	FUNCTION:	Check if we're docked at our own Fleet Carrier and greet us if we are!
-	
-	int	fnGreetCMDR(int dummy = 0) {
-	
-		alias part1 = "All hands announcement, Commander ";
-		alias part2 = " on board!";
-		
-		Dim(&TTSVoice, (strlen(&part1)+strlen(fnMyName())+strlen(&part2)+1));
-		TTSVoice[0] = 0;
-
-		if (strcmp(&FCOwner, fnMyName())==0) {
-			UseAltVoice = YES;
-			sprintf(&TTSVoice, "%s%s%s", &part1, fnMyName(), &part2);		// no spaces between each %s 
-			TTSVoice[strlen(&TTSVoice)] = NUL;
-			fnTextToSpeech(&TTSVoice, 100);
-		}
-		else {
-			UseAltVoice = YES;
-			sprintf(&TTSVoice, "Welcome aboard commander %s", fnMyName());
-			TTSVoice[strlen(&TTSVoice)] = NUL;
-			fnTextToSpeech(&TTSVoice, 100);
-		}
-		
-//		DEBUG
-		printf("TTSVoice = %s\x0a", &TTSVoice);
-//
-
-	}
-	
 // END

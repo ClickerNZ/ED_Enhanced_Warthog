@@ -195,9 +195,6 @@
 		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control X Axis (LEFT/RIGHT)	
 		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);						// Set Slew Control Y Axis (UP/DOWN)
 
-//		MapAxis(&MyThrottle, SCX, DX_XROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control X Axis (LEFT/RIGHT)	
-//		MapAxis(&MyThrottle, SCY, DX_YROT_AXIS, AXIS_NORMAL, MAP_RELATIVE);						// Set Slew Control Y Axis (UP/DOWN)
-
 		if (StartupLock) {
 			printf("Slew Axis	... done		");
 		}

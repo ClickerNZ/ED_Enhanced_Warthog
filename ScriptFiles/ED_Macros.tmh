@@ -239,7 +239,7 @@
 		m_Launch = CHAIN(
 			LOCK+PULSE+UIDown, D(500),							// Keystroke sequence = down, down, spc, (wait 20), R (hold for 1.5), L
 			PULSE+UIDown, D(500),
-			PULSE+UISelect, D(20000),
+			PULSE+UISelect, D(20000),							// Wait 20 seconds
 			DOWN+ThrustUp, D(1500),								// Hold for 1.5
 			UP+ThrustUp, D(500),
 			PULSE+LandingGear, D(500),							// Retract gear

@@ -39,6 +39,7 @@
 	Line 582: 	int tgWarpDrive(int JumpType)
 	Line 654: 	int tgExtCamera()
 	Line 673: 	int tgXAxis(int param = RESET) 
+	Line xxx:	int tgTerrainFollow()
 */
 	
 // START
@@ -294,10 +295,6 @@
 				else {
 					fnVPOutput("Cargo scoop malfunction!!");							// flags not aligned...try again, once only in 1.5 seconds!
 					ActKey(PULSE+KEYON+CargoScoop);
-//					if (RetryCounter == 0) {
-//						RetryCounter = RetryCounter + 1;
-//						DeferCall(1500, &tgCargoScoop, x);
-//					}				
 				}
 			}	
 		}		
@@ -692,6 +689,37 @@
 		}
 
 		fnVPOutput(VoiceTxt);
+	}
+	
+	// TOGGLE:		Toggle Terrain Following feature
+	// Parameter:	Engage - No parameter parsed = toggle TF
+	//				Allow other conditions to DISENGAGE 
+	
+	int tgTerrainFollow(int Engage = ON) {
+		int SetAltitude;
+		char myAltitude;
+		Dim(&myAltitude, 40);
+		myAltitude[0] = 0;
+		
+		if (Engage == ON) {		
+			TerrainFollow = ON;												// Flip the flag each time I+U+APENG is pressed
+		}
+		else {
+			TerrainFollow = OFF;
+		}
+		
+		if (TerrainFollow & fMainShip) {
+			if (fAltFromAvgRad == 0) {										// Must be below orbital cruise
+				SetAltitude = stfnGetKeyValue("Altitude", INTEGER);			// Use current altitude to set MinHeight
+				AutoRepeat(hTerrain, 1500, &fnTerrainFollow, SetAltitude);	// Start with a 1.5 second loop
+				sprintf(&myAltitude, "Terrain follow set to %d meters", SetAltitude);
+				fnVPOutput(&SetAltitude);
+			}
+		}
+		else {
+			StopAutoRepeat(hTerrain);
+			fnVPOutput("Terrain follow Disengaged");
+		}
 	}
 
 // END

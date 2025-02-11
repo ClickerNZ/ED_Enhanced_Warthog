@@ -23,9 +23,11 @@
 
 /*
 	Index:		FUNCTION
+	Line   49:	int stfnReadMyJournalData()
 	Line   53: 	int stfnReadStatusJson()
 	Line  155: 	int stfnWriteMaxJson()
 	Line  196: 	int stfnGetKeyValue(alias pattern, int vtype)
+	Line  394:	int stfnExtractMyJournalData()
 	Line  303: 	int stfnProcessFlags(int UpdateLEDs = NO)
 	Line  803: 	int stfnProcessFlags2()
 	Line 1076: 	int stfnProcessGuiFocus()
@@ -35,13 +37,84 @@
 	
 // START
 
+	// FUNCTION:	Read MyJournalData.json into 'myJournalData' char variable
+	// Requires:	'myJournalData' alias to be correctly set in ED_UserSettings file
+
+	// GlobalVars
+
+	char	myJournalData;
+	char	lastJournalData;
+	int		ReadError2Count	= 0;
+	int		ReadError2Sent;
+	int		initmyJournalData = 0;
+	int		initlastJournalData = 0;
+	int		readloops = 0;
+	
+	// ------------
+	
+	int stfnReadMyJournalData() {
+
+		int 	VoiceTxt;
+		int 	fp;
+		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
+		int		myResult;
+		
+		char	jason; Dim(&jason, 16); jason[0] = 0;
+
+		if(!initmyJournalData) {		// Only need to initialise the char array once per script run
+			Dim(&myJournalData, buf);
+			myJournalData[0] = 0;
+			initmyJournalData = 1;
+		}
+		if (!initlastJournalData) {		// Only need to initialise the char array once per script run
+			Dim(&lastJournalData, buf); 
+	 		lastJournalData[0] = NUL;
+			initlastJournalData = 1;
+		}
+		
+		fp = fopen(&MyJournalData, "r");
+		
+		if (fp) {
+			myResult = fread(&myJournalData, 1, buf, fp);
+			fclose(fp);
+			if (myResult == 0) {
+				ReadError2Count = ReadError2Count + 1;
+				if (ReadError2Count > 3) {
+					printf("File Read Error Count = %d : MyJournalData.json\x0a", ReadErrorCount);
+					if (!ReadError2Sent) {
+						VoiceTxt = "My journal data jason read error count exceeded";
+						fnTextToSpeech(VoiceTxt, 100);
+						ReadError2Sent = 1;
+					}
+				}
+			}
+			else if (myResult < 0) {
+				printf("\x0a Error reading MyJournalData.json. Check buffer length\x0a");
+			}
+			else {	
+				ReadError2Count = 0;
+				ReadError2Sent = 0;
+				myJournalData[myResult]	= 0;								// terminates char array with nul				
+			}
+		}
+		else {																// ED must have the file locked for reading?
+			printf("ERROR: MyJournalData.json file not found\x0a");			// trap if myjournaldata.json is suddenly unavailable during game
+			fnSoundFX("wstop");
+		//	Abort();						// Not a fatal error
+		}
+	}
 
 	// FUNCTION:	Read status.json into 'myJson'
 	// Requires:	'StatusFile' string variable to be correctly set in ED_UserSettings file
 
 	// GlobalVars
 
-	char	myJson;	
+	char myJson;	
+	int initmyJson = 0;	
+	
+	char lastJson;
+	int initlastJson = 0;
+	
 	int		ReadErrorCount	= 0;
 	int		ReadErrorSent;
 	int		loop;
@@ -63,12 +136,16 @@
 		
 		char	jason; Dim(&jason, 16); jason[0] = 0;
 
-		Dim(&myJson, buf);
-		myJson[0] = NUL;
-		
-		char	lastJson;
- 		Dim(&lastJson, buf); 
- 		lastJson[0] = NUL;		
+		if (!initmyJson) {
+			Dim(&myJson, buf);
+			myJson[0] = NUL;
+			initmyJson = 1;
+		}
+		if (!initlastJson) {	
+			Dim(&lastJson, buf); 
+			lastJson[0] = NUL;
+			initlastJson = 1;
+		}
 		
 		fp = fopen(&StatusFile, "r");
 		
@@ -93,7 +170,7 @@
 				// Debug: check myJson string length to ensure buffer size is set high enough
 				if (loop == 9) {
 					if(maxjson > NewMaxJson) {
-						printf("\x0a\++	Max json length seen = %d ...\x0a", maxjson);
+				//		printf("\x0a\++	DEBUG: Max json length seen = %d ...\x0a", maxjson);
 						fnSoundFX("snd_warn");
 						NewMaxJson = maxjson;
 
@@ -121,7 +198,7 @@
 				myJson[myResult] 	= 0;								// terminates char array with nul
 				
 				newJson = strcmp(&myJson, &lastJson);
-				if (newJson != 0) {					
+				if (newJson != 0) {										// Has myJson changed since last read?
 					Flags = stfnGetKeyValue("Flags", INTEGER);
 
 					stfnProcessFlags(0);
@@ -136,17 +213,17 @@
 						}
 					}
 				}			
-				sprintf(&lastJson, "%s", &myJson);
-				lastJson[strlen(&lastJson)] = NUL;						//terminate char array 
+//				sprintf(&lastJson, "%s", &myJson);						// copy myJson to lastJson
+				strcpy(&lastJson, &myJson);								// copy myJson to lastJson
+				lastJson[strlen(&lastJson)] = NUL;						// terminate char array ... needed?
 			}
 		}
 		else {															// ED must have the file locked for reading?
 			printf("ERROR: Status.jason file not found\x0a");			// trap if status.json is suddenly unavailable during game
 			fnSoundFX("wstop");
 			Abort();
-		}		
+		}
 	}
-
 
 	// FUNCTION:	Copies status.json as NewMaxJson.json in Journal folder each time a new max length status.json is found
 	// Requires:	'MaxStatusFile' string variable to be correctly set in ED_UserSettings file
@@ -174,8 +251,13 @@
 
 
 	// FUNCTION:	Extract json key value by name from status.json
-	// Input:		Key name (pattern: string), key value type (vtype: FLOAT, INTEGER, STRING)
-	// Output:		Returns key value
+	// Input:		pattern:	Key name
+	//				vtype:		Key value type (vtype: FLOAT, INTEGER, STRING)
+	//				jsonfile:	0 or 1
+	//					0 or missing (default), use &myJson containing status.json content
+	//					1, use &myJournalData containing MyJournalData.json content
+	//
+	// Output:		Sets &keyvalue if key value type = STRING, otherwise returns key value (FLOAT or INTEGER)
 	
 	// Valid Key Names:	refer Journal Manual @ http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf 
 	//				HORIZONS: pattern(vtype)
@@ -186,6 +268,9 @@
 	//				ODYSSEY: pattern(vtype) for additional Keys in ODYSSEY
 	//				Flags2(INTEGER), when on foot, the following will also usually be available;
 	//				Oxygen(FLOAT), Health(FLOAT), Temperature(INTEGER), SelectedWeapon(STRING), Gravity(FLOAT)
+	//
+	//				MyJournalData: Keys contained in MyJournalData.json are All STRING
+	//				CMDRName, ShipName, ShipType, StationName, StationType, SystemName, BodyName, OrganicFound, timestamp ("yyyy-mm-dd HH:MM:SS")
 
 	// GlobalVars
 
@@ -193,7 +278,7 @@
 
 	// ----------
 
-	int stfnGetKeyValue(alias pattern, int vtype) {
+	int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
 		
 		int 	PatLen = strlen(&pattern);
 				
@@ -201,6 +286,10 @@
 		int 	vallen		= 0;									// string length of the key value
 		int 	chrpnt		= 0;									// character pointer used to determine where key value ends
 		int		EndValue	= 0;									// flag to set when we hit the end of value
+
+		char	KVJson;												// which json string are we processing
+		Dim(&KVJson, 1024);
+		KVJson[0] = 0;
 		
 		char 	thischr;											// char variable to detect end of value via a ',' or '}' or ' '	
 		Dim(&thischr, 2);
@@ -210,16 +299,25 @@
 		Dim(&myStr, PatLen);
 		myStr[0] 	= NUL;
 
-		Dim(&keyvalue, 64);											// keyvalue char is global (used in status dump)
+		Dim(&keyvalue, 64);											// keyvalue char is global
 		keyvalue[0] = NUL;
 
 		float	fkeyvalue;											// floating point key values
 		int		ikeyvalue;											// integer key value
 		int		myResult;
+
+		if(jsonfile == 0) {
+//			sprintf(&KVJson, "%s", &myJson);
+			strcpy(&KVJson, &myJson);
+		}
+		else {
+//			sprintf(&KVJson, "%s", &myJournalData);
+			strcpy(&KVJson, &myJournalData);
+		}
 		
 		// Find the Key (pattern) ...
 
-		int Start = findstr(&myJson, &pattern);							// 'findstr()' is my version of 'strstr()' in sys.tmh...which I cannot get to work...defined in ED_Functions.tmh 
+		int Start = findstr(&KVJson, &pattern);							// 'findstr()' is my version of 'strstr()' in sys.tmh...which I cannot get to work...defined in ED_Functions.tmh 
 																		// 'Start' contains the character count to the first character of the Keyname, if found. 
 		if (Start == -1) {												// 'Start' contains -1 if the Keyname is not found
 			return -1;
@@ -236,13 +334,13 @@
 		if (myResult == 0) {											// pattern = "Pips"
 			vallen = 5;
 			while(chrpnt < vallen) {
-				strsub(&thischr, &myJson, valstart+chrpnt, valstart+chrpnt);
+				strsub(&thischr, &KVJson, valstart+chrpnt, valstart+chrpnt);
 				strcat(&keyvalue, &thischr);
 				chrpnt = chrpnt + 1;
 			}
 		}
 		else {
-			strsub(&thischr, &myJson, valstart, valstart);
+			strsub(&thischr, &KVJson, valstart, valstart);
 			myResult = strcmp(&thischr, ",");
 			if (myResult == 0 & (vtype == FLOAT | vtype == INTEGER)) EndValue = 1;
 		
@@ -254,9 +352,9 @@
 			
 			if (EndValue == 0) strcat(&keyvalue, &thischr);
 			
-			while (EndValue == 0 & chrpnt < 20) {
+			while (EndValue == 0 & chrpnt < 64) {						// How many chars are we expecting to see for a key-value?
 				chrpnt = chrpnt + 1;
-				strsub(&thischr, &myJson, valstart+chrpnt, valstart+chrpnt);
+				strsub(&thischr, &KVJson, valstart+chrpnt, valstart+chrpnt);
 				
 				myResult = strcmp(&thischr, ",");						// end of value signalled by ',' or '}' or ' ' or '"' 
 				if (myResult == 0 & (vtype == FLOAT | vtype == INTEGER)) EndValue = 1;
@@ -285,14 +383,14 @@
 		if (vtype == INTEGER)	return ieval(&keyvalue);				// return integer value 
 		if (vtype == STRING) {			
 			strdel(&keyvalue, 0, 0);									// Just remove leading quote and...
-			return 0;													// ...use the global &keyvalue on return
+			return 0;													// Use the global "&keyvalue" on return
 		}
 	}
 	// End of stfnGetKeyValue()
 
-
+	
 	// FUNCTION: Read and process "Flags" value from "status.json"
-	// Input: 'UpdateLEDs', 1 = update, 0 = no update (default)
+	// Input: 'UpdateLEDs', YES (1) = update, NO (0) = no update (default)
 	// Output: Flags variables set/reset
 
 	int stfnProcessFlags(int UpdateLEDs = NO) {
@@ -346,15 +444,15 @@
 				GameLoaded = NO;										// Reset GameLoaded flag 
 				Odyssey = 0;											// Turn off Flags2 processing
 
-				TTS = "Game halted -";
+				TTS = "Game halted";
 				if(TrainingMode == ENABLED){
 					TrainingMap();										// Load KeyMap profile for training
 					if (AnnounceTraining) {
-						TTS = "Game halted. Training mode enabled -";
+						TTS = "Game halted. Training mode enabled";
 					}
 				}
 				
-				printf("\x0a- ");
+				printf("\x0a");
 				fnVPOutput(TTS);
 				printf("\x0a");
 							
@@ -365,6 +463,9 @@
 				fnSetLEDs();															// Turn off Status LEDs, then...
 				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED0)); 		// set GLOBAL LED OFF
 
+				StopAutoRepeat(hReadStatusJson);
+				StopAutoRepeat(hReadMyJournalData);
+				
 				stfnMyStates(SAVE);
 			}
 		}
@@ -425,17 +526,16 @@
 			fLanded				= ((Flags & ED_Landed) > 0);
 			fDocked				= ((Flags & ED_Docked) > 0);
 
-			if (fMainShip & (fDocked != lDocked)) {						// Framework - currently testing - may not be viable in current form without additional information from journal						
+			if (fMainShip & (fDocked != lDocked)) {								// Framework - currently testing - may not be viable in current form without additional information from journal						
 				if (fDocked) {							
 					if (AutoHanger) {
-						DeferCall(2500, &fnHangerServices, 1);			// Cannot use 'Auto' feature until we verify SAME PROCESS for Starport v Carrier v Surface Port
+						DeferCall(2500, &fnHangerServices, 1);					// Cannot use 'Auto' feature until we verify SAME PROCESS for Starport v Carrier v Surface Port
 					}
 					DeferCall(1000, &ActKey, PULSE+KEYON+BalancePower);
+					stfnGetKeyValue("StationName", STRING, 1);
 					if (!StartupLock) {
-						printf("Docked: %s @ %s\x0a", fnGetTOD(), fnStation());		// May be a timing issue between when we detect a status.json change and when EDSM/StreamSource writes a file
-						if (strcmp(&MyFC, fnStation()) == 0) {						// Issue personalised greeting when docked at Clicker's Folly
-							DeferCall(11000, &fnGreetCMDR, 0);								// 11 seconds?
-						}
+						printf("Docked: %s @ %s\x0a", fnGetTOD(), &keyvalue);
+						DeferCall(11000, &fnGreetCMDR, 0);
 					}
 				}
 				else	{	
@@ -447,7 +547,7 @@
 				}
 			}
 
-			if (fMainShip & (fLanded != lLanded)) {						// Framework for future functionality							
+			if (fMainShip & (fLanded != lLanded)) {								// Framework for future functionality							
 				if (fLanded) {
 					printf("Landed @ %s\x0a", fnGetTOD());
 				}
@@ -460,8 +560,8 @@
 				}
 			}
 			
-			if (fLandingGear != lLandingGear) {								// This may be announced via in game setting
-				if (fLandingGear & fMainShip) {								// Dealt with in tgLandingGear
+			if (fLandingGear != lLandingGear) {									// This may be announced via in game setting
+				if (fLandingGear & fMainShip) {									// Dealt with in tgLandingGear
 					// Landing Gear Deployed 
 				}
 				else if (fMainShip) {	
@@ -558,15 +658,6 @@
 				}				
 			}
 
-// TESTING  // Check and align switch with function
-//			// I suspect this was just making things work and I ran out of F's trying to fix
-//
-//			if ((MyThrottle[RDRNRM] & !fCargoScoop) | (MyThrottle[RDRDIS] & fCargoScoop)) {
-//				ActKey(PULSE+KEYON+CargoScoop);								// Fix misaligned switch after menu log?
-//			}
-//
-/////////////
-
 			if (fSilentRunning != lSilentRunning) {
 				if (fSilentRunning) {
 					// do nothing ... handled within tgSilentRunning()
@@ -575,15 +666,6 @@
 					// do nothing ... handled within tgSilentRunning()
 				}
 			}
-
-// TESTING	// Check and align switch with function
-//			// As with Cargo Scoop switch, I've disabled this as well, just in case (ie not tested)
-//
-//			if ((MyThrottle[EACON] & !fSilentRunning) | (MyThrottle[EACOFF] & fSilentRunning)) {
-//				ActKey(PULSE+KEYON+SilentRunning);							// Fix misaligned switch?
-//			}
-//
-//////////////
 
 			if (fFuelScoop != lFuelScoop) {
 				if (fFuelScoop) {
@@ -611,6 +693,7 @@
 					// printf("EXIT - SRV Turret View\x0a");				
 				}				
 			}
+			
 // TEST THIS ==
 			if (fSRV & (fSRVTurretRetracted != lSRVTurretRetracted)) {
 				if (fSRVTurretRetracted ) {												// Detect turret deploy/retract
@@ -620,7 +703,8 @@
 					fnVPOutput("Turret deployed");										// ... but not here?
 				}
 			}
-// ===========
+// ============
+
 			if (fSRVDriveAssist != lSRVDriveAssist & fSRV) {
 				if (fSRVDriveAssist) {
 					printf("SRV DriveAssist: ON\x0a");
@@ -742,7 +826,7 @@
 			
 			if ((fNightVision != lNightVision) & (fMainShip | fSRV)) {
 				if (fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))) {
-					fnVPOutput("Night vision:		ON");
+					fnVPOutput("Night vision");
 				}
 				else if (!fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))){
 					fnVPOutput("Night vision:		OFF");
@@ -751,7 +835,10 @@
 
 			if (fAltFromAvgRad != lAltFromAvgRad) {
 				if (fAltFromAvgRad) {
-					printf("Altitude based on planet radius\x0a");				
+					printf("Altitude based on planet radius\x0a");
+					if (TerrainFollow) {
+						tgTerrainFollow(OFF);
+					}
 				}
 				else {
 					printf("Altitude based on raycast to surface\x0a");								
@@ -770,19 +857,23 @@
 					
 					if (!fHUDAnalysis & AutoHUD) {							// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
 						tgHUDMode(1);										// Delays announcing change
-						// Set Firegroup to 0
-//						fnCheckFiregroup();									// Sets global Firegoup to match status.json 
-
-						printf("DEBUG: Firegroup selected  = %d\x0a", fnCheckFiregroup());		// DEBUG 
-						
-						while (Firegroup != 0) {							// Too fast?????
-							ActKey(PULSE+NextFireGroup);
-//							fnCheckFiregroup();
-							Firegroup = Firegroup + 1;
-							printf("DEBUG: Firegroup should be %d\x0a", Firegroup);				// DEBUG
-						}
-						printf("DEBUG: Current Firegroup  = %d\x0a", fnCheckFiregroup());		// DEBUG 						
 					}
+					// Set Firegroup to 0
+//					fnCheckFiregroup();										// Sets global Firegoup to match status.json 
+					printf("DEBUG: Firegroup in status.json is %d\x0a", fnCheckFiregroup());	// DEBUG 
+
+
+//	CREATE SEPERATE FUNCTION
+//					
+//					while (Firegroup != 1) {								// Too fast?????
+//						ActKey(PULSE+NextFireGroup);
+//						Firegroup = Firegroup + 1;
+// DEBUG ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//						printf("DEBUG: Firegroup %d\x0a", Firegroup);							// DEBUG
+// DEBUG ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//						fnCheckFiregroup();
+//					}
+//					printf("DEBUG: Firegroup in status.json is %d\x0a", fnCheckFiregroup());	// DEBUG 						
 				}
 			}
 
@@ -796,8 +887,10 @@
 			}
 						
 			// Detect if we need to update the LEDs						
-			if ((lFAOff != fFAOff) | (lLights != fLights) | (lSilentRunning != fSilentRunning) | (lCargoScoop != fCargoScoop) | (lLandingGear != fLandingGear) | (lMainShip != fMainShip)) UpdateLEDs = YES;
-
+			if ((lFAOff != fFAOff) | (lLights != fLights) | (lSilentRunning != fSilentRunning) | (lCargoScoop != fCargoScoop) | (lLandingGear != fLandingGear) | (lMainShip != fMainShip) | (lSRV !=  fSRV)) UpdateLEDs = YES;
+			// ... or, always UpdateLEDs?
+			// UpdateLEDs = YES;
+			
 			if(!GameLoaded) {											// Game started...as opposed to re-started.
 				fnGameStarted();
 			}
@@ -817,6 +910,8 @@
 	// Output:		Flags2 variables set/reset
 	
 	int stfnProcessFlags2() {
+
+		int UpdateLEDs = 0;
 	
 		// TARGET uses 32 bit signed precision for its integers.
 		// Integers larger than 2,147,483,648 wrap around to negative number
@@ -907,6 +1002,7 @@
 				else {
 					// not on foot
 				}
+				if (lOnFoot != fOnFoot) UpdateLEDs = YES;
 			}
 
 			if (fInTaxi != lInTaxi) {
@@ -1081,6 +1177,10 @@
 			}
 		}
 
+		if(UpdateLEDs == YES) {
+			fnSetLEDs();
+		}
+
 		OldFlags2 = Flags2;												// Keep track of last Flags2 Value to track when Flags2 bits change		
 	}
 	
@@ -1117,10 +1217,6 @@
 	// FUNCTION: Initial check to see if game is already running after we've restarted the script.
 	
 	int stfnStartCheck() {
-
-////	For TEST AREA (below)
-//		alias VoiceTxt = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-////
 	
 		int fp;								// file pointer (handle)
 		int json100;						// status.json string length - Most Significant Bit (Hundreds) 
@@ -1147,6 +1243,9 @@
 		if (StartupLock == ON) {
 			printf("\x0a\status.json location set to %s\x0a\x0a", &StatusFile);			
 		}
+
+		stfnReadMyJournalData();
+		ActKey(KEYON+REXEC(hReadMyJournalData, JournalReadRate, "stfnReadMyJournalData();", RNOSTOP));
 		
 		stfnReadStatusJson();																	// Read status.json first time before starting loop. Won't work otherwise. I don't know why.
 		ActKey(KEYON+REXEC(hReadStatusJson, StatusReadRate, "stfnReadStatusJson();", RNOSTOP));	// Start perpetual loop to read status.json. StatusReadRate is set in ED_UserSettings file
@@ -1156,7 +1255,7 @@
 			if(Flags == 0) {
 				printf("++	Waiting for Game to load...\x0a");	
 				printf("\x0a\Script initialized and running @ %s \x0a", fnGetTOD());
-				printf("\x0a\++	Max json length seen = %d ...\x0a\x0a", NewMaxJson);			// Tracking max string length of status.json to ensure read buffer is big enough.
+		//		printf("\x0a\++	DEBUG: Max json length seen = %d ...\x0a\x0a", NewMaxJson);			// Tracking max string length of status.json to ensure read buffer is big enough.
 																								// If you see errors, ensure 'buf' is set to a value exceeding this number at start of stfnReadStatusJson(), above.
 
 
@@ -1173,54 +1272,14 @@
 				fnTextToSpeech("Waiting for game to load");
 			}
 			fnSoundFX("tada");																	// Script has started successfully 
-
-////	TEST AREA --- Copy code here to test at end of script start
-//
-//			//Testing here...move solution up to Line 435
-//
-//			if (strcmp(&MyFC, fnStation()) == 0) {
-//				printf("Clicker's Folly\x0a");
-//				UseAltVoice = YES;
-//				sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName()); 
-//				DeferCall(2000, &fnTextToSpeech, &VoiceTxt);									// WORKS IF &VoiceTxt is an alias and not a char array 
-//			}
-//			else {
-//				printf("NOT Clicker's Folly\x0a");
-//			}
-/*			
-			if (strcmp(fnMyName(), &FCOwner) == 0) {
-				printf("Commander Clicker\x0a\x0a");
-				DeferCall(2000, &fnGreetCMDR, 0);								// <- this is the solution 
-			}
-			else {
-				printf("NOT Commander Clicker\x0a\x0a");
-				DeferCall(2000, &fnGreetCMDR, 0);
-			}
-*/			
-//			UseAltVoice = YES;
-//			if (strcmp(&MyFC, fnStation()) == 0) { 
-//				sprintf(&VoiceTxt, "Currently docked at Clicker's Folly"); 
-//			}
-//			else {
-//				sprintf(&VoiceTxt, "Currently docked at %s ", fnStation()); 
-//			}
-//			printf("RTN: %s\x0a", fnStation());
-//			printf("TTS: %s\x0a", &VoiceTxt);
-//			SerialText = 1;
-//			fnTextToSpeech(&VoiceTxt, 100);			
-//			
-//			Sleep(3000);
-//			
-//			UseAltVoice = YES;
-//			sprintf(&VoiceTxt, "All hands on deck, Commander %s on the bridge!", fnMyName());
-//			printf("RTN: %s\x0a", fnMyName());
-//			printf("TTS: %s\x0a", &VoiceTxt);
-//			SerialText = 1;
-//			fnTextToSpeech(&VoiceTxt, 100);			
-//
-////	TEST AREA
-			
 		}
+		
+////	TEST AREA --- Copy code below here to test at end of script start
+//
+		
+//
+////	TEST AREA --- Copy code above here to test at end of script start
+
 	}
 
 	// FUNCTION:	Save states not included in status.json
