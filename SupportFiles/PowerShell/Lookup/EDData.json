@@ -48,7 +48,21 @@
 		"viper":                        "Viper MkIII",
 		"viper_mkiv":                   "Viper MkIV",
 		"vulture":                      "Vulture",
-		"ExplorationSuit_Class3":		"Artemis (3)"
+		"explorationsuit_class1":		"Artemis (1)",
+		"explorationsuit_class2":		"Artemis (2)",
+		"explorationsuit_class3":		"Artemis (3)",
+		"explorationsuit_class4":		"Artemis (4)",
+		"explorationsuit_class5":		"Artemis (5)",
+		"tacticalsuit_class1":			"Dominator (1)",
+		"tacticalsuit_class2":			"Dominator (2)",
+		"tacticalsuit_class3":			"Dominator (3)",
+		"tacticalsuit_class4":			"Dominator (4)",
+		"tacticalsuit_class5":			"Dominator (5)",
+		"utilitysuit_class1":			"Maverick (1)",
+		"utilitysuit_class2":			"Maverick (2)",
+		"utilitysuit_class3":			"Maverick (3)",
+		"utilitysuit_class4":			"Maverick (4)",
+		"utilitysuit_class5":			"Maverick (5)"		
 	},
 	"Exobiology_Value_map":{
 		"Aleoida Arcus": 7252500,

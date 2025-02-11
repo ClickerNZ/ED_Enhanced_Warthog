@@ -1,4 +1,5 @@
-# v14 - looks like it might be working.
+# v20	- Cleaned up V19
+#		- Add some debug code
 
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
@@ -7,6 +8,48 @@ param (
 	[string]$StatusFile = "status.json" # we check for Flags and Flags2 values and set GameRunning accordingly
 )
 
+$JsonFilePath = Join-Path -Path $outputFolderPath -ChildPath "MyJournalData.json"
+
+# Set the module path for the current session
+$customModulePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Modules"
+if (-Not ($env:PSModulePath -like "*$customModulePath*")) {
+    $env:PSModulePath += ";$customModulePath"
+}
+
+# Import our modules...
+
+Import-Module TransformUtilities
+# Verify the module is loaded
+if (-Not (Get-Module -Name TransformUtilities)) {
+    throw "Failed to import the MapUtilities module. Ensure the module exists in $customModulePath."
+}
+
+Import-Module TTS
+# Verify the module is loaded
+if (-Not (Get-Module -Name TTS)) {
+    throw "Failed to import the TTS module. Ensure the module exists in $customModulePath."
+}
+	# USAGE: [TTS]::SpeakText(text, voice, rate, volume)
+	# voice, rate and volume are optional ... refer TTS.psm1 for default settings
+
+$voice = "Microsoft Catherine"
+$rate = 0
+$volume = 75
+
+[TTS]::SpeakText("Journal processor loading")
+
+# Load the map file into memory
+Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
+	# USAGE:
+	# $shipvalue = Get-MappedValue -MapName "ShipType_map" -Key "diamondbackxl"
+	# Write-Output "The value for the key is: $shipvalue"
+	# USAGE:
+	# $exovalue = Get-MappedValue -MapName "Exobiology_Value_map" -Key "Aleoida Arcus"
+	# $formattedNum = $exovalue.ToString("N0")
+	# Write-Output "The value for the key is: $formattedNum"
+
+Write-Host "ProcessJournal v17"
+
 # Ensure the output folder exists
 if (-not (Test-Path -Path $outputFolderPath)) {
     New-Item -Path $outputFolderPath -ItemType Directory
@@ -14,65 +57,94 @@ if (-not (Test-Path -Path $outputFolderPath)) {
 
 # Ensure the tracking file exists
 if (-not (Test-Path -Path $trackingFilePath)) {
-    Set-Content -Path $trackingFilePath -Value "{\"lastTimestamp\":null}" -Encoding utf8
+    Set-Content -Path $trackingFilePath -Value "{\"lastTimestamp\":null}" -Encoding ascii
 }
 
-# Function to write to a temporary file and then rename it after completion
-function Write-TextToFile {
-    param(
-        [string]$finalFilePath,
-        [string]$content
-    )
-
-# the write-texttotempfile was causing issues. keep the old code if we wish to re-implement
-#    $tempFilePath = "$finalFilePath.tmp"
-
-    # Write content to a temporary file
-#    $content | Out-File -FilePath $tempFilePath -Encoding ascii   # don't write temp file
-
-    # Rename the temporary file to the final file
-#    if (Test-Path -Path $tempFilePath) {
-#        Rename-Item -Path $tempFilePath -NewName $finalFilePath -Force
-#        Write-Host "Data written to $finalFilePath"
-#        Remove-Item -Path $tempFilePath -Force
-#    }
-
-# do this instead
-
-    try {
-        Write-Host "Writing to file: $finalFilePath with content: $content" -ForegroundColor Cyan
-        $content | Out-File -FilePath $finalFilePath -Encoding ascii
-    } catch {
-        Write-Host "Error writing to file: $finalFilePath - $_" -ForegroundColor Red
+# Initialize or Load Global Variables from JSON
+function Initialize-GlobalVariables {
+    if (-Not (Test-Path $JsonFilePath)) {
+        # JSON file does not exist, create it with default values
+        $defaultData = @{
+            CMDRName     = "not set"
+            ShipName     = "not set"
+            ShipType     = "not set"
+            StationName  = "not set"
+            StationType  = "not set"
+            SystemName   = "not set"
+            BodyName     = "not set"
+            OrganicFound = "not set"
+        }
+        $defaultData | ConvertTo-Json | Set-Content $JsonFilePath
     }
+
+    # Read JSON file and parse data
+    $jsonData = Get-Content $JsonFilePath | ConvertFrom-Json
+
+    # Assign global variables
+    $Global:CMDRName = $jsonData.CMDRName
+    $Global:ShipName = $jsonData.ShipName
+    $Global:ShipType = $jsonData.ShipType
+    $Global:StationName = $jsonData.StationName
+    $Global:StationType = $jsonData.StationType
+    $Global:SystemName = $jsonData.SystemName
+    $Global:BodyName = $jsonData.BodyName
+    $Global:OrganicFound = $jsonData.OrganicFound
 }
 
-# Function to initialize placeholder files
-function Initialize-PlaceholderFiles {
-    Write-Host "Initializing placeholder files..."
+# Compare newKeyValues with Global KeyValues
+function Compare-And-UpdateVariables {
+    $changeDetected = $false
 
-    $placeholders = @{
-        "CMDRName.txt"    = "none"
-        "ShipType.txt"    = "none"
-        "StationName.txt" = "none"
-        "StationType.txt" = "none"
-        "ShipName.txt"    = "none"
-        "BodyName.txt"    = "none"
-        "SystemName.txt"  = "none"
-        "OrganicFound.txt" = "none"
-    }
+    # List of tracked keys
+    $keys = @("CMDRName", "ShipName", "ShipType", "StationName", "StationType", "SystemName", "BodyName", "OrganicFound")
 
-    foreach ($file in $placeholders.Keys) {
-        $filePath = Join-Path -Path $outputFolderPath -ChildPath $file
-        if (-not (Test-Path -Path $filePath)) {
-            Write-TextToFile -finalFilePath $filePath -content $placeholders[$file]
-        } else {
-            Write-Host "Placeholder already exists: $filePath" -ForegroundColor Yellow 
+    foreach ($key in $keys) {
+        $globalKeyName = "Global:$key"
+        $newKeyName = "Global:new$key"
+
+        if (Test-Path Variable:$newKeyName) {
+            if ((Get-Variable -Name "new$key" -Scope Global).Value -ne (Get-Variable -Name $key -Scope Global).Value) {
+                $changeDetected = $true
+                break					# if we detect a change, no point testing any more keys
+            }
         }
     }
+
+    if ($changeDetected) {
+        foreach ($key in $keys) {
+            $newKeyName = "Global:new$key"
+            $globalKeyName = "Global:$key"
+
+            if (Test-Path Variable:$newKeyName) {
+                Set-Variable -Name $key -Value (Get-Variable -Name "new$key" -Scope Global).Value -Scope Global
+            }
+        }
+		Write-Host "Update MyJournalData.json" -ForegroundColor Cyan
+        Update-JsonFile
+    }
 }
 
-# Function to read the tracking file
+# Update JSON File
+function Update-JsonFile {
+	
+	$Global:timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+	
+    $updatedData = [ordered]@{
+        timestamp    = $Global:timestamp			
+        CMDRName     = $Global:CMDRName
+        ShipName     = $Global:ShipName
+        ShipType     = $Global:ShipType
+        StationName  = $Global:StationName
+        StationType  = $Global:StationType
+        SystemName   = $Global:SystemName
+        BodyName     = $Global:BodyName
+        OrganicFound = $Global:OrganicFound
+    }
+
+    $updatedData | ConvertTo-Json -Compress | Set-Content $JsonFilePath
+ }
+
+# Read the timestamped tracking file
 function Get-LastTimestamp {
     try {
         $trackingData = Get-Content -Path $trackingFilePath | ConvertFrom-Json
@@ -83,27 +155,28 @@ function Get-LastTimestamp {
     }
 }
 
-# Function to update the tracking file
+# Update the timestamp tracking file
 function Update-LastTimestamp {
     param (
         [string]$newTimestamp
     )
     try {
         $trackingData = @{ lastTimestamp = $newTimestamp }
-        $trackingData | ConvertTo-Json | Set-Content -Path $trackingFilePath -Encoding utf8
-        Write-Host "Updated last timestamp to: $newTimestamp" -ForegroundColor Yellow
+        $trackingData | ConvertTo-Json | Set-Content -Path $trackingFilePath -Encoding ascii
     } catch {
         Write-Host "Error updating tracking file: $_" -ForegroundColor Red
     }
 }
 
-# Function to process a single log file
+# Process Journal log file
 function Process-LogFile {
     param (
         [string]$filePath,
         [string]$lastTimestamp
     )
-    #Write-Host "Processing log file: $filePath starting from timestamp: $lastTimestamp"
+    #Write-Host "Processing log file: $filePath starting from timestamp: $lastTimestamp" -ForegroundColor Yellow
+
+    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # Match log file timestamp format
 
     try {
         $entries = Get-Content -Path $filePath | ForEach-Object { $_ | ConvertFrom-Json }
@@ -116,102 +189,254 @@ function Process-LogFile {
                 switch ($entry.event) {
                     "Commander" {
                         if ("Name" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "CMDRName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Name
+							$Global:newCMDRName = $entry.Name
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Cyan
+								}
+							}
                         }
                     }
                     "LoadGame" {
-                        if ("Ship_Localised" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship_Localised
+                        if ("Ship" -in $entry.PSObject.Properties.Name) {
+ 							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
+							$Global:newShipType = $ShipType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Cyan 
+								}
+							}
                         }
-                    }
+                    }					
                     "Docked" {
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationName
+							$Global:newStationName = $entry.StationName
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Docked, StationName = $Global:newStationName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Docked, StationName = $Global:newStationName" -ForegroundColor Cyan 
+								}
+							}							
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationType
+							$Global:newStationType = $entry.StationType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Docked, StationType = $Global:newStationType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Docked, StationType = $Global:newStationType" -ForegroundColor Cyan
+								}
+							}							
                         }
                     }
                     "Loadout" {
                         if ("Ship" -in $entry.PSObject.Properties.Name) {
-							#Lookup-Shiptype -ship $entry.ship 
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Ship
+							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
+							$Global:newShipType = $ShipType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Cyan
+								}
+							}														
                         }
                         if ("ShipName" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipName
+							$Global:newShipName = $entry.ShipName
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Docked, ShipName = $Global:newShipName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Docked, ShipName = $Global:newSHipName" -ForegroundColor Cyan
+								}
+							}														
                         }
                     }
                     "ShipyardSwap" {
-                        if ("ShipType_Localised" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "ShipType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.ShipType_Localised
+                        if ("ShipType" -in $entry.PSObject.Properties.Name) {
+							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
+							$Global:newShipType = $ShipType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Cyan 
+								}
+							}																					
                         }
                     }
                     "Location" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "SystemName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StarSystem
+							$Global:newSystemName = $entry.StarSystem
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
+								}
+							}																					
                         }
                         if ("Body" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "BodyName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Body
+							$Global:newBodyName = $entry.Body
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Location, Body = $Global:newBodyName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Location, Body = $Global:newBodyName" -ForegroundColor Cyan
+								}
+							}																					
                         }
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationName
+							$Global:newStationName = $entry.StationName
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Location, StationName = $Global:newStationName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Location, StationName = $Global:newStationName" -ForegroundColor Cyan
+								}
+							}																					
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "StationType.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StationType
+							$Global:newStationType = $entry.StationType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: Location, StationType = $Global:newStationType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: Location, StationType = $Global:newStationType" -ForegroundColor Cyan
+								}
+							}																					
                         }
                     }
                     "Touchdown" {
                         if ("Body" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "BodyName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Body
+							$Global:newBodyName = $entry.Body
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Cyan
+								}
+							}																					
                         }
                     }
+					"DockingGranted" {
+                        if ("StationName" -in $entry.PSObject.Properties.Name) {
+							$Global:newStationName = $entry.StationName
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Cyan  
+								}
+							}																					
+						}
+                        if ("StationType" -in $entry.PSObject.Properties.Name) {
+							$Global:newStationType = $entry.StationType
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Cyan 
+								}
+							}																					
+						}
+					}
                     "FSDJump" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "SystemName.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.StarSystem
+							$Global:newSystemName = $entry.StarSystem
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
+								}
+							}																					
                         }
                     }
-                    "ScanOrganic" {
-                        if (("ScanType" -in $entry.PSObject.Properties.Name) -and $entry.ScanType -eq "Analyse" -and ("Variant_Localised" -in $entry.PSObject.Properties.Name)) {
-                            $filePath = Join-Path -Path $outputFolderPath -ChildPath "OrganicFound.txt"
-                            Write-TextToFile -finalFilePath $filePath -content $entry.Variant_Localised
+                    "ScanOrganic" {						
+                        if (("ScanType" -in $entry.PSObject.Properties.Name) -and $entry.ScanType -eq "Analyse" -and ("Species_Localised" -in $entry.PSObject.Properties.Name)) {
+							if ($Global:GameRunning) { 								
+								$exovalue = Get-MappedValue -MapName "Exobiology_Value_map" -Key $entry.Species_Localised
+								$formattedNum = [math]::Round($exovalue / 1000000, 1)
+								$Global:newOrganicFound = $entry.Species_Localised
+								[TTS]::SpeakText("Value of $Global:newOrganicFound is $formattedNum million")
+							}
+							if ($Global:Debug) {
+								if (-not $Global:GameRunning) {
+									Write-Host "$updatedTimestamp : Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Yellow 
+								}
+								else {
+									Write-Host "$updatedTimestamp : Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Cyan  
+								}
+							}																					
                         }
                     }
+<#					
 					"Shutdown" {
-						Write-Host "Shutdown event encountered: Game Running is $GameRunning" -ForegroundColor Yellow -BackgroundColor Green
-						if ($GameRunning) {
-							#Write-Host "Exiting due to Shutdown event." -ForegroundColor Yellow -BackgroundColor Green
-							# Cleanup watchers on exit 
-							$watcher1.Dispose()
-							$watcher2.Dispose()
-							exit
+						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green						
+						if ($Global:GameRunning) {
+							try {
+								if ($null -ne $watcher1) {
+									$watcher1.Dispose()
+									Write-Host "[$timestamp] Watcher1 disposed." -ForegroundColor Green
+								}
+							} catch {
+								Write-Host "[$timestamp] Error disposing watcher: $_" -ForegroundColor Red
+							} finally {
+								exit 0
+							}
+						}
+					}
+#>
+					"Shutdown" {
+						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green                        
+						if ($Global:GameRunning -and $null -ne $watcher1) {
+							try {
+								$watcher1.Dispose()
+								Write-Host "[$timestamp] Watcher1 disposed." -ForegroundColor Green
+							} catch {
+								Write-Host "[$timestamp] Error disposing watcher: $_" -ForegroundColor Red
+							}
+							Write-Host "[$timestamp] Exiting script..." -ForegroundColor Cyan
+							Stop-Process -Id $PID -Force  # Forcefully kill script
 						}
 					}
                 }
-
                 $updatedTimestamp = $entry.timestamp
             }
         }
-
         Update-LastTimestamp -newTimestamp $updatedTimestamp
+		
+		Compare-And-UpdateVariables			# Compares Global:newKeyValues with Global:KeyValues and updates MyJournalData.json
+		
     } catch {
         Write-Host "Error processing log file: $_" -ForegroundColor Red
     }
 }
 
-# Function to get the newest log file
+# Get the newest journal log
 function Get-NewestLogFile {
     try {
         $logFiles = Get-ChildItem -Path $inputFolderPath -Filter "Journal*.log" | Sort-Object LastWriteTime -Descending
@@ -238,66 +463,27 @@ function Process-NewestLogFile {
     }
 }
 
-function Get-KeyValue {
-    param (
-        [Parameter(Mandatory = $true)]
-        [string]$JsonFilePath,
+#####################
+# Main script logic #
+#####################
 
-        [Parameter(Mandatory = $true)]
-        [string]$Key
-    )
+#Define Global variables 
+$Global:GameRunning = $false
+$Global:DEBUG = $true 
 
-    # Validate that the JSON file exists
-    if (-not (Test-Path -Path $JsonFilePath)) {
-        throw "The file '$JsonFilePath' does not exist."
-    }
+#Initialize-GlobalVariables by reading MyJournalData.json 
+Initialize-GlobalVariables
 
-    try {
-        # Read the JSON file
-        $jsonContent = Get-Content -Path $JsonFilePath -Raw | ConvertFrom-Json
+# Start glogal vars matching each other then let's go from there...
+$Global:newCMDRName = $Global:CMDRName 
+$Global:newShipName = $Global:ShipName 
+$Global:newShipType = $Global:ShipType 
+$Global:newStationName = $Global:StationName 
+$Global:newStationType = $Global:StationType 
+$Global:newSystemName = $Global:SystemName 
+$Global:newBodyName = $Global:BodyName 
+$Global:newOrganicFound = $Global:OrganicFound 
 
-        # Attempt to retrieve the value for the specified key
-        if ($jsonContent.PSObject.Properties.Name -contains $Key) {
-            return $jsonContent.$Key
-        } else {
-            #throw "The key '$Key' was not found in the JSON file."
-			return $false
-        }
-    } catch {
-        throw "An error occurred while processing the JSON file: $_"
-    }
-}
-
-function Check-GameRunning {
-    param (
-        [string]$filePath
-    )
-	
-	#Write-Host "Processing status file: $filePath" -ForegroundColor Yellow 	
-	$Flags = Get-KeyValue -JsonFilePath $filePath -Key "Flags"	
-	$Flags2 = Get-KeyValue -JsonFilePath $filePath -Key "Flags2"	
-
-	if ($Flags2) {
-		$GameRunning = $true
-	}
-	else {
-		if ($Flags) {
-			$GameRunning = $true
-		}
-	}
-	# Should only trigger once...
-	if ($GameRunning){
-		Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
-	}
-	# Should never see this...
-	else {
-		Write-Host "Game is not running" -ForegroundColor Red -BackgroundColor Yellow
-	}
-}
-
-# Main script logic
-$GameRunning = $false
-Initialize-PlaceholderFiles
 Process-NewestLogFile
 
 # FileSystemWatcher for real-time monitoring
@@ -309,7 +495,7 @@ $watcher1.IncludeSubdirectories = $false
 
 Register-ObjectEvent -InputObject $watcher1 -EventName "Changed" -Action {
     param($sender, $eventArgs)
-    Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
+	$Global:GameRunning = $true 
     $newestFile = Get-NewestLogFile
     if ($eventArgs.FullPath -eq $newestFile.FullName) {
         $lastTimestamp = Get-LastTimestamp
@@ -329,28 +515,15 @@ Register-ObjectEvent -InputObject $watcher1 -EventName "Created" -Action {
             }
             Process-LogFile -filePath $newestFile.FullName -lastTimestamp $entries[0].timestamp
         } catch {
-            Write-Host "Error processing new log file: $_" -ForegroundColor Red
+            #Write-Host "Error processing new log file: $_" -ForegroundColor Red
         }
+		$Global:GameRunning = $true 
+		Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
     }
 }
 
-$watcher2 = New-Object System.IO.FileSystemWatcher
-$watcher2.Path = $inputFolderPath
-$watcher2.Filter = "status.json"
-$watcher2.EnableRaisingEvents = $true
-
-Register-ObjectEvent -InputObject $watcher2 -EventName "Changed" -Action {
-	if (-not $GameRunning) {	
-		param($sender, $eventArgs)
-		Write-Host "Detected change in file: $($eventArgs.FullPath)" -ForegroundColor Yellow 
-		$statusFilepath = Join-Path -Path $watcher2.Path -ChildPath $watcher2.Filter   
-		Check-GameRunning -filePath $statusFilepath	
-	}
-}
-
 Write-Host "FileSystemWatcher is monitoring $inputFolderPath for changes..." -ForegroundColor Yellow 
+
 while ($true) {
-#    Start-Sleep -Seconds 10
     Wait-Event  # Wait for events indefinitely
 }
-
