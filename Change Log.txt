@@ -24,12 +24,17 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
-//		-	New feature added - integration with EDMC with a modified version of the StreamSource plugin
-			New feature added - using powershell script to write text files from particular Journalfile key values 
-			-	New function fnMyName() returns Commander name string
-			-	New function fnStation() returns Station name string
-		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech
-		-	Re index 
+//		-	NEW FEATURE: - integration with EDMC with a modified version of the StreamSource plugin
+//			NEW FEATURE: - using powershell script to monitor Journal Events and write text files in an output folder 
+			NEW FEATURE: - using powershell script to monitor Journal Events and write to MyJournalData.json in output folder 
+//			-	New function fnMyName() reads CMDRName.txt in output folder
+//			-	New function fnStation() reads StationName.txt in output folder 
+			-	Read MyJournalData.json once per second 
+		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech)
+		-	TESTING - NEW FEATURE: Autopilot Terrain Following 
+		-	STILL TO BE DONE:
+			-	Cleanup and Re index 
+			-	Review and correct Keymaps and mapfiles
 
 
 =======
@@ -42,7 +47,6 @@ v502.02 - Replace legacy TARGET aliases as per;
 		- Remove excludes for compatible thrustmaster hardware (AVA base and/or F18 flight sticks should work) 
 		- Set joystick Y axis default to YAW for BASIC profile for users without Rudders
 		- Review and correct Keymaps and map files
-		-
 
 =======
  
