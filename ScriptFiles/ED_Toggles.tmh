@@ -33,7 +33,7 @@
 	Line 369: 	int tgReverseThrust(int EnableSpeedBrake)
 	Line 448: 	int tgBoost()
 	Line 466: 	int tgHardpoints()
-	Line 505: 	int tgHUDMode(int delayannounce=0)
+	Line 497: 	int tgHUDMode(int delayannounce=0)
 	Line 531: 	int tgFSSMode()
 	Line 557: 	int tgPlanetView()
 	Line 582: 	int tgWarpDrive(int JumpType)
@@ -495,6 +495,11 @@
 		}
 		else {
 			tgHUDMode(0);											// If we're in Supercruise, just toggle the HUD Mode
+
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+			printf("DEBUG: tgHUDMode called from tgHardpoints() due to S5 press in Supercruise (ED_Toggles.tmh - 497)\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+
 		}
 	}
 
@@ -573,7 +578,7 @@
 
 	// TOGGLE: Warp Drive
 	// Parameter: 'JumpType'. Valid: 0 = Supercruise, 1 = Hyperjump 
-	// Flags: fSupercruise, fFSDJump
+	// Flags: fSupercruise, fFSDJump, fFSDCharging, fFSDCooldown, fDocked, fLanded, fMassLocked, fHardpoints, fLandingGear, fCargoScoop 
 	
 	// Global Variables
 	
@@ -703,6 +708,7 @@
 		
 		if (Engage == ON) {		
 			TerrainFollow = ON;												// Flip the flag each time I+U+APENG is pressed
+			SetAltitude = stfnGetKeyValue("Altitude", INTEGER);				// Use current altitude to set MinHeight			
 		}
 		else {
 			TerrainFollow = OFF;
@@ -710,7 +716,6 @@
 		
 		if (TerrainFollow & fMainShip) {
 			if (fAltFromAvgRad == 0) {										// Must be below orbital cruise
-				SetAltitude = stfnGetKeyValue("Altitude", INTEGER);			// Use current altitude to set MinHeight
 				AutoRepeat(hTerrain, 1500, &fnTerrainFollow, SetAltitude);	// Start with a 1.5 second loop
 				sprintf(&myAltitude, "Terrain follow set to %d meters", SetAltitude);
 				fnVPOutput(&SetAltitude);
