@@ -76,6 +76,7 @@
 	int ShipDismissed		= 0;		// Track when Ship is dismissed/recalled via EORIGN-U
 	int SilentStrobe		= 0;		// Used to track when we are using the Silent Running Strobe feature
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
+	int GUIState			= 1;		// Used to track when ship's HUD GUI is turned off or on (default = ON)
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
 	
