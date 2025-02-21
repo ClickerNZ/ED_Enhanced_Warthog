@@ -83,7 +83,7 @@
 		}
 		else {		
 			MapKeyUMD(&MyJoystick, S1,
-				EXEC("tgHUDMode();"),																		// U - Toggle - Analysis/Combat Mode
+				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints();"),																	// M - Deploy/Retract Hard-points
 				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
 				);
