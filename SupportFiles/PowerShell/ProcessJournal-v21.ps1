@@ -1,11 +1,11 @@
-# v20	- Cleaned up V19
-#		- Add some debug code
+# v21	- changed Filesystem watcher code
+#		- moved output folder up one level so both Powershell and Python have a common path
+#		- moved tracking.txt file into Output folder 
 
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
-    [string]$outputFolderPath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Output",  # Output folder to save the text files
-    [string]$trackingFilePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Tracking.txt", # File to track the last processed timestamp
-	[string]$StatusFile = "status.json" # we check for Flags and Flags2 values and set GameRunning accordingly
+    [string]$outputFolderPath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output",  # Output folder to save the text files
+    [string]$trackingFilePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output\Tracking.txt" # File to track the last processed timestamp
 )
 
 $JsonFilePath = Join-Path -Path $outputFolderPath -ChildPath "MyJournalData.json"
@@ -36,7 +36,7 @@ $voice = "Microsoft Catherine"
 $rate = 0
 $volume = 75
 
-[TTS]::SpeakText("Journal processor loading")
+[TTS]::SpeakText("Journal processor version 21 loading", $voice, $rate, $volume)
 
 # Load the map file into memory
 Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
@@ -48,7 +48,7 @@ Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\P
 	# $formattedNum = $exovalue.ToString("N0")
 	# Write-Output "The value for the key is: $formattedNum"
 
-Write-Host "ProcessJournal v19b"
+Write-Host "ProcessJournal v21"
 
 # Ensure the output folder exists
 if (-not (Test-Path -Path $outputFolderPath)) {
@@ -110,6 +110,8 @@ function Compare-And-UpdateVariables {
         }
     }
 
+	$localtime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # Match log file timestamp format
+
     if ($changeDetected) {
         foreach ($key in $keys) {
             $newKeyName = "Global:new$key"
@@ -119,18 +121,21 @@ function Compare-And-UpdateVariables {
                 Set-Variable -Name $key -Value (Get-Variable -Name "new$key" -Scope Global).Value -Scope Global
             }
         }
-		Write-Host "Update MyJournalData.json" -ForegroundColor Cyan
         Update-JsonFile
+		Write-Host "[$localtime] - Updated MyJournalData.json" -ForegroundColor Cyan
     }
+	else {
+		Write-Host "[$localtime] - MyJournalData.json NOT Updated" -ForegroundColor Blue
+	}
 }
 
 # Update JSON File
 function Update-JsonFile {
 	
-	$Global:timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
+	$Global:localtime = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
 	
     $updatedData = [ordered]@{
-        timestamp    = $Global:timestamp			
+        localtime    = $Global:localtime			
         CMDRName     = $Global:CMDRName
         ShipName     = $Global:ShipName
         ShipType     = $Global:ShipType
@@ -176,7 +181,7 @@ function Process-LogFile {
     )
     #Write-Host "Processing log file: $filePath starting from timestamp: $lastTimestamp" -ForegroundColor Yellow
 
-    $timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # Match log file timestamp format
+    $localtime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # Match log file timestamp format
 
     try {
         $entries = Get-Content -Path $filePath | ForEach-Object { $_ | ConvertFrom-Json }
@@ -192,10 +197,10 @@ function Process-LogFile {
 							$Global:newCMDRName = $entry.Name
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Commander, Name = $Global:newCMDRName" -ForegroundColor Cyan
 								}
 							}
                         }
@@ -206,10 +211,10 @@ function Process-LogFile {
 							$Global:newShipType = $ShipType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Cyan 
+									Write-Host "$updatedTimestamp : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Cyan 
 								}
 							}
                         }
@@ -219,10 +224,10 @@ function Process-LogFile {
 							$Global:newStationName = $entry.StationName
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Docked, StationName = $Global:newStationName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Docked, StationName = $Global:newStationName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Docked, StationName = $Global:newStationName" -ForegroundColor Cyan 
+									Write-Host "$updatedTimestamp : Event: Docked, StationName = $Global:newStationName" -ForegroundColor Cyan 
 								}
 							}							
                         }
@@ -230,10 +235,10 @@ function Process-LogFile {
 							$Global:newStationType = $entry.StationType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Docked, StationType = $Global:newStationType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Docked, StationType = $Global:newStationType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Docked, StationType = $Global:newStationType" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Docked, StationType = $Global:newStationType" -ForegroundColor Cyan
 								}
 							}							
                         }
@@ -244,10 +249,10 @@ function Process-LogFile {
 							$Global:newShipType = $ShipType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Loadout, Ship = $Global:newShipType" -ForegroundColor Cyan
 								}
 							}														
                         }
@@ -255,10 +260,10 @@ function Process-LogFile {
 							$Global:newShipName = $entry.ShipName
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Docked, ShipName = $Global:newShipName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Docked, ShipName = $Global:newShipName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Docked, ShipName = $Global:newSHipName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Docked, ShipName = $Global:newSHipName" -ForegroundColor Cyan
 								}
 							}														
                         }
@@ -269,10 +274,10 @@ function Process-LogFile {
 							$Global:newShipType = $ShipType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Cyan 
+									Write-Host "$updatedTimestamp : Event: ShipyardSwap, ShipType = $Global:newShipType" -ForegroundColor Cyan 
 								}
 							}																					
                         }
@@ -282,10 +287,10 @@ function Process-LogFile {
 							$Global:newSystemName = $entry.StarSystem
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Location, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -293,10 +298,10 @@ function Process-LogFile {
 							$Global:newBodyName = $entry.Body
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Location, Body = $Global:newBodyName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Location, Body = $Global:newBodyName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Location, Body = $Global:newBodyName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Location, Body = $Global:newBodyName" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -304,10 +309,10 @@ function Process-LogFile {
 							$Global:newStationName = $entry.StationName
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Location, StationName = $Global:newStationName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Location, StationName = $Global:newStationName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Location, StationName = $Global:newStationName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Location, StationName = $Global:newStationName" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -315,10 +320,10 @@ function Process-LogFile {
 							$Global:newStationType = $entry.StationType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: Location, StationType = $Global:newStationType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: Location, StationType = $Global:newStationType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: Location, StationType = $Global:newStationType" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: Location, StationType = $Global:newStationType" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -328,10 +333,10 @@ function Process-LogFile {
 							$Global:newBodyName = $entry.Body
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: TouchDown, Body = $Global:newBodyName" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -341,10 +346,10 @@ function Process-LogFile {
 							$Global:newStationName = $entry.StationName
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Cyan  
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationName = $Global:newStationName" -ForegroundColor Cyan  
 								}
 							}																					
 						}
@@ -352,10 +357,10 @@ function Process-LogFile {
 							$Global:newStationType = $entry.StationType
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Cyan 
+									Write-Host "$updatedTimestamp : Event: DockingGranted, StationType = $Global:newStationType" -ForegroundColor Cyan 
 								}
 							}																					
 						}
@@ -365,10 +370,10 @@ function Process-LogFile {
 							$Global:newSystemName = $entry.StarSystem
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
+									Write-Host "$updatedTimestamp : Event: FSDJump, StarSystem = $Global:newSystemName" -ForegroundColor Cyan
 								}
 							}																					
                         }
@@ -383,43 +388,25 @@ function Process-LogFile {
 							}
 							if ($Global:Debug) {
 								if (-not $Global:GameRunning) {
-									Write-Host "Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Yellow 
+									Write-Host "$updatedTimestamp : Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Yellow 
 								}
 								else {
-									Write-Host "Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Cyan  
+									Write-Host "$updatedTimestamp : Event: ScanOrganic, Species_Localised = $Global:newOrganicFound" -ForegroundColor Cyan  
 								}
 							}																					
                         }
                     }
-<#					
 					"Shutdown" {
-						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green						
-						if ($Global:GameRunning) {
-							try {
-								if ($null -ne $watcher1) {
-									$watcher1.Dispose()
-									Write-Host "[$timestamp] Watcher1 disposed." -ForegroundColor Green
-								}
-							} catch {
-								Write-Host "[$timestamp] Error disposing watcher: $_" -ForegroundColor Red
-							} finally {
-								exit 0
-							}
-						}
-					}
-#>
-					"Shutdown" {
-						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green                        
+						$localtime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+						Write-Host "[$localtime] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green                        
 						if ($Global:GameRunning -and $null -ne $watcher1) {
 							try {
 								$watcher1.Dispose()
-								Write-Host "[$timestamp] Watcher1 disposed." -ForegroundColor Green
+								Write-Host "[$localtime] Watcher1 disposed." -ForegroundColor Green
 							} catch {
-								Write-Host "[$timestamp] Error disposing watcher: $_" -ForegroundColor Red
+								Write-Host "[$localtime] Error disposing watcher: $_" -ForegroundColor Red
 							}
-							Write-Host "[$timestamp] Exiting script..." -ForegroundColor Cyan
+							Write-Host "[$localtime] Exiting script..." -ForegroundColor Cyan
 							Stop-Process -Id $PID -Force  # Forcefully kill script
 						}
 					}
@@ -497,6 +484,8 @@ Register-ObjectEvent -InputObject $watcher1 -EventName "Changed" -Action {
     param($sender, $eventArgs)
 	$Global:GameRunning = $true 
     $newestFile = Get-NewestLogFile
+	$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+	Write-Host "[$timestamp] - Journal file changed, call Process-Logfile"
     if ($eventArgs.FullPath -eq $newestFile.FullName) {
         $lastTimestamp = Get-LastTimestamp
         Process-LogFile -filePath $newestFile.FullName -lastTimestamp $lastTimestamp

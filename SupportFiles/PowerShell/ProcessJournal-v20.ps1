@@ -48,7 +48,7 @@ Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\P
 	# $formattedNum = $exovalue.ToString("N0")
 	# Write-Output "The value for the key is: $formattedNum"
 
-Write-Host "ProcessJournal v17"
+Write-Host "ProcessJournal v20"
 
 # Ensure the output folder exists
 if (-not (Test-Path -Path $outputFolderPath)) {
@@ -119,8 +119,9 @@ function Compare-And-UpdateVariables {
                 Set-Variable -Name $key -Value (Get-Variable -Name "new$key" -Scope Global).Value -Scope Global
             }
         }
-		Write-Host "Update MyJournalData.json" -ForegroundColor Cyan
+		$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"  # Match log file timestamp format
         Update-JsonFile
+		Write-Host "[$timestamp] Updated MyJournalData.json" -ForegroundColor Cyan
     }
 }
 
@@ -391,24 +392,6 @@ function Process-LogFile {
 							}																					
                         }
                     }
-<#					
-					"Shutdown" {
-						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
-						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green						
-						if ($Global:GameRunning) {
-							try {
-								if ($null -ne $watcher1) {
-									$watcher1.Dispose()
-									Write-Host "[$timestamp] Watcher1 disposed." -ForegroundColor Green
-								}
-							} catch {
-								Write-Host "[$timestamp] Error disposing watcher: $_" -ForegroundColor Red
-							} finally {
-								exit 0
-							}
-						}
-					}
-#>
 					"Shutdown" {
 						$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 						Write-Host "[$timestamp] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green                        
@@ -497,6 +480,8 @@ Register-ObjectEvent -InputObject $watcher1 -EventName "Changed" -Action {
     param($sender, $eventArgs)
 	$Global:GameRunning = $true 
     $newestFile = Get-NewestLogFile
+	$timestamp = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
+	Write-Host "[$timestamp] - Journal file changed, call Process-Logfile"
     if ($eventArgs.FullPath -eq $newestFile.FullName) {
         $lastTimestamp = Get-LastTimestamp
         Process-LogFile -filePath $newestFile.FullName -lastTimestamp $lastTimestamp

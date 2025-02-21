@@ -1,6 +1,4 @@
-# v19	- Remove text file processing
-#		- Use Global variables and a simple flag 
-#		- Use Read/Create, Compare, Update json functions
+# v18	- intermediate update to move from writing text files to writing a json file 
 
 param (
     [string]$inputFolderPath = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",  # Input folder containing the Journal*.log files
@@ -8,8 +6,6 @@ param (
     [string]$trackingFilePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Tracking.txt", # File to track the last processed timestamp
 	[string]$StatusFile = "status.json" # we check for Flags and Flags2 values and set GameRunning accordingly
 )
-
-$JsonFilePath = Join-Path -Path $outputFolderPath -ChildPath "MyJournalData.json"
 
 # Set the module path for the current session
 $customModulePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Modules"
@@ -52,7 +48,7 @@ Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\P
 #$formattedNum = $exovalue.ToString("N0")
 #Write-Output "The value for the key is: $formattedNum"
 
-Write-Host "ProcessJournal v19"
+Write-Host "ProcessJournal v18"
 
 # Ensure the output folder exists
 if (-not (Test-Path -Path $outputFolderPath)) {
@@ -64,96 +60,6 @@ if (-not (Test-Path -Path $trackingFilePath)) {
     Set-Content -Path $trackingFilePath -Value "{\"lastTimestamp\":null}" -Encoding ascii
 }
 
-# Function 1: Initialize or Load Global Variables from JSON
-function Initialize-GlobalVariables {
-    if (-Not (Test-Path $JsonFilePath)) {
-        # JSON file does not exist, create it with default values
-        $defaultData = @{
-#			timestamp    = "not set" 
-            CMDRName     = "not set"
-            ShipName     = "not set"
-            ShipType     = "not set"
-            StationName  = "not set"
-            StationType  = "not set"
-            SystemName   = "not set"
-            BodyName     = "not set"
-            OrganicFound = "not set"
-        }
-        $defaultData | ConvertTo-Json | Set-Content $JsonFilePath
-    }
-
-    # Read JSON file and parse data
-    $jsonData = Get-Content $JsonFilePath | ConvertFrom-Json
-
-    # Assign global variables
-#   $Global:timestamp = $jsonData.timestamp
-    $Global:CMDRName = $jsonData.CMDRName
-    $Global:ShipName = $jsonData.ShipName
-    $Global:ShipType = $jsonData.ShipType
-    $Global:StationName = $jsonData.StationName
-    $Global:StationType = $jsonData.StationType
-    $Global:SystemName = $jsonData.SystemName
-    $Global:BodyName = $jsonData.BodyName
-    $Global:OrganicFound = $jsonData.OrganicFound
-}
-
-# Function 2: Compare New Variables with Global Variables
-function Compare-And-UpdateVariables {
-    $changeDetected = $false
-
-    # List of tracked keys
-    $keys = @("CMDRName", "ShipName", "ShipType", "StationName", "StationType", "SystemName", "BodyName", "OrganicFound")
-
-    foreach ($key in $keys) {
-        $globalKeyName = "Global:$key"
-        $newKeyName = "Global:new$key"
-
-        if (Test-Path Variable:$newKeyName) {
-            if ((Get-Variable -Name "new$key" -Scope Global).Value -ne (Get-Variable -Name $key -Scope Global).Value) {
-                $changeDetected = $true
-                break					# if we detect a change, no point testing any more keys
-            }
-        }
-    }
-
-    if ($changeDetected) {
-        foreach ($key in $keys) {
-            $newKeyName = "Global:new$key"
-            $globalKeyName = "Global:$key"
-
-            if (Test-Path Variable:$newKeyName) {
-                Set-Variable -Name $key -Value (Get-Variable -Name "new$key" -Scope Global).Value -Scope Global
-            }
-        }
-		Write-Host "Update MyJournalData.json" -ForegroundColor Cyan
-        Update-JsonFile
-    }
-}
-
-# Function 3: Update JSON File
-function Update-JsonFile {
-	
-	$Global:timestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-	
-    $updatedData = [ordered]@{
-        timestamp    = $Global:timestamp			
-        CMDRName     = $Global:CMDRName
-        ShipName     = $Global:ShipName
-        ShipType     = $Global:ShipType
-        StationName  = $Global:StationName
-        StationType  = $Global:StationType
-        SystemName   = $Global:SystemName
-        BodyName     = $Global:BodyName
-        OrganicFound = $Global:OrganicFound
-    }
-
-    $updatedData | ConvertTo-Json -Compress | Set-Content $JsonFilePath
-   # Convert to JSON without whitespace
-#    $jsonString = $updatedData | ConvertTo-Json -Compress
-#    Set-Content -Path $JsonFilePath -Value $jsonString
-}
-
-<#
 # Function to initialize placeholder files
 function Initialize-PlaceholderFiles {
     Write-Host "Initializing placeholder files..."
@@ -193,7 +99,6 @@ function Write-TextToFile {
         Write-Host "Error writing to file: $finalFilePath - $_" -ForegroundColor Red
     }
 }
-#>
 
 # Function to read the tracking file
 function Get-LastTimestamp {
@@ -220,7 +125,6 @@ function Update-LastTimestamp {
     }
 }
 
-<#
 # Add function to update MyJournalData.json
 function Update-MyJournalData {
     param (
@@ -288,7 +192,6 @@ function Update-MyJournalData {
     # Save back to JSON file, preserving all entries
     $jsonData | ConvertTo-Json -Depth 10 -Compress | Set-Content -Path $jsonFilePath -Encoding ascii
 }
-#>
 
 # Function to process a single log file
 function Process-LogFile {
@@ -310,167 +213,141 @@ function Process-LogFile {
 
                 switch ($entry.event) {
                     "Commander" {
-                        if ("Name" -in $entry.PSObject.Properties.Name) {
-							$Global:newCMDRName = $entry.Name							
-#						    $textFileName = "CMDRName.txt"
-#							$textContent = $entry.Name
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = CMDRName, Value = $textContent" -ForegroundColor Cyan
+                        if ("Name" -in $entry.PSObject.Properties.Name) {							
+						    $textFileName = "CMDRName.txt"
+							$textContent = $entry.Name
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = CMDRName, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "LoadGame" {
                         if ("Ship" -in $entry.PSObject.Properties.Name) {
- 							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
-							$Global:newShipType = $ShipType
-#						    $textFileName = "ShipType.txt"
-#							$textContent = $ShipType
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
+ 							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship 														
+						    $textFileName = "ShipType.txt"
+							$textContent = $ShipType
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
-					"DockingGranted" {
-                        if ("StationName" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationName = $entry.StationName
-						}
-                        if ("StationType" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationType = $entry.StationType
-						}
-					}
-					
                     "Docked" {
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationName = $entry.StationName
-#						    $textFileName = "StationName.txt"
-#							$textContent = $entry.StationName
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = StationName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "StationName.txt"
+							$textContent = $entry.StationName
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = StationName, Value = $textContent" -ForegroundColor Cyan
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationType = $entry.StationType
-#						    $textFileName = "StationType.txt"
-#							$textContent = $entry.StationType
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp												
-#							Write-Host "Update MyJournal.json: Key = StationType, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "StationType.txt"
+							$textContent = $entry.StationType
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp												
+							Write-Host "Update MyJournal.json: Key = StationType, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "Loadout" {
                         if ("Ship" -in $entry.PSObject.Properties.Name) {
 							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
-							$Global:newShipType = $ShipType
-#						    $textFileName = "ShipType.txt"
-#							$textContent = $ShipType
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "ShipType.txt"
+							$textContent = $ShipType
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
                         }
                         if ("ShipName" -in $entry.PSObject.Properties.Name) {
-							$Global:newShipName = $entry.ShipName
-#						    $textFileName = "ShipName.txt"
-#							$textContent = $entry.ShipName
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = ShipName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "ShipName.txt"
+							$textContent = $entry.ShipName
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = ShipName, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "ShipyardSwap" {
                         if ("ShipType" -in $entry.PSObject.Properties.Name) {
 							$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
-							$Global:newShipType = $ShipType
-#						    $textFileName = "ShipType.txt"
-#							$textContent = $ShipType
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "ShipType.txt"
+							$textContent = $ShipType
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = ShipType, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "Location" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
-							$Global:newSystemName = $entry.StarSystem
-#						    $textFileName = "SystemName.txt"
-#							$textContent = $entry.StarSystem
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = SystemName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "SystemName.txt"
+							$textContent = $entry.StarSystem
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = SystemName, Value = $textContent" -ForegroundColor Cyan
                         }
                         if ("Body" -in $entry.PSObject.Properties.Name) {
-							$Global:newBodyName = $entry.Body
-#						    $textFileName = "BodyName.txt"
-#							$textContent = $entry.Body
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = BodyName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "BodyName.txt"
+							$textContent = $entry.Body
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = BodyName, Value = $textContent" -ForegroundColor Cyan
                         }
                         if ("StationName" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationName = $entry.StationName
-#						    $textFileName = "StationName.txt"
-#							$textContent = $entry.StationName
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = StationName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "StationName.txt"
+							$textContent = $entry.StationName
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = StationName, Value = $textContent" -ForegroundColor Cyan
                         }
                         if ("StationType" -in $entry.PSObject.Properties.Name) {
-							$Global:newStationType = $entry.StationType
-#						    $textFileName = "SystemType.txt"
-#							$textContent = $entry.StationType
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = SystemType, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "SystemType.txt"
+							$textContent = $entry.StationType
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = SystemType, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "Touchdown" {
                         if ("Body" -in $entry.PSObject.Properties.Name) {
-							$Global:newBodyName = $entry.Body
-#						    $textFileName = "BodyName.txt"
-#							$textContent = $entry.Body
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = BodyName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "BodyName.txt"
+							$textContent = $entry.Body
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = BodyName, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "FSDJump" {
                         if ("StarSystem" -in $entry.PSObject.Properties.Name) {
-							$Global:newSystemName = $entry.StarSystem
-#						    $textFileName = "SystemName.txt"
-#							$textContent = $entry.StarSystem
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
-#							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#							Write-Host "Update MyJournal.json: Key = SystemName, Value = $textContent" -ForegroundColor Cyan
+						    $textFileName = "SystemName.txt"
+							$textContent = $entry.StarSystem
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName
+							Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+						    Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+							Write-Host "Update MyJournal.json: Key = SystemName, Value = $textContent" -ForegroundColor Cyan
                         }
                     }
                     "ScanOrganic" {						
                         if (("ScanType" -in $entry.PSObject.Properties.Name) -and $entry.ScanType -eq "Analyse" -and ("Species_Localised" -in $entry.PSObject.Properties.Name)) {
-							if ($Global.GameRunning) { 								
-								$exovalue = Get-MappedValue -MapName "Exobiology_Value_map" -Key $entry.Species_Localised
-								$formattedNum = [math]::Round($exovalue / 1000000, 1)
-								$Global:newOrganicFound = $entry.Species_Localised
-								[TTS]::SpeakText("Value of $Global:newOrganicFound is $formattedNum million")
-							}
-#							$newSpecies = $entry.Species_Localised
-#						    $textFileName = "OrganicFound.txt"
-#							$textContent = $newSpecies
-#						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName							
+							$exovalue = Get-MappedValue -MapName "Exobiology_Value_map" -Key $entry.Species_Localised
+							$formattedNum = [math]::Round($exovalue / 1000000, 1)
+							$newSpecies = $entry.Species_Localised
+						    $textFileName = "OrganicFound.txt"
+							$textContent = $newSpecies
+						    $filePath = Join-Path -Path $outputFolderPath -ChildPath $textFileName							
 						#	if ($Global.GameRunning) { 
-#								Write-TextIfDifferent -finalFilePath $filePath -content $textContent
-#								Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
-#								Write-Host "Update MyJournal.json: Key = OrganicFound, Value = $textContent" -ForegroundColor Cyan
-#								[TTS]::SpeakText("Value of $newSpecies is $formattedNum million")							
+								Write-TextIfDifferent -finalFilePath $filePath -content $textContent
+								Update-MyJournalData -outputFolderPath $outputFolderPath -filePath $filePath -fileContent $textContent -timestamp $timestamp
+								Write-Host "Update MyJournal.json: Key = OrganicFound, Value = $textContent" -ForegroundColor Cyan
+								[TTS]::SpeakText("Value of $newSpecies is $formattedNum million")							
 						#	}
                         }
                     }
@@ -499,15 +376,11 @@ function Process-LogFile {
             }
         }
         Update-LastTimestamp -newTimestamp $updatedTimestamp
-		
-		Compare-And-UpdateVariables			# Compares Global:newKeyValues with Global:KeyValues and updates MyJournalData.json
-		
     } catch {
         Write-Host "Error processing log file: $_" -ForegroundColor Red
     }
 }
 
-<#
 function Write-TextIfDifferent {
     param (
         [string]$finalFilePath,
@@ -523,7 +396,6 @@ function Write-TextIfDifferent {
     Write-Host "Writing to file: $finalFilePath with content: $content" -ForegroundColor Cyan
     $content | Set-Content -Path $finalFilePath
 }
-#>
 
 # Function to get the newest log file
 function Get-NewestLogFile {
@@ -552,7 +424,6 @@ function Process-NewestLogFile {
     }
 }
 
-<#
 function Get-KeyValue {
     param (
         [Parameter(Mandatory = $true)]
@@ -582,9 +453,7 @@ function Get-KeyValue {
         throw "An error occurred while processing the JSON file: $_"
     }
 }
-#>
 
-<#
 function Check-GameRunning {
     param (
         [string]$filePath
@@ -609,29 +478,10 @@ function Check-GameRunning {
         Write-Host "Error processing file: $_" -ForegroundColor Red
     }
 }
-#>
 
-#####################
-# Main script logic #
-#####################
-
-#Define Global variables 
+# Main script logic
 $Global:GameRunning = $false
-
-#Initialize-GlobalVariables by reading MyJournalData.json 
-Initialize-GlobalVariables
-
-# Start glogal vars matching each other then let's go from there...
-$Global:newCMDRName = $Global:CMDRName 
-$Global:newShipName = $Global:ShipName 
-$Global:newShipType = $Global:ShipType 
-$Global:newStationName = $Global:StationName 
-$Global:newStationType = $Global:StationType 
-$Global:newSystemName = $Global:SystemName 
-$Global:newBodyName = $Global:BodyName 
-$Global:newOrganicFound = $Global:OrganicFound 
-#$Global:newtimestamp = (Get-Date -Format "yyyy-MM-dd HH:mm:ss")
-
+Initialize-PlaceholderFiles
 Process-NewestLogFile
 
 # FileSystemWatcher for real-time monitoring
@@ -665,12 +515,9 @@ Register-ObjectEvent -InputObject $watcher1 -EventName "Created" -Action {
         } catch {
             #Write-Host "Error processing new log file: $_" -ForegroundColor Red
         }
-		$Global:GameRunning = $true 
-		Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
     }
 }
 
-<#
 $watcher2 = New-Object System.IO.FileSystemWatcher
 $watcher2.Path = $inputFolderPath
 $watcher2.Filter = "status.json"
@@ -687,7 +534,6 @@ Register-ObjectEvent -InputObject $watcher2 -EventName "Changed" -Action {
         #Write-Host "Skipping processing because GameRunning is true" -ForegroundColor Yellow
     }
 }
-#>
 
 Write-Host "FileSystemWatcher is monitoring $inputFolderPath for changes..." -ForegroundColor Yellow 
 while ($true) {
