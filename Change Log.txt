@@ -24,13 +24,14 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
-//		-	NEW FEATURE: - integration with EDMC with a modified version of the StreamSource plugin
-//			NEW FEATURE: - using powershell script to monitor Journal Events and write text files in an output folder 
 			NEW FEATURE: - using powershell script to monitor Journal Events and write to MyJournalData.json in output folder 
-//			-	New function fnMyName() reads CMDRName.txt in output folder
+			-	New function fnMyName() reads CMDRName.txt in output folder
 //			-	New function fnStation() reads StationName.txt in output folder 
 			-	Read MyJournalData.json once per second 
 		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech)
+		-	Toggle HUD when using Night Vision (taken from Aussiedroid)
+		-	Toggle HUD during FSDJump (taken from Aussiedroid)
+		-	Review/fix/move code for several detected flag transitions
 		-	TESTING - NEW FEATURE: Autopilot Terrain Following 
 		-	STILL TO BE DONE:
 			-	Cleanup and Re index 
