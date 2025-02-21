@@ -559,7 +559,9 @@
 					ShipDismissed = NO;			
 				}
 			}
-			
+
+			//	Placeholder for future development
+			//	LOGIC: Set when Landing gear is deployed and reset when retracted
 			if (fLandingGear != lLandingGear) {									// This may be announced via in game setting
 				if (fLandingGear & fMainShip) {									// Dealt with in tgLandingGear
 					// Landing Gear Deployed 
@@ -568,25 +570,51 @@
 					// Landing Gear retracted  
 				}
 			}
-			
-			if ((!fShieldsUp & lShieldsUp) & (!fSilentRunning & fMainShip) & !fLanded) {	// Shields just dropped
-				if (fDanger) {
-					if (AutoStrobe) {
-						DeferCall(750, &fnVPOutput, "Activating Silent Strobe");
-						tgSilentRunning(STROBE);
+
+			//	LOGIC: Reset when shield drops. Set when fully charged
+			if ((fShieldsUp != lShieldsUp)	{									// Shields just dropped?
+				if (!fShieldsUp)
+					if ((!fSilentRunning & fMainShip) & !fLanded)) {
+						if (fDanger) {
+							if (AutoStrobe) {
+								DeferCall(750, &fnVPOutput, "Activating Silent Strobe");
+								tgSilentRunning(STROBE);
+							}
+							else {
+								DeferCall(750, &fnTextToSpeech, "Consider using Silent Running commander");
+							}
+						}
 					}
-					else {
-						DeferCall(750, &fnTextToSpeech, "Consider using Silent Running commander");
-					}
-				}
+				}	
 			}
 
-			if (fMainShip & (fSupercruise != lSupercruise)) {								// Detect when Supercruise toggles
+			if (fMainShip & (fSupercruise != lSupercruise)) {					// Detect when Supercruise toggles ie not Taxi or Dropship 
 				if(fSupercruise) {
-					printf("Supercruise flag set\x0a");
+
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+//					DeferCall(2000, &fnVPOutput, "Supercruise flag");			// fSupercruise and fFSDJump often occur simultaneouly 
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+
+//					MOVED TO fFSDJump flag reset 				
+//
+//					if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
+//						tgHUDMode(0);											// Turn on Analysis mode and... 
+//
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+//						printf("DEBUG: tgHUDMode called due to Supercruise flag (ED_StateTracker.tmh - 592)\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+//
+//						fnSelectFiregroup(1);									// Select Discovery scanner. NOTE: Always have Discovery scanner set to FG 1						
+//					}
+
 				}
 				else {
-					printf("Supercruise flag reset\x0a");
+				
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+//					fnVPOutput("Supercruise flag reset");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+
+					// Maybe create dedicated external function???
 					if (SelectDrop == NO) {													// Uninitiated drop				
 						if (OrbitalCruise & !fInterdicted) {
 							TTS = "Entering Glide Mode";
@@ -598,6 +626,11 @@
 						if (fInterdicted | fDanger) {
 							if (fHUDAnalysis) {	
 								tgHUDMode(1);												// Select Combat HUD
+
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+						printf("DEBUG: tgHUDMode called due to SlectDrop = NO, Interdicted or Danger (ED_StateTracker.tmh - 618)\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+
 							}
 							if (!fHardpoints) {
 								tgHardpoints();												// Deploy weapons
@@ -726,7 +759,13 @@
 
 			if (fFSDCharging != lFSDCharging) {
 				if (fFSDCharging) {
-					printf("FSD charging\x0a");
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					if (!fFSDHyperdriveChg) {
+						fnVPOutput("FSD Supercruise charging");							// Short delay should be instantaneous. Allows tweaking if we get other messages clobbering this one 
+					}
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
 				}
 				else {
 					// do nothing
@@ -747,7 +786,7 @@
 					fnVPOutput("WARNING! Fuel Low");
 				}
 				else {
-					printf("Fuel above low threshold\x0a");
+					fnVPOutput("Fuel above low threshold");
 				}				
 			}
 
@@ -825,11 +864,25 @@
 			}
 			
 			if ((fNightVision != lNightVision) & (fMainShip | fSRV)) {
+			
+				printf("NVGUI = %d, GUIState = %d\x0a", NVGUI, GUIState);
+			
 				if (fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))) {
-					fnVPOutput("Night vision");
+					fnVPOutput("Night vision");										
+					if (NVGUI & GUIState) {												// NVGUI is configured in ED_UserSettings.tmh. GUIState initialised in ED_GlobalVars.tmh 
+						ActKey(PULSE+KEYON+HideShipGUI);										// Turn off HUD
+						printf("ShipGUI should now be OFF\x0a");
+						GUIState = 0;
+					}
+					
 				}
 				else if (!fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))){
 					fnVPOutput("Night vision:		OFF");
+					if (NVGUI & GUIState == 0) {
+						ActKey(PULSE+KEYON+HideShipGUI);										// Turn on HUD
+						printf("ShipGUI should now be ON\x0a");											
+						GUIState = 1;
+					}
 				}				
 			}
 
@@ -848,32 +901,58 @@
 			// Cannot select FSDJump when SCO is in Overcharge mode. This is announced in-game.
 			// There is currently no status.json flag for SCO
 			
-			if (fFSDJump != lFSDJump) {										// Detect when Supercruise or Hyperjump has been toggled
-				if (!fFSDJump) {											// Detect when FSD Jump flag gets reset
-		//			printf("FSD Jump flag reset\x0a");
-				}
-				else {														// Detect when FSD Jump flag gets set
-		//			printf("FSD Jump flag set\x0a");
-					
-					if (!fHUDAnalysis & AutoHUD) {							// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
-						tgHUDMode(1);										// Delays announcing change
+			// LOGIC:	fFSDJump is set at end of FSD countdown. It is reset when...
+			//			...Supercruise is entered from Normal flight
+			//			...or when we reach hyperjump destination
+			//			...or we're pulled out of witchspace
+			
+			if (fFSDJump != lFSDJump) {										// Detect when Supercruise or Hyperjump has been toggled	
+
+// DEBUG +++++++++++++++++++++++++++++++++++++++++
+//				if (!fFSDJump) {
+//					fnVPOutput("FSD Flag reset");
+//				}
+//				else {
+//					fnVPOutput("FSD Flag");				
+//				}
+//				printf("\x0a+++ DEBUG: NVGUI = %d, GUIState = %d\x0a", NVGUI, GUIState);
+//				printf("+++ DEBUG: fSupercruise = %d, fFSDJump = %d\x0a\x0a", fSupercruise, fFSDJump);
+// DEBUG +++++++++++++++++++++++++++++++++++++++++
+			
+				if (!fFSDJump & fSupercruise) {								// Detect when FSD Jump flag gets reset
+												
+					if (FSDGUI & GUIState == 0) {
+						ActKey(PULSE+KEYON+HideShipGUI);					// Turn HUD back ON 
+						GUIState = 1;
+
+// DEBUG +++++++++++++++++++++++++++++++++++++++++
+						printf("ShipGUI should now be ON\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++
+
 					}
-					// Set Firegroup to 0
-//					fnCheckFiregroup();										// Sets global Firegoup to match status.json 
-					printf("DEBUG: Firegroup in status.json is %d\x0a", fnCheckFiregroup());	// DEBUG 
 
+					if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
+						tgHUDMode(0);											// Turn on Analysis mode and... 
+//
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+						printf("DEBUG: tgHUDMode called due to Supercruise flag (ED_StateTracker.tmh - 921)\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
+//
+						fnSelectFiregroup(1);									// Select Discovery scanner. NOTE: Always have Discovery scanner set to FG 1						
+					}
+				}
+				
+				if (fFSDJump & fFSDHyperdriveChg) {	
+				
+					if (FSDGUI & GUIState == 1) {							// Set in ED_userSettings.tmh 
+						ActKey(PULSE+KEYON+HideShipGUI);					// Turn HUD OFF 
+						GUIState = 0;
 
-//	CREATE SEPERATE FUNCTION
-//					
-//					while (Firegroup != 1) {								// Too fast?????
-//						ActKey(PULSE+NextFireGroup);
-//						Firegroup = Firegroup + 1;
-// DEBUG ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//						printf("DEBUG: Firegroup %d\x0a", Firegroup);							// DEBUG
-// DEBUG ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//						fnCheckFiregroup();
-//					}
-//					printf("DEBUG: Firegroup in status.json is %d\x0a", fnCheckFiregroup());	// DEBUG 						
+// DEBUG +++++++++++++++++++++++++++++++++++++++++						
+						printf("ShipGUI should now be OFF\x0a");
+// DEBUG +++++++++++++++++++++++++++++++++++++++++
+
+					}
 				}
 			}
 
@@ -1168,11 +1247,25 @@
 			}
 
 			if (fFSDHyperdriveChg != lFSDHyperdriveChg) {
-				if (fFSDHyperdriveChg) {
-					printf("FSD Hyperdrive Charging\x0a");					
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				printf("+++ DEBUG: fFSDHyperdriveChg = %d, fFSDJump = %d, fSupercruise = %d \x0a\x0a", fFSDHyperdriveChg, fFSDJump, fSupercruise);
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+			
+				if (fFSDHyperdriveChg) {										// MAYBE - stick the HideGUI code here instead???
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag");		// Allows tweaking if we get other messages clobbering this one 
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
 				}
 				else {
-					// FSD Hyperdrive no longer charging									
+					// FSD Hyperdrive no longer charging
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag reset");	// Allows tweaking if we get other messages clobbering this one 
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					
 				}
 			}
 		}
@@ -1181,7 +1274,7 @@
 			fnSetLEDs();
 		}
 
-		OldFlags2 = Flags2;												// Keep track of last Flags2 Value to track when Flags2 bits change		
+		OldFlags2 = Flags2;														// Keep track of last Flags2 Value to track when Flags2 bits change		
 	}
 	
 	//END of stfnProcessFlags2()
