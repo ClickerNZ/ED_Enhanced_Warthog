@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_Initialise.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_Initialise.tmh ... supports Elite Dangerous (Trailblazers)
 
 // Refer Change Log.txt in parent folder
 
@@ -28,9 +28,9 @@
 	Line 165: 	int initThrottleAxis()
 	Line 179: 	int initSliderAxis()
 	Line 192: 	int initSlewAxis()
-	Line 211: 	int initRudderAxis()
-	Line 224: 	int initTextToSpeech()
-	Line 242: 	int initSoundFX()
+	Line 208: 	int initRudderAxis()
+	Line 221: 	int initTextToSpeech()
+	Line 239: 	int initSoundFX()
 */
 
 // START
@@ -222,7 +222,7 @@
 		VoiceExists = fopen(&VoicePath, "r");
 		if (VoiceExists) {
 			fclose(VoiceExists);
-			SerialText = 1;
+//			SerialText = 1;						// Handled by the fact the Gamestarted = 0
 			fnVPOutput("Text to speech function enabled");
 			printf("Voice.exe present at %s\x0a\x0a", &VoicePath);
 		}
@@ -240,7 +240,7 @@
 		SounderExists = fopen(&SoundPath, "r");
 		if (SounderExists) {
 			fclose(SounderExists);
-			SerialText = 1;
+//			SerialText = 1;						// Handled by the fact the Gamestarted = 0
 			fnVPOutput("Script based sound FX enabled");			
 			printf("Sounder.exe present at %s\x0a", &SoundPath);
 		}
