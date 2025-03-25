@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Trailblazers)
 
 // Contains MapKey Statements for all button and switch actions
 // Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
@@ -26,14 +26,14 @@
 
 /*
 	Index:		FUNCTION
-	Line   46: 	int MainKeyMap()
-	Line   49:		Joystick Triggers
-	Line  257:		Throttle Lever Switches
-	Line  404:		Throttle Base Buttons
-	Line  640: 	int TrainingMap()
-	Line  643:		Joystick Triggers
-	Line  823:		Throttle Lever Switches
-	Line  969:		Throttle Base Buttons 
+	Line   47: 	int MainKeyMap()
+	Line   50:		Joystick Triggers
+	Line  258:		Throttle Lever Switches
+	Line  407:		Throttle Base Buttons
+	Line  643: 	int TrainingMap()
+	Line  646:		Joystick Triggers
+	Line  826:		Throttle Lever Switches
+	Line  973:		Throttle Base Buttons 
 */
 
 	// START
@@ -361,9 +361,11 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, SPDF,
-				EXEC("tgReverseThrust(0);"),																// U - Reverse Only			- No Speedbrake
+				0,																							// U - Align Switch only	- Deploy Speedbrake only (no Reverse)			
+//				EXEC("tgReverseThrust(0);"),																// U - Reverse Only			- No Speedbrake
 				EXEC("tgReverseThrust(1);"),																// M - Standard Reverse		- Deploy Speedbrake if Hardpoints deployed
-				EXEC("tgReverseThrust(2);")																	// D - Align Switch only	- Deploy Speedbrake only (no Reverse)
+//				EXEC("tgReverseThrust(2);")																	// D - Align Switch only	- Deploy Speedbrake only (no Reverse)
+				EXEC("tgReverseThrust(0);")																	// D - Reverse Only			- No Speedbrake
 				);
 	
 			MapKeyR(&MyThrottle, SPDF, EXEC("tgReverseThrust(3);"));										// RELEASE - Turn off Reverse Throttle
@@ -437,9 +439,13 @@
 			MapKey(&MyThrottle, EACOFF, PULSE+SilentRunning);
 		}
 		else {
-			MapKeyIO(&MyThrottle, EACON,
-				EXEC("tgSilentRunning(STROBE);"),															// I - Strobe Silent running every 2 seconds
-				EXEC("tgSilentRunning(ON);")																// O - Engage Silent Running
+			MapKeyIOUMD(&MyThrottle, EACON,
+				0,																							// IU -
+				0,																							// OU -	Use to fix mis-aligned switch 
+				EXEC("tgSilentRunning(STROBE);"),															// IM - Strobe Silent running every 2 seconds
+				EXEC("tgSilentRunning(ON);"),																// OM - Engage Silent Running
+				0,																							// ID - 
+				0																							// OD - 
 			);
 			
 			MapKey(&MyThrottle, EACOFF, EXEC("tgSilentRunning(OFF);"));
@@ -454,11 +460,11 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, RDRNRM,
-				PULSE+EjectCargo,																			// IU - About as safe as I can make it!
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// OU -
+				EXEC("fnTextToSpeech(\"Not mapped\");"),													// IU - 
+				0,																							// OU - (PSF+) Use to fix mis-aligned switch 
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// IM -
 				EXEC("tgCargoScoop(DEPLOY);"),																// OM - Deploy Cargo Scoop
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// ID -
+				PULSE+EjectCargo,																			// ID - (S3+PSF+) About as safe as I can make it!
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// OD -
 			);
 		
@@ -553,9 +559,18 @@
 			MapKey(&MyThrottle, EORIGN, EXEC("fnDRShip();"));												// From SRV - Recall/Dismiss Ship
 		}
 		
-		MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);													// Toggle: Ship GUI OFF
-		MapKey(&MyThrottle, EORNORM, 0);																	// Not Mapped
+		if (MapKeyProfile == BASIC) {
+			MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);
+		}
+		else {		
+			MapKeyIO(&MyThrottle, EORMOTOR, 
+						0,																					// I - Use to fix misalligned switch
+						PULSE+HideShipGUI																	// O - Toggle: Ship GUI OFF
+						);
+		}		
 		MapKeyR(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);	// RELEASE										// Toggle: Ship GUI ON
+
+		MapKey(&MyThrottle, EORNORM, 0);																	// Not Mapped
 
 	//	(Engine Operate - Left)
 	//	-----------------------
@@ -571,8 +586,14 @@
 				 );
 		}
 				 
+		if (MapKeyProfile == BASIC) {
+			MapKey(&MyThrottle, EOLMOTOR, PULSE+m_ChangeColours);											// Toggle Engine and Weapon Colours
+		}
+		else {
+			MapKey(&MyThrottle, EOLMOTOR, PULSE+m_ChangeColours);											// Toggle Engine and Weapon Colours		
+		}
+
 		MapKey(&MyThrottle, EOLNORM, 0);																	// <not currently used>
-		MapKey(&MyThrottle, EOLMOTOR, PULSE+m_ChangeColours);												// Toggle Engine and Weapon Colours
 
 	//	(Engine Fuel Flow - Right)
 	//	--------------------------
@@ -584,7 +605,7 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnPrintState();"),																	// U - Print Status Page
 				EXEC("fnSetLEDs();"),																		// M - Reset Status LEDs manually
-				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
+				EXEC("stfnMyStates(SAVE);")																	// D - Save MyStates to MyWarthogStatusFile.json
 				);
 		}
 				
@@ -1002,9 +1023,13 @@
 			MapKey(&MyThrottle, EACON, EXEC("fnVPOutput(\"Engage Silent running\");"));
 		}
 		else {
-			MapKeyIO(&MyThrottle, EACON,
+			MapKeyIOUMD(&MyThrottle, EACON,
+				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Fix mis aligned switch\");"),				
 				EXEC("fnVPOutput(\"Engage Silent running strobe function\");"),
-				EXEC("fnVPOutput(\"Engage Silent running\");")
+				EXEC("fnVPOutput(\"Engage Silent running\");"),
+				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Not mapped\");")
 			);
 		}
 				
@@ -1018,11 +1043,11 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, RDRNRM, 
-				EXEC("fnVPOutput(\"Jettison Cargo\");"),
 				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Fix mis aligned switch\");"),
 				EXEC("fnVPOutput(\"Not mapped\");"),			
 				EXEC("fnVPOutput(\"Deploy cargo scoop\");"),
-				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Jettison Cargo\");"),
 				EXEC("fnVPOutput(\"Not mapped\");")
 			);
 		}
@@ -1113,8 +1138,17 @@
 		else {
 			MapKey(&MyThrottle, EORIGN, EXEC("fnVPOutput(\"Dismiss or recall ship\");"));
 		}
-		
-		MapKey(&MyThrottle, EORMOTOR, EXEC("fnVPOutput(\"Toggle Ship GUI off\");"));			
+
+		if (MapKeyProfile == BASIC) {
+			MapKey(&MyThrottle, EORNORM, EXEC("fnVPOutput(\"Toggle Ship GUI off\");"));
+		}
+		else {
+			MapKeyIO(&MyThrottle, EORMOTOR, 
+				EXEC("fnVPOutput(\"Align Ship GUI switch\");"),
+				EXEC("fnVPOutput(\"Toggle Ship GUI off\");")
+				);
+		}
+				
 		MapKeyR(&MyThrottle, EORMOTOR, EXEC("fnVPOutput(\"Toggle ship GUI on\");"));						// RELEASE
 
 		
@@ -1144,7 +1178,8 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnVPOutput(\"Print status page to Con-sole\");"),
 				EXEC("fnVPOutput(\"Reset status LEDs\");"),
-				EXEC("fnVPOutput(\"Not mapped\");")
+				EXEC("fnVPOutput(\"Save my status file\");")
+		//		EXEC("stfnMyStates(SAVE);")									// use this when manually updating states to file and don't want to run/exit the game
 				);
 		}
 				
