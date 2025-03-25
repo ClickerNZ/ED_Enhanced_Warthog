@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_GameBindings.ttm ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_GameBindings.ttm ... supports Elite Dangerous (Trailblazers)
 
 // 1 - By default, each individual controller (Joystick and Throttle) can generate up to 56 DX buttons, 8 DX Axes and 8 DX POV directions per device
 // 2 - Using TARGET script or configuring via the TARGET GUI combines the controllers into a single virtual device resulting in a limit of 56 DX buttons, 8 Axes and 8 DX POV total.
