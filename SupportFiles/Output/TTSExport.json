@@ -1,0 +1,4 @@
+{ "TTSSeq":0, "TTSString":"Text to speech function enabled", "TTSVoice":"Microsoft Catherine", "TTSRate":1, "TTSVolume":75 }
+{ "TTSSeq":1, "TTSString":"Script based sound FX enabled", "TTSVoice":"Microsoft Catherine", "TTSRate":1, "TTSVolume":75 }
+{ "TTSSeq":2, "TTSString":"Running full key map", "TTSVoice":"Microsoft Catherine", "TTSRate":1, "TTSVolume":75 }
+{ "TTSSeq":3, "TTSString":"Waiting for game to load", "TTSVoice":"Microsoft Catherine", "TTSRate":1, "TTSVolume":75 }

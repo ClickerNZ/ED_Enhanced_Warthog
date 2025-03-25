@@ -17,4 +17,4 @@ public class TTS {
     }
 }
 "@
-# USAGE: [TTS]::SpeakTextWithSettings("Testing different settings for text-to-speech.", "Microsoft Zira Desktop", 2, 90)
+# USAGE: [TTS]::SpeakText("Testing different settings for text-to-speech.", "Microsoft Zira Desktop", 2, 90)
