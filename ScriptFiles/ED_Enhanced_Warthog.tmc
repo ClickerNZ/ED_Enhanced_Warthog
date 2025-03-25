@@ -4,7 +4,7 @@
 //----------------------------------------------------------------------//
 
 // This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
-// Supports:	Elite Dangerous 				v4.0.0.1904
+// Supports:	Elite Dangerous 				v4.1.0.2
 // Requires:	TARGET 							v3.0.24.618_rev1		https://support.thrustmaster.com/en/product/t-16000m-fcs-flight-pack-en/
 //				Joystick firmware				v12
 //				Throttle firmware 				v23
@@ -27,8 +27,8 @@
 	Index:		FUNCTION
 	Line  60:	include statements
 	Line  92: 	int main()
-	Line 123:	initialise hardware
-	Line 176: 	int EventHandle(int type, alias o, int x)
+	Line 124:	initialise hardware
+	Line 177: 	int EventHandle(int type, alias o, int x)
 */
 
 // PREFACE
@@ -65,8 +65,8 @@ include "target.tmh"
 //		...this ensures these critical files are loaded in the correct order
 
 //      The above 4x .tmh files are bundled with the TARGET software and will be replaced each time you apply an update.
-//		90% of the rest of this package has been written by me.
-//		10% borrowed from code found on line
+//		The rest of this package has been written. Ideas are both mine and borrowed from others.
+//		Some code (~10%) has been borrowed from code found on line
 
 /////////////////////////////////////////////////////////////////////////////
 ///                                                                       ///
@@ -107,8 +107,8 @@ include "ED_Toggles.tmh"
 		Exclude(&TCAQBoeing12);
 		Exclude(&TCAQBoeing34);
 		Exclude(&TCAYokeBoeing);
-		Exclude(&ViperTQS);														// Throttle Quadrant System - If used may require recode for &MyThrottle alias if different from standard WARTHOG
-		Exclude(&ViperBBox);													// Throttle Quadrant System - If used may require recode for &MyThrottle alias if different from standard WARTHOG
+		Exclude(&ViperTQS);		
+		Exclude(&ViperBBox);	
 		Exclude(&TCASidestickXPilot);
 		Exclude(&TCASidestickXCopilot);
 		Exclude(&FarmStickRight);
@@ -126,13 +126,13 @@ include "ED_Toggles.tmh"
 		
 		SetShiftButton(&MyJoystick, S3, &MyThrottle, PSF, PSB);					// ** DO NOT TOUCH **  Joystick Nosewheel Switch (S3) = IO, Throttle pinky switch (PSF/PSB) = UMD
 
-		SetKBRate(PulseTime, DelayTime);										// Base Settings 	(See ED_UserSettings.tmh)
+		SetKBRate(PulseTime, DelayTime);										// Basic Settings 	(See ED_UserSettings.tmh)
 		SetKBLayout(KBLayout);													//					(See ED_ScriptDefines.ttm)
 
 		fnPIPMode(RESET);														// Reset PIPMode. Refer ED_UserSettings.tmh to set your preferred default PIP Mode
 																				// Do this before calling stfnMyStates(LOAD) call
 		printf("\x0a\++	Load MyStates from file...\x0a");
-		stfnMyStates(LOAD);														// Load my status variables
+		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json)
 		
 		fnLEDBrightness();														// Set initial LED Brightness levels
 
@@ -157,7 +157,7 @@ include "ED_Toggles.tmh"
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a\x0a");
 
-		fnStartupMapKeyMode();
+		fnStartupMapKeyMode();													// Enable Joystick and Throttle buttons and switches
 		
 // ----------------- //
 // Check Game State  //
@@ -165,7 +165,7 @@ include "ED_Toggles.tmh"
 
 		printf("\x0a\++	Check Game state ...\x0a");
 		
-		stfnStartCheck();														// Check for vital files and game start
+		stfnStartCheck();														// Check for vital files and game start. Bootstrap script execution.
 	}	
 	
 // end of int main()	
