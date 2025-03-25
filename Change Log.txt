@@ -23,14 +23,22 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
-			NEW FEATURE: - Create powershell script to monitor Journal Events and write to MyJournalData.json in output folder 
+		-	NEW FEATURE: -	Create powershell script to monitor Journal Events and write to MyJournalData.json in output folder 
 			-	New function fnMyName() reads CMDRName from MyJournalData,json
 			-	New function fnStation() reads StationName from MyJournalData.json 
 		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech)
+		-	Add personalised greetings
+		-	NEW FEATURE: -	Create powershell script to replace system calls for TTS functions.
+							This allows sequential TTS without impact to contoller/script response.
+							No more clobbered speech when 2+ calls get made in quick succession
 		-	Toggle HUD when using Night Vision	(taken from Aussiedroid)
 		-	Toggle HUD during FSDJump 			(taken from Aussiedroid)
 		-	Review/fix/move code for several detected flag transitions
 		-	Tweak code to handle mis-aligned switches
+		-	tgWarpDrive will fire after Masslock cleared if selected whilst set
+		-	Eject all cargo function now mapped to S3+PSB+RDRNRM
+		-	Manual SAVE Mystates function mapped to PSB+EFRNORM (aids when changing structure or manually correcting max json length)
+		-	Fix Deploy SRV and Board Ship Macros
 		-	TESTING - NEW FEATURE: Autopilot Terrain Following
 			-	Moved CHAIN code to macros
 			-	Test for responsiveness of controls
@@ -38,7 +46,8 @@ v510	- 	New minor release
 			-	Test using different ship 
 		-	TESTING - NEW FEATURE: AUTO Analysis Mode to select fire group 0
 			-	Moved CHAIN code to macros 
-		- NEW FEATURE: AutoHONK - fire discovery scanner when entering new system
+		- 	NEW FEATURE: AutoHONK - fire discovery scanner when entering new system
+		-	NEW FEATURE: Composition Scanner Fire Mode
 		-	INVESTIGATE/DEVELOP	-	Queing system for TTS and SoundFX
 		-	Add new status flags (v4.1.0.2)
 			-	Uncomment RESERVED flags lines
