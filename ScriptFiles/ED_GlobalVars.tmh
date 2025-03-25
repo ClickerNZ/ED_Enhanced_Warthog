@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_GlobalVars.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_GlobalVars.tmh ... supports Elite Dangerous (Trailblazers)
 
 // NOTE:	All user related settings can be found in the ED_UserSettings.tmh file
 //			Changing any of the below global variables will have significant effect on the script
@@ -25,7 +25,6 @@
 
 // START
 
-	char	TTSVoice;					// TESTING: prefer we Dim this based on usecase rather than an alias string staticly set within each function
 	char 	CMDRName;					// Global CMDRName 
 
 //--------------------//
