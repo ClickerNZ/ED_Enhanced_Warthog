@@ -23,16 +23,15 @@
 
 /*
 	Index:		FUNCTION
-	Line   49:	int stfnReadMyJournalData()
-	Line   53: 	int stfnReadStatusJson()
-	Line  155: 	int stfnWriteMaxJson()
-	Line  196: 	int stfnGetKeyValue(alias pattern, int vtype)
-	Line  394:	int stfnExtractMyJournalData()
-	Line  303: 	int stfnProcessFlags(int UpdateLEDs = NO)
-	Line  803: 	int stfnProcessFlags2()
-	Line 1076: 	int stfnProcessGuiFocus()
-	Line 1103: 	int stfnStartCheck()
-	Line 1178: 	int stfnMyStates(int action)
+	Line   55: 	int stfnReadMyJournalData() {
+	Line  126: 	int stfnReadStatusJson() {
+	Line  232: 	int stfnWriteMaxJson() {
+	Line  281: 	int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
+	Line  396: 	int stfnProcessFlags(int UpdateLEDs = NO) {
+	Line  991: 	int stfnProcessFlags2() {
+	Line 1289: 	int stfnProcessGuiFocus() {
+	Line 1316: 	int stfnStartCheck() {
+	Line 1402: 	int stfnMyStates(int action) {
 */
 	
 // START
@@ -54,7 +53,7 @@
 	
 	int stfnReadMyJournalData() {
 
-		int 	VoiceTxt;
+//		int 	VoiceTxt;
 		int 	fp;
 		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
 		int		myResult;
@@ -81,15 +80,19 @@
 				ReadError2Count = ReadError2Count + 1;
 				if (ReadError2Count > 3) {
 					printf("File Read Error Count = %d : MyJournalData.json\x0a", ReadErrorCount);
+					printf("Check file contents using notepad\x0a");
+					printf("Recreate by deleting and running ProcessJournal.ps1");
 					if (!ReadError2Sent) {
-						VoiceTxt = "My journal data jason read error count exceeded";
-						fnTextToSpeech(VoiceTxt, 100);
+						fnTextToSpeech("My journal data jason read error count exceeded", 100);
 						ReadError2Sent = 1;
 					}
 				}
 			}
 			else if (myResult < 0) {
 				printf("\x0a Error reading MyJournalData.json. Check buffer length\x0a");
+				printf("Buffer size currently set to %d\x0a", buf);
+				printf("Search for \"int stfnReadMyJournalData()\" and increase \"buf\" variable\x0a");
+				Abort();
 			}
 			else {	
 				ReadError2Count = 0;
@@ -98,9 +101,10 @@
 			}
 		}
 		else {																// ED must have the file locked for reading?
-			printf("ERROR: MyJournalData.json file not found\x0a");			// trap if myjournaldata.json is suddenly unavailable during game
+			printf("+++ CRITICAL ERROR: MyJournalData.json file not found\x0a");			// trap if myjournaldata.json is suddenly unavailable during game
+			printf("+++ Run the ProcessJournal.ps1 script before running TARGET script to create the file\x0a");
 			fnSoundFX("wstop");
-		//	Abort();						// Not a fatal error
+			Abort();
 		}
 	}
 
@@ -125,7 +129,7 @@
 	
 	int stfnReadStatusJson() {
 
-		int 	VoiceTxt;
+//		int 	VoiceTxt;
 		int 	fp;
 		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
 		int		myResult;
@@ -155,23 +159,25 @@
 			if (myResult == 0) {
 				ReadErrorCount = ReadErrorCount + 1;
 				if (ReadErrorCount > 3) {
-					printf("File Read Error Count = %d : status.json\x0a", ReadErrorCount);
+					printf("+++ ERROR: File Read Error Count = %d : status.json\x0a", ReadErrorCount);
 					if (!ReadErrorSent) {
-						VoiceTxt = "Status Jason Read Error count exceeded";
-						fnTextToSpeech(VoiceTxt, 100);
+//						VoiceTxt = "Status Jason Read Error count exceeded";
+//						fnTextToSpeech(VoiceTxt, 100);
+//						fnTextToSpeech("Status Jason Read Error count exceeded", "100");
+						fnTextToSpeech("Status Jason Read Error count exceeded", 100);
 						ReadErrorSent = 1;
 					}
 				}
 			}
 			else if (myResult < 0) {
-				printf("\x0a Error reading status.json. Check buffer length\x0a");
+				printf("\x0a +++ ERROR: Error reading status.json. Check buffer length\x0a");
 			}
 			else {
 				// Debug: check myJson string length to ensure buffer size is set high enough
 				if (loop == 9) {
 					if(maxjson > NewMaxJson) {
 				//		printf("\x0a\++	DEBUG: Max json length seen = %d ...\x0a", maxjson);
-						fnSoundFX("snd_warn");
+				//		fnSoundFX("snd_warn", 60);
 						NewMaxJson = maxjson;
 
 						json100 = (NewMaxJson - (NewMaxJson % 100))/100;
@@ -213,7 +219,6 @@
 						}
 					}
 				}			
-//				sprintf(&lastJson, "%s", &myJson);						// copy myJson to lastJson
 				strcpy(&lastJson, &myJson);								// copy myJson to lastJson
 				lastJson[strlen(&lastJson)] = NUL;						// terminate char array ... needed?
 			}
@@ -227,7 +232,7 @@
 
 	// FUNCTION:	Copies status.json as NewMaxJson.json in Journal folder each time a new max length status.json is found
 	// Requires:	'MaxStatusFile' string variable to be correctly set in ED_UserSettings file
-	// Called by..	stfnReadStatusJson() each time NewMaxJson is found
+	// Called by:	stfnReadStatusJson() each time NewMaxJson is found
 
 	int stfnWriteMaxJson() {
 	
@@ -244,7 +249,7 @@
 				printf("Error writing new MaxJson file.\x0a");
 			}
 			else {
-				printf("					New MaxJson file written.\x0a\x0a");
+				printf("++ New MaxJson file written ++\x0a\x0a");
 			}
 		}
 	}
@@ -307,11 +312,9 @@
 		int		myResult;
 
 		if(jsonfile == 0) {
-//			sprintf(&KVJson, "%s", &myJson);
 			strcpy(&KVJson, &myJson);
 		}
 		else {
-//			sprintf(&KVJson, "%s", &myJournalData);
 			strcpy(&KVJson, &myJournalData);
 		}
 		
@@ -461,10 +464,20 @@
 				}
 				
 				fnSetLEDs();															// Turn off Status LEDs, then...
-				ActKey(PULSE+KEYON+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED0)); 		// set GLOBAL LED OFF
+				ActKey(KEYON+PULSE+LED(&MyThrottle, LED_ONOFF, LED_CURRENT-LED0)); 		// set GLOBAL LED OFF
 
+				// Tidy up...
+				printf("Tidy up all autorepeat handles...\x0a");
+				StopAutoRepeat(hPWS);
 				StopAutoRepeat(hReadStatusJson);
+				StopAutoRepeat(hSRStrobe);
+				StopAutoRepeat(hFSDCharge);
+				StopAutoRepeat(hMassLocked);
+				StopAutoRepeat(hSoundFX);
+				StopAutoRepeat(hBeepFX);
+				StopAutoRepeat(hTerrain);
 				StopAutoRepeat(hReadMyJournalData);
+				printf("...done\x0a\x0a");
 				
 				stfnMyStates(SAVE);
 			}
@@ -531,7 +544,7 @@
 					if (AutoHanger) {
 						DeferCall(2500, &fnHangerServices, 1);					// Cannot use 'Auto' feature until we verify SAME PROCESS for Starport v Carrier v Surface Port
 					}
-					DeferCall(1000, &ActKey, PULSE+KEYON+BalancePower);
+					DeferCall(1000, &ActKey, KEYON+PULSE+BalancePower);
 					stfnGetKeyValue("StationName", STRING, 1);
 					if (!StartupLock) {
 						printf("Docked: %s @ %s\x0a", fnGetTOD(), &keyvalue);
@@ -541,7 +554,7 @@
 				else	{	
 					InHanger = NO;
 					if (AutoGearUP) {
-						DeferCall(1500, &ActKey, PULSE+KEYON+LandingGear);
+						DeferCall(1500, &ActKey, KEYON+PULSE+LandingGear);
 					}
 					printf("Liftoff @ %s\x0a", fnGetTOD());					
 				}
@@ -554,7 +567,7 @@
 				else {
 					printf("Lift off @ %s\x0a", fnGetTOD());
 					if (AutoGearUP) {
-						ActKey(PULSE+KEYON+LandingGear);
+						ActKey(KEYON+PULSE+LandingGear);
 					}
 					ShipDismissed = NO;			
 				}
@@ -572,9 +585,9 @@
 			}
 
 			//	LOGIC: Reset when shield drops. Set when fully charged
-			if ((fShieldsUp != lShieldsUp)	{									// Shields just dropped?
-				if (!fShieldsUp)
-					if ((!fSilentRunning & fMainShip) & !fLanded)) {
+			if (fShieldsUp != lShieldsUp)	{									// Shields just dropped?
+				if (!fShieldsUp) {
+					if ((!fSilentRunning & fMainShip) & !fLanded) {
 						if (fDanger) {
 							if (AutoStrobe) {
 								DeferCall(750, &fnVPOutput, "Activating Silent Strobe");
@@ -597,7 +610,7 @@
 
 //					MOVED TO fFSDJump flag reset 				
 //
-//					if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
+//					if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Analysis mode if AutoHUD is set in ED_ UserSettings	
 //						tgHUDMode(0);											// Turn on Analysis mode and... 
 //
 // DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
@@ -611,7 +624,7 @@
 				else {
 				
 // DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
-//					fnVPOutput("Supercruise flag reset");
+//					DeferCall(1000, &fnVPOutput, "Supercruise flag reset");
 // DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
 
 					// Maybe create dedicated external function???
@@ -625,17 +638,18 @@
 						fnVPOutput(TTS);													//  Announce drop type
 						if (fInterdicted | fDanger) {
 							if (fHUDAnalysis) {	
-								tgHUDMode(1);												// Select Combat HUD
+								tgHUDMode(1);												// Select Combat HUD, delay announce 
 
 // DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
-						printf("DEBUG: tgHUDMode called due to SlectDrop = NO, Interdicted or Danger (ED_StateTracker.tmh - 618)\x0a");
+//						printf("DEBUG: tgHUDMode called due to SlectDrop = NO, Interdicted or Danger (ED_StateTracker.tmh - 624)\x0a");
 // DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
 
+							DeferCall(2000, &fnSelectFiregroup, 1);							// Select fire group 1. NOTE: Assign primary weapons to fg 1 (B) in game
 							}
 							if (!fHardpoints) {
 								tgHardpoints();												// Deploy weapons
 							}
-							DeferCall(1500, &ActKey, PULSE+KEYON+SelectHighestThreat);		// Select shooter
+							DeferCall(1500, &ActKey, KEYON+PULSE+SelectHighestThreat);		// Select shooter
 							fnTextToSpeech("Warning! Danger! Combat Mode Initiated", 100);	// Sound warning 
 						}
 					}
@@ -653,13 +667,14 @@
 						printf("Flight Assist:	OFF\x0a");
 					}
 					else {
-						printf("Flight Assist:	ON\x0a");					
+						printf("Flight Assist\x0a");					
 					}
 				}
 				else {
 					fnVPOutput("F A off unandled exception");
 				}
 			}
+			
 			if (fHardpoints != lHardpoints) {
 				if (fHardpoints) {
 					printf("Hardpoints deployed\x0a");
@@ -678,8 +693,15 @@
 				}				
 			}
 
-			if (fLights != lLights) {									// notifications handled by tgLights()
-				// NOTHING TO DO
+			if (fLights != lLights) {									// notifications handled by tgLights() unless OnFoot
+				if (fOnFoot) {
+					if (fLights) {
+						fnVPOutput("Flashlight");
+					}
+					else {
+						fnVPOutput("Flashlight off");
+					}
+				}
 			}
 
 			if (fCargoScoop != lCargoScoop & ((fMainShip & !fSupercruise) | fSRV)) {					
@@ -728,9 +750,11 @@
 			}
 			
 // TEST THIS ==
-			if (fSRV & (fSRVTurretRetracted != lSRVTurretRetracted)) {
+//			if (fSRV & (fSRVTurretRetracted != lSRVTurretRetracted)) {					// Surely fSRV is given if fSRVTurretRetracted is toggled?
+			if (fSRVTurretRetracted != lSRVTurretRetracted) {							// ...perhaps we get spurious messages when boarding ship or disembarking on foot?
 				if (fSRVTurretRetracted ) {												// Detect turret deploy/retract
-					DeferCall(1000, &fnVPOutput, "Turret retracted");					// Why the DeferCall here...
+//					DeferCall(1000, &fnVPOutput, "Turret retracted");					// Why the DeferCall here...
+					fnVPOutput("Turret retracted");										// 
 				}
 				else {
 					fnVPOutput("Turret deployed");										// ... but not here?
@@ -748,12 +772,18 @@
 			}
 
 			if (fMassLocked != lMassLocked) {
-				if (fMassLocked & !lMassLocked & !fLanded & !fDocked) {					// Detect when Mass Locked during flight 
-					fnVPOutput("Mass Locked!");
+//				if (fMassLocked & !lMassLocked & !fLanded & !fDocked) {					// Detect when Mass Locked during flight 
+				if (fMassLocked & !fLanded & !fDocked) {								// Detect when Mass Locked during flight 
+					fnVPOutput("Mass locked!");
 				}
 				
-				if (!fMassLocked & lMassLocked & !fLanded & !fDocked) {					// Detect when no longer Mass Locked
+//				if (!fMassLocked & lMassLocked & !fLanded & !fDocked) {					// Detect when no longer Mass Locked
+				if (!fMassLocked & !fLanded & !fDocked) {								// Detect when no longer Mass Locked
 					fnVPOutput("Masslock cleared");
+					if (MASSLOCKED) {													// We were attempting to engage FSD...
+						MASSLOCKED = NO;
+						DeferCall(1000, &tgWarpDrive, MLJumpType);						// ...so retry now.
+					}
 				}
 			}
 
@@ -761,9 +791,9 @@
 				if (fFSDCharging) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (!fFSDHyperdriveChg) {
-						fnVPOutput("FSD Supercruise charging");							// Short delay should be instantaneous. Allows tweaking if we get other messages clobbering this one 
-					}
+//					if (!fFSDHyperdriveChg) {
+//						fnVPOutput("FSD charging flag");										// Short delay should be instantaneous. Allows tweaking if we get other messages clobbering this one 
+//					}
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
@@ -794,7 +824,7 @@
 				if (fMainShip & fOverHeating) {
 					if (AutoHeatsink) {													// If 'AutoHeatSink' is set, fire a heatsink (assuming we have one)
 						fnVPOutput("OVERHEATING: Auto Heat sink engaged!");
-						ActKey(PULSE+KEYON+DeployHeatSink);
+						ActKey(KEYON+PULSE+DeployHeatSink);
 					}
 					else {
 						fnTextToSpeech("OVERHEATING: Consider firing a heat sink commander", 100);
@@ -870,7 +900,7 @@
 				if (fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))) {
 					fnVPOutput("Night vision");										
 					if (NVGUI & GUIState) {												// NVGUI is configured in ED_UserSettings.tmh. GUIState initialised in ED_GlobalVars.tmh 
-						ActKey(PULSE+KEYON+HideShipGUI);										// Turn off HUD
+						ActKey(KEYON+PULSE+HideShipGUI);										// Turn off HUD
 						printf("ShipGUI should now be OFF\x0a");
 						GUIState = 0;
 					}
@@ -879,7 +909,7 @@
 				else if (!fNightVision & ((fSRV == lSRV) | (fMainShip == lMainShip))){
 					fnVPOutput("Night vision:		OFF");
 					if (NVGUI & GUIState == 0) {
-						ActKey(PULSE+KEYON+HideShipGUI);										// Turn on HUD
+						ActKey(KEYON+PULSE+HideShipGUI);										// Turn on HUD
 						printf("ShipGUI should now be ON\x0a");											
 						GUIState = 1;
 					}
@@ -899,14 +929,16 @@
 			}
 
 			// Cannot select FSDJump when SCO is in Overcharge mode. This is announced in-game.
-			// There is currently no status.json flag for SCO
 			
 			// LOGIC:	fFSDJump is set at end of FSD countdown. It is reset when...
 			//			...Supercruise is entered from Normal flight
 			//			...or when we reach hyperjump destination
 			//			...or we're pulled out of witchspace
 			
-			if (fFSDJump != lFSDJump) {										// Detect when Supercruise or Hyperjump has been toggled	
+			if (fFSDJump != lFSDJump) {										// Detect when Supercruise or Hyperjump has been toggled
+			
+			// There's a LOT of calls in this section which may interfere  with State Tracker detection candence
+			// Look into creating and calling dedicated functions instead
 
 // DEBUG +++++++++++++++++++++++++++++++++++++++++
 //				if (!fFSDJump) {
@@ -915,43 +947,31 @@
 //				else {
 //					fnVPOutput("FSD Flag");				
 //				}
-//				printf("\x0a+++ DEBUG: NVGUI = %d, GUIState = %d\x0a", NVGUI, GUIState);
-//				printf("+++ DEBUG: fSupercruise = %d, fFSDJump = %d\x0a\x0a", fSupercruise, fFSDJump);
 // DEBUG +++++++++++++++++++++++++++++++++++++++++
 			
 				if (!fFSDJump & fSupercruise) {								// Detect when FSD Jump flag gets reset
 												
 					if (FSDGUI & GUIState == 0) {
-						ActKey(PULSE+KEYON+HideShipGUI);					// Turn HUD back ON 
+						ActKey(KEYON+PULSE+HideShipGUI);					// Turn HUD back ON 
 						GUIState = 1;
-
-// DEBUG +++++++++++++++++++++++++++++++++++++++++
-						printf("ShipGUI should now be ON\x0a");
-// DEBUG +++++++++++++++++++++++++++++++++++++++++
-
 					}
-
 					if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
 						tgHUDMode(0);											// Turn on Analysis mode and... 
-//
-// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
-						printf("DEBUG: tgHUDMode called due to Supercruise flag (ED_StateTracker.tmh - 921)\x0a");
-// DEBUG +++++++++++++++++++++++++++++++++++++++++++++++
-//
-						fnSelectFiregroup(1);									// Select Discovery scanner. NOTE: Always have Discovery scanner set to FG 1						
+
+						DeferCall(2000, &fnSelectFiregroup, 0);					// Select Discovery scanner. NOTE: Always have Discovery scanner set to FG 0 (A)
+						if (AutoHONK) {											// Assumes both HUD switch and firegroup selection have completed ok...
+							DeferCall(2500, &fnAdvFireControl, 1);				// Fire Discovery Scanner. Assumes FG-0, Disco Scanner primary weapon
+						}
+					}					
+					if (AutoHONK & fnCheckFiregroup()==0 & fHUDAnalysis) {		// fHUDAnalysis may not be set yet from above if statement 
+						FireModeP = 0;											// Set FireModeP to Disco Scanner mode
+						DeferCall(1000, &fnAdvFireControl, 1);					// Fire Discovery Scanner. Assumes FG-0, Disco Scanner primary weapon
 					}
-				}
-				
-				if (fFSDJump & fFSDHyperdriveChg) {	
-				
-					if (FSDGUI & GUIState == 1) {							// Set in ED_userSettings.tmh 
-						ActKey(PULSE+KEYON+HideShipGUI);					// Turn HUD OFF 
+				}				
+				if (fFSDJump & fFSDHyperdriveChg) {					
+					if (FSDGUI & GUIState == 1) {								// Set in ED_userSettings.tmh 
+						ActKey(KEYON+PULSE+HideShipGUI);						// Turn HUD OFF 
 						GUIState = 0;
-
-// DEBUG +++++++++++++++++++++++++++++++++++++++++						
-						printf("ShipGUI should now be OFF\x0a");
-// DEBUG +++++++++++++++++++++++++++++++++++++++++
-
 					}
 				}
 			}
@@ -978,7 +998,6 @@
 			}
 			
 			OldFlags = Flags;											// Keep track of last Flags Value to track when Flag bits change
-			
 		}
 	}
 	
@@ -1023,14 +1042,29 @@
 		int lPhysicalMulticrew		= fPhysicalMulticrew;
 		int lFSDHyperdriveChg		= fFSDHyperdriveChg;
 
+		int lSupercruiseOvercharge	= fSupercruiseOvercharge;
+		int lSupercruiseAssist 		= fSupercruiseAssist;
+		int lNPCCrewActive 			= fNPCCrewActive;
+		int lRESERVED24 			= fRESERVED24;
+
+		int lRESERVED25 			= fRESERVED25;
+		int lRESERVED26 			= fRESERVED26;
+		int lRESERVED27 			= fRESERVED27;
+		int lRESERVED28 			= fRESERVED28;
+
+		int lRESERVED29 			= fRESERVED29;
+		int lRESERVED30 			= fRESERVED30;
+		int lRESERVED31 			= fRESERVED31;
+		int lRESERVED32 			= fRESERVED32;
+
 		// Process 'Flags2' value...most significant bit order
 		
-	//	if (Flags2 < 0) {														// Most significant bit is set 
-	//		fRESERVED			= ON;
-	//	}
-	//	else {
-	//		fRESERVED			= OFF;
-	//	}
+		if (Flags2 < 0) {														// Most significant bit is set 
+			fRESERVED32			= ON;
+		}
+		else {
+			fRESERVED32			= OFF;
+		}
 
 		// Bitwise-And of the negative number works for all bits other than most significant bit 
 
@@ -1059,19 +1093,19 @@
 		fPhysicalMulticrew		= ((Flags2 & ED_PhysicalMulticrew) > 0);
 		fFSDHyperdriveChg		= ((Flags2 & ED_FSDHyperdriveChg) > 0);
 
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
+		fSupercruiseOvercharge	= ((Flags2 & ED_SupercruiseOvercharge) > 0);
+		fSupercruiseAssist		= ((Flags2 & ED_SupercruiseAssist) > 0);
+		fNPCCrewActive			= ((Flags2 & ED_NPCCrewActive) > 0);
+		fRESERVED24				= ((Flags2 & ED_RESERVED24) > 0);
 
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
+		fRESERVED25				= ((Flags2 & ED_RESERVED25) > 0);
+		fRESERVED26				= ((Flags2 & ED_RESERVED26) > 0);
+		fRESERVED27				= ((Flags2 & ED_RESERVED27) > 0);
+		fRESERVED28				= ((Flags2 & ED_RESERVED28) > 0);
 
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
-	//	fRESERVED				= ((Flags2 & ED_RESERVED) > 0);
+		fRESERVED29				= ((Flags2 & ED_RESERVED29) > 0);
+		fRESERVED30				= ((Flags2 & ED_RESERVED30) > 0);
+		fRESERVED31				= ((Flags2 & ED_RESERVED31) > 0);
 
 		if (OldFlags2 != Flags2) {
 			if (fOnFoot != lOnFoot) {									// Track when on foot
@@ -1215,7 +1249,11 @@
 					printf("We're outside on foot\x0a");
 				}
 				else {
-					printf("We're inside on foot\x0a");
+//					printf("We're inside on foot\x0a");
+					printf("We're inside ");
+					if(fSRV) printf("SRV\x0a");
+					else if(fMainShip) printf("Ship\x0a");
+					else printf("somehwere...where are we?\x0a");
 				}
 			}
 
@@ -1249,13 +1287,13 @@
 			if (fFSDHyperdriveChg != lFSDHyperdriveChg) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-				printf("+++ DEBUG: fFSDHyperdriveChg = %d, fFSDJump = %d, fSupercruise = %d \x0a\x0a", fFSDHyperdriveChg, fFSDJump, fSupercruise);
+//				printf("+++ DEBUG: fFSDHyperdriveChg = %d, fFSDJump = %d, fSupercruise = %d \x0a\x0a", fFSDHyperdriveChg, fFSDJump, fSupercruise);
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 			
-				if (fFSDHyperdriveChg) {										// MAYBE - stick the HideGUI code here instead???
+				if (fFSDHyperdriveChg) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag");		// Allows tweaking if we get other messages clobbering this one 
+//					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag");		// Allows tweaking if we get other messages clobbering this one 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
@@ -1263,11 +1301,217 @@
 					// FSD Hyperdrive no longer charging
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag reset");	// Allows tweaking if we get other messages clobbering this one 
+//					DeferCall(1500, &fnVPOutput, "FSD Hyperdrive flag reset");	// Allows tweaking if we get other messages clobbering this one 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 					
 				}
 			}
+
+			if (fSupercruiseOvercharge != lSupercruiseOvercharge) {
+				if (fSupercruiseOvercharge) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("Supercruise Overcharge");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+				
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("Supercruise Overcharge Off");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+			}
+			
+			if (fSupercruiseAssist != lSupercruiseAssist) {
+				if (fSupercruiseAssist) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("Supercruise Assist");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("Supercruise Assist OFF");				
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+			}
+
+			if (fNPCCrewActive != lNPCCrewActive) {
+				if (fNPCCrewActive) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("NPC crew active");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+					fnVPOutput("NPC crew not active");				
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+			}
+
+			if (fRESERVED24 != lRESERVED24) {
+				fnVPOutput("Flags 2 Bit 24");
+				if (fRESERVED24) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 24");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 24 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED25 != lRESERVED25) {
+				fnVPOutput("Flags 2 Bit 25");
+				if (fRESERVED25) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 25");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 27 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+			
+			if (fRESERVED26 != lRESERVED26) {
+				if (fRESERVED26) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 26");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 26 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED27 != lRESERVED27) {
+				if (fRESERVED27) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 27");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 27 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED28 != lRESERVED28) {
+				if (fRESERVED28) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 28");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 28 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED29 != lRESERVED29) {
+				if (fRESERVED29) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 29");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 29 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+			
+			if (fRESERVED30 != lRESERVED30) {
+				if (fRESERVED30) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 30");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 30 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED31 != lRESERVED31) {
+				if (fRESERVED31) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 31");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 31 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}
+
+			if (fRESERVED32 != lRESERVED32) {
+				if (fRESERVED32) {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 32");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+
+				}
+				else {
+
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				fnVPOutput("F2 Bit 32 OFF");
+// DEBUG ++++++++++++++++++++++++++++++++++++++
+				
+				}
+			}			
 		}
 
 		if(UpdateLEDs == YES) {
@@ -1361,15 +1605,16 @@
 		//		SerialText = 1;
 		//		fnTextToSpeech(&jason);
 				
-				SerialText = 1;				
-				fnTextToSpeech("Waiting for game to load");
+//				SerialText = 1;																	// Handled by the fact the Gamestarted = 0
+//				fnTextToSpeech("Waiting for game to load", "75");
+				fnTextToSpeech("Waiting for game to load", 75);
 			}
-			fnSoundFX("tada");																	// Script has started successfully 
+			fnSoundFX("tada", 75);																// Script has started successfully 
 		}
 		
 ////	TEST AREA --- Copy code below here to test at end of script start
 //
-		
+ 
 //
 ////	TEST AREA --- Copy code above here to test at end of script start
 
@@ -1377,18 +1622,18 @@
 
 	// FUNCTION:	Save states not included in status.json
 	// PURPOSE:		Save current status of certain variables when mode switching or restarting the game
-	// REQUIRES:	'MyStatusFile' path to be set correctly within ED_UserSettings.tmh file
+	// REQUIRES:	'MyStatusFile' path must be set correctly within ED_UserSettings.tmh file
 	// PARAMETERS:	action = SAVE or LOAD
 
 	// Global declarations for stfnMyStates()
 	
 	struct MyStruct {
-		int		sVolume;
-		int 	sDismissed;
-		int 	sCurves;
-		int 	sLEDLevel;
-		int		sMaxJsonLength;
-		int		sPIPMode;
+		int		sVolume;					//	Saves the last Voice Volume level if adjusted via PSF+FLAPS UP or DOWN
+		int 	sDismissed;					//	Saves if we dismissed the ship using EOR UP 
+		int 	sCurves;					//	Saves the axes curves 
+		int 	sLEDLevel;					//	Saves the LED intensity level if we've adjusted via PSB+FLAPS UP or DOWN 
+		int		sMaxJsonLength;				//	Saves the largest seen status.json character length (ensure the read buffer is big enough) 
+		int		sPIPMode;					//	Saves PIP Mode if adjusted via CMS PUSH
 	}
 	
 	MyStruct MyStates;
@@ -1426,7 +1671,7 @@
 					printf("MyStates successfully saved @ %s\x0a", fnGetTOD());
 					printf("=================================\x0a\x0a");
 					printf("VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("ShipDismissed		= %d\x0a", ShipDismissed);
+					printf("ShipDismissed	= %d\x0a", ShipDismissed);
 					printf("OldCurves		= %d\x0a", OldCurves);
 					printf("LEDLevel		= %d\x0a", LEDLevel);
 					printf("NewMaxJson		= %d\x0a", NewMaxJson);
@@ -1457,13 +1702,13 @@
 					LEDLevel		= MyStates.sLEDLevel;
 					NewMaxJson		= MyStates.sMaxJsonLength;
 			//		NewMaxJson		= 603;								// To reset NewMaxJson, uncomment this line and comment out the line immediately above it (save/compile/run).
-																		// Start then stop the game, then undo this, save/recompile/run then start game again.
+																		// PSB+EFRNORM will save states if you uncomment the Training mode announcement for that key combo, then undo.
 					PIPMode			= MyStates.sPIPMode;
 					
 					printf("\x0a\MyStates successfully loaded @ %s\x0a\x0a", fnGetTOD());
 					printf("States Loaded:\x0a");
 					printf("VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("ShipDismissed		= %d\x0a", ShipDismissed);
+					printf("ShipDismissed	= %d\x0a", ShipDismissed);
 					printf("OldCurves		= %d\x0a", OldCurves);
 					printf("LEDLevel		= %d\x0a", LEDLevel);
 					printf("NewMaxJson		= %d\x0a", NewMaxJson);
