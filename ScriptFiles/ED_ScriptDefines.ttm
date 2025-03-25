@@ -3,7 +3,7 @@
 //	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 //----------------------------------------------------------------------//
 
-// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Odyssey - Cobra V)
+// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Trailblazers)
 
 // Below are the global, static, state and boolean definitions used within the script package
 // Also contains global status.json integer variable flags for ease of maintenance and readability
@@ -30,7 +30,7 @@
 
 						//   -- NOTES --   //
 
-// Assigning ALT+F3 results in a 'brrringg' noise in TARGET Script Editor/GUI 
+// Assigning ALT+F3 results in a 'brrringg' noise in TARGET Script Editor/GUI and is not advised
 
 // START
 
@@ -49,14 +49,15 @@
 // Timings //
 //---------//
 
-	// These delay settings affect how fast the script executes key presses etc.
+	// These delay settings affect how fast the script executes key press sequences etc.
 	// If you find the macros are dropping characters, then the delay is too short.
-	// "LongPress" is a personal setting. I find a half second is about right for me.
+	// "LongPress" is a personal setting. I find a half second is about right for me when usisng with TEMPO.
 	
-	define 	PulseTime 			33						// PULSE+ Delay time (ms) - Used as key-hold-down time.
+	define 	PulseTime 			35						// PULSE+ Delay time (ms) - Used as key-hold-down time.
 	define 	DelayTime 			100						// D() Delay time 	 (ms) - Used in macros as the time between releasing one key and pressing the next. Increase from 75 for Odyssey
 	define 	LongPress	 		500						// Tempo Delay 		 (ms) - Used in Tempos. ie hold switch/button for 0.5 seconds for alternate function
-	
+
+	define 	CompoDelay			9900					// Composite scanner 'hold-trigger' timer (10 seconds)		
 	define 	DiscoDelay			6100					// Discovery scanner 'hold-trigger' timer (6.1 seconds)	
 
 //-------------------//
@@ -270,20 +271,20 @@
 	define ED_PhysicalMulticrew    	0x0000000000040000
 	define ED_FSDHyperdriveChg     	0x0000000000080000
 
-//	define ED_RESERVED          	0x0000000000100000			// No Flags2 bits currently allocated by Frontier
-//	define ED_RESERVED           	0x0000000000200000
-//	define ED_RESERVED           	0x0000000000400000
-//	define ED_RESERVED     			0x0000000000800000
+	define ED_SupercruiseOvercharge	0x0000000000100000
+	define ED_SupercruiseAssist    	0x0000000000200000
+	define ED_NPCCrewActive        	0x0000000000400000
+	define ED_RESERVED24   			0x0000000000800000
 
-//	define ED_RESERVED           	0x0000000001000000
-//	define ED_RESERVED            	0x0000000002000000
-//	define ED_RESERVED              0x0000000004000000
-//	define ED_RESERVED		    	0x0000000008000000
+	define ED_RESERVED25           	0x0000000001000000
+	define ED_RESERVED26           	0x0000000002000000
+	define ED_RESERVED27            0x0000000004000000
+	define ED_RESERVED28	    	0x0000000008000000
 
-//	define ED_RESERVED				0x0000000010000000
-//	define ED_RESERVED	    		0x0000000020000000
-//	define ED_RESERVED				0x0000000040000000	
-//	define ED_RESERVED				0x0000000080000000
+	define ED_RESERVED29			0x0000000010000000
+	define ED_RESERVED30    		0x0000000020000000
+	define ED_RESERVED31			0x0000000040000000	
+	define ED_RESERVED32			0x0000000080000000
 
 //----------------------------------//
 //  Corresponding Flags2 Variables  //
@@ -317,20 +318,20 @@
 	int fPhysicalMulticrew		= 	0;
 	int fFSDHyperdriveChg		= 	0;
 
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
+	int fSupercruiseOvercharge	= 	0;
+	int fSupercruiseAssist		= 	0;
+	int fNPCCrewActive			= 	0;
+	int fRESERVED24				= 	0;
 
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
+	int fRESERVED25				= 	0;
+	int fRESERVED26				= 	0;
+	int fRESERVED27				= 	0;
+	int fRESERVED28				= 	0;
 
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
-//	int fRESERVED				= 	0;
+	int fRESERVED29				= 	0;
+	int fRESERVED30				= 	0;
+	int fRESERVED31				= 	0;
+	int fRESERVED32				= 	0;
 
 //--------------------//
 // GUIFocus Variables //
