@@ -1,13 +1,21 @@
 // CMDR Clicker's Enhanced WARTHOG TARGET Script Change Log //
 
-v510	- 	New minor release
+v510	- 	Uses 2x new external powershell helper apps 'TTSMonitor.ps1' and 'ProcessJournal.ps1'
+		- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Client Version 4)
 		- 	Renamed repo to ED_Enhanced_Warthog
+		-	Renamed main.tmc to ED_Enhanced_Warthog.tmc
 		-	Remove no longer needed functions
 		-	Removed Commented code
+		-	Add stfnDecodeFlags() and stfnDecodeFlags2() - these now decode the bits from both flags
+		-	Recode stfnProcessFlags() - now does the processing of the decoded bits for both flags 
+			-	Remove decode functions from stfnProcessFlags() and move into stfnDecodeFlags()
+			-	Remove decode functions from stfnProcessFlags2() and move into stfnDecodeFlags2()
+			-	Merge stfnProcessFlags2() into stfnProcessFlags()
+			-	Remove stfnProcessFlags2()
 		-	Recode tgLights()
 		-	Recode tgCargoScoop()
 		-	Recode tgLandingGear()
-		-	Recode tgReverseThrust()
+		-	Recode tgReverseThrust() - TESTING 
 		-	Recode tgHUDMode()
 		-	Fix typo for "fnName" variables
 		-	Supress Cargo Scoop console printouts in ED_Statetracker
@@ -22,26 +30,44 @@ v510	- 	New minor release
 		- 	Add critical init file fnStartupMapKeyMode() to ED_Enhanced_Warthog.tmc 
 		-	Re-enable SliderCurves for Warthog
 		-	Fix typo on WingmanNavLock variable
-		-	NEW FEATURE: -	Create powershell script to monitor Journal Events and write to MyJournalData.json in output folder 
-			-	New function fnMyName() reads CMDRName from MyJournalData,json
+		-	NEW FEATURES: 
+			-	Created powershell script (ProcessJournal.ps1) to monitor specific Journal Events and write to MyJournalData.json in output folder 
+			-	New function fnMyName() reads 'CMDRName' from MyJournalData,json
 			-	New function fnGreetCMDR() issues customised greeting each time we dock
-			-	New function fnGetStationName() reads StationName from MyJournalData.json 
-			-	New function fnDockingStatus() reads DockingStatus and LandingPad from MyJournalData.json
+			-	New function fnGetStationName() reads 'StationName' from MyJournalData.json 
+			-	New function fnDockingStatus() reads 'DockingStatus' and 'LandingPad' from MyJournalData.json
+			-	New function fnFighterStatus() reads 'ActiveFighter' and 'FighterPresent' from MyJournalData.json 
+				- Recalls fighter if 'DockingStatus' is denied due to ActiveFighter  
+			-	New function fnSRVStatus() reads 'SRVPresent' from MyJournalData.json
+				- Enables DEPLOY/RECALL SRV functions 
+			-	New function fnShieldCellBank() reads 'ShieldCellBank' from MyJournalData.json
+				- Enables Shield Cell Bank functions
+			-	New function fnECM() reads 'ElectronicCounterMeasure' from MyJournalData.json 
+				- Enables ECM functions 
+			-	New function fnChaffLauncher() reads 'ChaffLauncher' from MyJournalData.json
+				- Enables Chaff functions 
+			-	New function fnHeatsinkLauncher() reads 'Heatsinks from MyJournalData.json
+				- Enables Heat Sink functions 
+			-	New function fnSCO() reads 'SCOPresent' from MyJournalData.json 
+				- Enables SCO functions 
 		-	Added AltVoice feature for use when we cannot parse a voice alias to fnTextToSpeech (refer ED_UserSettings and fnTextToSpeech)
-		-	NEW FEATURE: -	Create powershell script to replace system calls for TTS functions.
+		-	NEW FEATURE: -	Create powershell script to replace system calls for TTS functions (TTSMonitor.ps1)
 							This allows sequential TTS without impact to contoller/script response.
-							No more clobbered speech when 2+ calls get made in quick succession
-		-	Toggle HUD when using Night Vision	(taken from Aussiedroid)
-		-	Toggle HUD during FSDJump 			(taken from Aussiedroid)
+							Prevents TARGET Script generated speech overlaps when 2+ calls get made in quick succession
+		-	New USERSETTING 'NVGUI' enables toggle HUD GUI when using Night Vision	(taken from Aussiedroid)
+		-	New USERSETTING 'FSDGUI' enables toggle HUD GUI during FSDJump 			(taken from Aussiedroid)
 		-	Review/fix/move code for several detected flag transitions
-		-	Tweak code to handle mis-aligned switches
-		-	tgWarpDrive: If called whilst Masslocked or FSD Cooldown...
+		-	Tweak code to handle mis-aligned switches - TESTING 
+		-	tgWarpDrive: If called whilst Masslocked, FSD Cooldown, Fuelscoop deployed or in Danger...
 			- retries after Masslock cleared
 			- retries after FSD Cooldown is complete
+			- retries after Fuelscoop is disengaged
+			- retries after Danger flag is cleared (eg heat drops to < 34% from >66%) , press Supercruise or Warpdrive again to override
 		-	Eject all cargo function now mapped to S3+PSB+RDRNRM
 		-	SAVE Mystates function mapped to PSB+EFRNORM (aids when changing structure or manually correcting max json length)
-		-	MyStatusFile converted to json format 
-		-	Fixed Deploy SRV and Board Ship Macros
+			-	MyStatusFile converted to json format 
+		-	Fixed Deploy SRV and Board Ship Macros (again)
+		-	Add code to check existance of SRV and Fighter bays via MyJournalData.json. Enable/Disable Fighter/SRV DEPLOY/RECALL functions
 		-	NEW FEATURE: Panic Mode - exits when we hit MSP (use when the script goes haywire...may not work if script becomes unresponsive) 
 		-	New functions fnSelectFiregroup() and fnCheckFireGroup() to support the following...
 		-	NEW FEATURE: AUTO Analysis Mode selects fire group 0
@@ -52,16 +78,20 @@ v510	- 	New minor release
 			- Composition/Wake Scanner (10 seconds)
 		-	NEW FEATURE: Replace TTS System calls to voice.exe with TTSMonitor powershell script
 			- Uses queue and archive logic to ensure all TTS messages are spoken and do not overlap each other 
-		-	Add new status flags introduced in v4.1.0.2
+		-	Add new status flags introduced in v4.1.0.2 - NOTE: Both Horizons and Odyssey under client 4+ now use both Flags and Flags2 within status.json 
 			-	Uncomment RESERVED flags lines
 			-	Add code to detect all flags including reserved
+		-	TESTING - Add fighter functions
+			- Create Launch/Recover Fighter macro
+			- Map fighter orders to swicthes
 		-	TESTING - NEW FEATURE: Autopilot Terrain Following
 			-	Moved CHAIN code to macros
 			-	Test for responsiveness of controls
 			-	Tweak timing (for Diamondback Express)
 			-	Test using different ship 
 		-	TESTING - Different slider curves
-		-	TO BE DONE:
+
+		-	TO BE DONE BEFORE PUBLISHING:
 			-	Remove debug code
 			-	Cleanup and Re index 
 			-	Review and correct Keymaps and mapfiles
