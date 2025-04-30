@@ -1,4 +1,4 @@
-# TTSMonitor-v19.ps1 - update to position console window - not working, removed code
+# TTSMonitor-v18.ps1 (Updated with Archiving for Old Files)
 # This script monitors the TTS queue folder and processes individual JSON files using an external TTS module.
 # After processing, each JSON file is archived (moved to an Archive folder) rather than being removed.
 # The ED TARGET script writes files named TTSMsg0000.json, TTSMsg0001.json, etc.
@@ -36,7 +36,7 @@ function Test-FileLocked {
 
 #Set the window title 
 try {
-    $host.UI.RawUI.WindowTitle = "TTS Monitor v19"
+    $host.UI.RawUI.WindowTitle = "TTS Monitor v18"
 } catch {
     Write-Host "Could not set window title: $_"
 }
@@ -132,8 +132,7 @@ while ($true) {
             }
 			
             if ($ttsString -match "GAME HALTED") {
-                Write-Host "Game Halted detected, exiting in 20 seconds..." -ForegroundColor Yellow
-				Start-Sleep -Milliseconds 20000
+                Write-Host "Game Halted detected, exiting..." -ForegroundColor Yellow
                 Stop-Process -Id $PID -Force  # Forcefully kill script
             }
         }

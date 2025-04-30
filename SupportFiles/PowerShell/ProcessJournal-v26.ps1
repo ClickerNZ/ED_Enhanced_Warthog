@@ -48,7 +48,7 @@ function Initialize-GlobalVariables {
             DockingStatus = "not set"; DeniedReason  = "not set"; LandingPad    = "not set";
             FighterPresent = $false; ActiveFighter = $false; SRVPresent = $false; 
 			Heatsinks = $false; ChaffLauncher = $false; ShieldCellBank = $false;
-			ElectronicCounterMeasure = $false;
+			ElectronicCounterMeasure = $false; SCOPresent = $false;
         }
         $defaults | ConvertTo-Json | Set-Content $JsonFilePath
     }
@@ -65,7 +65,7 @@ function Compare-And-UpdateVariables {
         'SystemName','BodyName','OrganicFound','DockingStatus',
         'DeniedReason','LandingPad','FighterPresent','ActiveFighter',
 		'SRVPresent', 'Heatsinks', 'ChaffLauncher', 'ShieldCellBank',
-		'ElectronicCounterMeasure'
+		'ElectronicCounterMeasure', 'SCOPresent'
     )
     $changed = $false
     foreach ($k in $keys) {
@@ -92,6 +92,7 @@ function Compare-And-UpdateVariables {
             DockingStatus  = $Global:DockingStatus;
             DeniedReason   = $Global:DeniedReason;
             LandingPad     = $Global:LandingPad;
+			SCOPresent     = $Global:SCOPresent;
             FighterPresent = $Global:FighterPresent
 			ActiveFighter  = $Global:ActiveFighter 
 			SRVPresent     = $Global:SRVPresent
@@ -244,6 +245,23 @@ function Process-NewLines {
 						}
 					}														
 				}
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "int_hyperdrive_overcharge*") {
+						$Global:newSCOPresent = $true
+						break 
+					}
+					else {
+						$Global:newSCOPresent = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Fighter Bay = $Global:newSCOPresent" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Fighter Bay = $Global:newSCOPresent" -ForegroundColor Cyan 
+					}
+				}					
 				foreach ($mod in $entry.Modules) {
 					if ($mod.Item -like "int_fighterbay*") {
 						$Global:newFighterPresent = $true
@@ -594,7 +612,7 @@ $Global:GameRunning = $false
 $Global:DEBUG       = $true
 Initialize-GlobalVariables
 # seed new* variables
-foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|FighterPresent|ActiveFighter|SRVPresent|Heatsinks|ChaffLauncher|ShieldCellBank|ElectronicCounterMeasure)$')) {
+foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|SCOPresent|FighterPresent|ActiveFighter|SRVPresent|Heatsinks|ChaffLauncher|ShieldCellBank|ElectronicCounterMeasure)$')) {
     Set-Variable -Name "new$($prop.Name)" -Value $prop.Value -Scope Global
 }
 

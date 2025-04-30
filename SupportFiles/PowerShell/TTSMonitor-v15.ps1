@@ -1,6 +1,13 @@
 # TTSMonitor - v15
 # Add code to detect when TTSExport.json is reset
 
+# NOTE:	This version is superceded/replaced by V17.
+#		This version reads and processes a single file which was being amended by TARGET script.
+#		The issue was the TARGET script would error due to competing file locks etc.
+#		Resolved by TARGET script writing one seeperate json file for each message.
+#		v17 looks for new files inside the ...Output\TTSQueue subfolder the archives to another subfolder
+#		after sending string etc to windows TTS engine
+
 # Import the TTS module
 Import-Module "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Modules\TTS\TTS.psm1"
 

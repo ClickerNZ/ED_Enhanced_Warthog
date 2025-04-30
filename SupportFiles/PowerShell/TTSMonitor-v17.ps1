@@ -1,4 +1,4 @@
-# TTSMonitor-v19.ps1 - update to position console window - not working, removed code
+# TTSMonitor-v17.ps1 (Updated with Archiving)
 # This script monitors the TTS queue folder and processes individual JSON files using an external TTS module.
 # After processing, each JSON file is archived (moved to an Archive folder) rather than being removed.
 # The ED TARGET script writes files named TTSMsg0000.json, TTSMsg0001.json, etc.
@@ -34,13 +34,6 @@ function Test-FileLocked {
     }
 }
 
-#Set the window title 
-try {
-    $host.UI.RawUI.WindowTitle = "TTS Monitor v19"
-} catch {
-    Write-Host "Could not set window title: $_"
-}
-
 Write-Host "Monitoring folder: $queueFolder for TTS message files..." -ForegroundColor Yellow
 
 # Main processing loop
@@ -62,22 +55,6 @@ while ($true) {
             }
             if (Test-FileLocked -FilePath $file.FullName) {
                 Write-Host "File $($file.Name) is locked after multiple attempts. Skipping for now." -ForegroundColor Red
-                continue
-            }
-
-            # Check if the file is 5 minutes old or older. If yes, archive it and skip processing.
-
-			$fileAge = (Get-Date) - $file.LastWriteTime
-            #$fileAge = (Get-Date) - $file.CreationTime
-            if ($fileAge.TotalMinutes -ge 5) {
-                Write-Host "File $($file.Name) is older than 5 minutes (Age: $([math]::Round($fileAge.TotalMinutes,2)) minutes), archiving it." -ForegroundColor Yellow
-                try {
-                    $destinationPath = Join-Path -Path $archiveFolder -ChildPath $file.Name
-                    Move-Item $file.FullName -Destination $destinationPath -Force
-                }
-                catch {
-                    Write-Host "Failed to archive $($file.Name): $_" -ForegroundColor Red
-                }
                 continue
             }
             
@@ -103,10 +80,10 @@ while ($true) {
             $ttsVolume = $json.TTSVolume
 
             if ($ttsString) {
-                Write-Host "TTS message (Seq: $expectedSeq): $ttsString" -ForegroundColor Cyan
+                Write-Host "Processing message (Seq: $expectedSeq): $ttsString" -ForegroundColor Cyan
                 try {
                     # Call the external TTS module with parameters from the JSON.
-                    [TTS]::SpeakText($ttsString, $ttsVoice, $ttsRate, $ttsVolume)
+					[TTS]::SpeakText($ttsString, $ttsVoice, $ttsRate, $ttsVolume)
                 }
                 catch {
                     Write-Host "Error during TTS processing: $_" -ForegroundColor Red
@@ -126,16 +103,21 @@ while ($true) {
 				#	Archive file option...
                 $destinationPath = Join-Path -Path $archiveFolder -ChildPath $file.Name
                 Move-Item $file.FullName -Destination $destinationPath -Force
+                #Write-Host "Archived file: $($file.Name)" -ForegroundColor Yellow
             }
             catch {
                 Write-Host "Failed to archive $($file.Name): $_" -ForegroundColor Red
             }
 			
-            if ($ttsString -match "GAME HALTED") {
-                Write-Host "Game Halted detected, exiting in 20 seconds..." -ForegroundColor Yellow
-				Start-Sleep -Milliseconds 20000
-                Stop-Process -Id $PID -Force  # Forcefully kill script
-            }
+			if ($ttsString -eq "Game halted") {
+				Write-Host "Game Halted detected, exiting..." -ForegroundColor Yellow
+
+				# Send to TTS
+				#[TTS]::SpeakText($entry.TTSString, $entry.TTSVoice, $entry.TTSRate, $entry.TTSVolume)
+
+				Stop-Process -Id $PID -Force  # Forcefully kill script
+			}
+			
         }
     }
     else {
