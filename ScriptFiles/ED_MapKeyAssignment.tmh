@@ -1,40 +1,40 @@
 
-//----------------------------------------------------------------------//
-//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-//----------------------------------------------------------------------//
+	//----------------------------------------------------------------------//
+	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
+	//----------------------------------------------------------------------//
 
-// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Trailblazers)
 
-// Contains MapKey Statements for all button and switch actions
-// Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
+	// Contains MapKey Statements for all button and switch actions
+	// Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
 
-// Refer Change Log.txt in parent folder
+	// Refer Change Log.txt in parent folder
 
-// LEGEND: 
-// ========================================================================
-// fnName()								refer to ED_Functions file
-// initName()							refer to ED_Initialise file
-// stfnName()							refer to ED_StateTracker file
-// tgName()								refer to ED_Toggles file
-// mName								refer to ED_Macros file
-// MapKey statements					refer to ED_MapKeyAssignment file
-// Global State and Boolean Defines		refer to ED_ScriptDefines file
-// Global Game Key Bind Defines			refer to ED_GameBindings file 
-// Global Script Variables				refer to ED_GlobalVars file
-// User Config Settings					refer to ED_UserSettings file
-// ========================================================================
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
 
-/*
+	/*
 	Index:		FUNCTION
 	Line   47: 	int MainKeyMap()
 	Line   50:		Joystick Triggers
-	Line  258:		Throttle Lever Switches
-	Line  407:		Throttle Base Buttons
-	Line  643: 	int TrainingMap()
-	Line  646:		Joystick Triggers
-	Line  826:		Throttle Lever Switches
-	Line  973:		Throttle Base Buttons 
-*/
+	Line  274:		Throttle Lever Switches
+	Line  424:		Throttle Base Buttons
+	Line  686: 	int TrainingMap()
+	Line  689:		Joystick Triggers
+	Line  896:		Throttle Lever Switches
+	Line 1045:		Throttle Base Buttons 
+	*/
 
 	// START
 
@@ -200,10 +200,26 @@
 			MapKey(&MyJoystick, H3R, PULSE+PowerWep);
 		}
 		else {
-			MapKey(&MyJoystick, H3U, EXEC("fnPIPManager(ENG);"));											// Fire Engine focussed PIP sequence
-			MapKey(&MyJoystick, H3D, PULSE+BalancePower);													// Balance PIP sequence
-			MapKey(&MyJoystick, H3L, EXEC("fnPIPManager(SYS);"));											// Fire System focussed PIP sequence
-			MapKey(&MyJoystick, H3R, EXEC("fnPIPManager(WEP);"));											// Fire Weapon focussed PIP sequence
+			MapKeyUMD(&MyJoystick, H3U, 
+				PULSE+FighterAttack,																		// U - Attack my target 
+				EXEC("fnPIPManager(ENG);"),																	// M - Engine focussed PIPs 
+				PULSE+FighterAttack																			// D - PLACEHOLDER
+			);
+			MapKeyUMD(&MyJoystick, H3D, 
+				PULSE+FighterNoFire,																		// U - Follow me. hold fire
+				PULSE+BalancePower,																			// M - Balance PIP sequence
+				PULSE+FighterHold																			// D - Stop
+			);
+			MapKeyUMD(&MyJoystick, H3L, 
+				PULSE+FighterDefend,																		// U - Defend me 
+				EXEC("fnPIPManager(SYS);"),																	// M - System focussed PIPs
+				PULSE+FighterFollow																			// D - Follow me 
+			);
+			MapKeyUMD(&MyJoystick, H3R, 
+				PULSE+FighterAggr,																			// U - Engage at will
+				EXEC("fnPIPManager(WEP);"),																	// M - Weapon focussed PIPs
+				PULSE+FighterAggr																			// D - PLACEHOLDER
+			);
 		}
 
 	//	(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
@@ -231,7 +247,7 @@
 	
 			MapKeyUMD(&MyJoystick, H4L,
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
-				EXEC("ActKey(KEYON+ChargeECM); printf(\"! ECM Charging...\");"),							// M - Charge ECM (Electronic Counter Measures)
+				EXEC("fnECM(); if (ECM) {ActKey(KEYON+ChargeECM); printf(\"! ECM Charging...\");} else {fnVPOutput(\"ECM Module not installed in ship\");}"),	// M - Charge ECM (Electronic Counter Measures)
 				CameraBlurOut																				// D - Camera Blur - OUT
 				);
 	
@@ -345,7 +361,8 @@
 			MapKey(&MyThrottle, MSD, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSL, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSR, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
-			MapKey(&MyThrottle, MSP, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
+		//	MapKey(&MyThrottle, MSP, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
+			MapKey(&MyThrottle, MSP, EXEC("fnPANIC();"));						// panic switch. Aborts script.
 			}
 		
 		
@@ -362,9 +379,7 @@
 		else {
 			MapKeyUMD(&MyThrottle, SPDF,
 				0,																							// U - Align Switch only	- Deploy Speedbrake only (no Reverse)			
-//				EXEC("tgReverseThrust(0);"),																// U - Reverse Only			- No Speedbrake
 				EXEC("tgReverseThrust(1);"),																// M - Standard Reverse		- Deploy Speedbrake if Hardpoints deployed
-//				EXEC("tgReverseThrust(2);")																	// D - Align Switch only	- Deploy Speedbrake only (no Reverse)
 				EXEC("tgReverseThrust(0);")																	// D - Reverse Only			- No Speedbrake
 				);
 	
@@ -405,9 +420,9 @@
 		MapKey(&MyThrottle, CHF, PULSE+TargetNextSubsystem);
 		MapKey(&MyThrottle, CHB, PULSE+TargetPrevSubsystem);
 		
-	// ---------------------------------------//
+	////////////////////////////////////////////
 	// Map Throttle BASE buttons and switches //
-	// ---------------------------------------//
+	////////////////////////////////////////////
 
 	//	(AutoPilot Select)	// JoystickCurves Selector
 	//	------------------
@@ -464,7 +479,7 @@
 				0,																							// OU - (PSF+) Use to fix mis-aligned switch 
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// IM -
 				EXEC("tgCargoScoop(DEPLOY);"),																// OM - Deploy Cargo Scoop
-				PULSE+EjectCargo,																			// ID - (S3+PSF+) About as safe as I can make it!
+				PULSE+EjectCargo,																			// ID - (S3+PSB+) About as safe as I can make it!
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// OD -
 			);
 		
@@ -512,13 +527,13 @@
 		else {
 			MapKeyUMD(&MyThrottle, FLAPU,
 				EXEC("fnVoiceVolume(INCREASE);"),															// U - Increase TextToSpeech volume
-				PULSE+GalMap,																				// M - Galaxy Map - ON
+				EXEC("tgGALMap(ON);"),																		// M - Galaxy Map - ON
 				EXEC("fnLEDBrightness(INCREASE);")															// D - Increase LED Brightness 
 				);
 				
 			MapKeyRUMD(&MyThrottle, FLAPU,																	// RELEASE
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// RU -
-				PULSE+GalMap,																				// RM - Galaxy View - OFF
+				EXEC("tgGALMap(OFF);"),																		// RM - Galaxy Map - OFF
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// RD -
 				);
 				
@@ -526,13 +541,13 @@
 				
 			MapKeyUMD(&MyThrottle, FLAPD,
 				EXEC("fnVoiceVolume(DECREASE);"),															// U - Decrease TextToSpeech volume
-				PULSE+SystemMap,																			// M - System Map view - ON
+				EXEC("tgSYSMap(ON);"),																		// M - System Map - ON
 				PULSE+LED(&MyThrottle, LED_INTENSITY, 0)													// D - Turn Throttle Base LEDs off 
 				);
 				
 			MapKeyRUMD(&MyThrottle, FLAPD,																	// RELEASE
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// RU -
-				PULSE+SystemMap,																			// RM - System Map - OFF
+				EXEC("tgSYSMap(OFF);"),																		// RM - System Map - OFF
 				EXEC("fnLEDBrightness();")																	// RD - Turn Throttle Base LEDs on
 				);
 		}
@@ -545,8 +560,15 @@
 			MapKey(&MyThrottle, APUOFF, 0);
 		}
 		else {
-			MapKey(&MyThrottle, APUON, EXEC("fnDeploySRV(DEPLOY);"));										// "APU Start"	= Deploy SRV
-			MapKey(&MyThrottle, APUOFF, EXEC("fnDeploySRV(RECOVER);"));										// "AAPU OFF"	= Board Ship
+			MapKeyIO(&MyThrottle, APUON,																	// "APU Start"	= Deploy SRV/Fighter
+				EXEC("fnDeployFighter(DEPLOY);"),															// I -
+				EXEC("fnDeploySRV(DEPLOY);")																// O -
+			);
+			
+			MapKeyIO(&MyThrottle, APUOFF, 																	// "APU OFF"	= Recover SRV/Fighter
+				EXEC("fnDeployFighter(RECOVER);"),															// I -
+				EXEC("fnDeploySRV(RECOVER);")																// O - 
+			);
 		}
 
 	//	(Engine Operate - Right)
@@ -645,7 +667,7 @@
 		MapKey(&MyThrottle, IDLERON, 0);																	// <not currently used>
 		MapKey(&MyThrottle, IDLEROFF, 0);																	// <not currently used>
 
-		printf("\x0a\HOTAS Mode:	ACTIVE\x0a");
+		printf("\x0a\HOTAS Mode:		ACTIVE\x0a");
 		
 	}	// end of MainKeyMap
 	
@@ -793,16 +815,43 @@
 				);
 		}
 	
-	//		(Data Management Switch)				// Power (PIP) Management
-	//		------------------------
+	//	(Data Management Switch)				// Power (PIP) Management
+	//	------------------------
 
-		MapKey(&MyJoystick, H3U, EXEC("fnVPOutput(\"PIP Manager, Engine Focussed\");"));
-		MapKey(&MyJoystick, H3D, EXEC("fnVPOutput(\"PIP Manager, Balance PIPs\");"));
-		MapKey(&MyJoystick, H3L, EXEC("fnVPOutput(\"PIP Manager, System Focussed\");"));
-		MapKey(&MyJoystick, H3R, EXEC("fnVPOutput(\"PIP Manager, Weapon Focussed\");"));
+		if (MapKeyProfile == BASIC) {
+			MapKey(&MyJoystick, H3U, EXEC("fnVPOutput(\"PIP Manager, Engine Focussed\");"));
+			MapKey(&MyJoystick, H3D, EXEC("fnVPOutput(\"PIP Manager, Balance PIPs\");"));
+			MapKey(&MyJoystick, H3L, EXEC("fnVPOutput(\"PIP Manager, System Focussed\");"));
+			MapKey(&MyJoystick, H3R, EXEC("fnVPOutput(\"PIP Manager, Weapon Focussed\");"));
+		}
+		else {
+			MapKeyUMD(&MyJoystick, H3U, 
+				EXEC("fnVPOutput(\"Fighter, Attack\");"),
+				EXEC("fnVPOutput(\"PIP Manager, Engine Focussed\");"),
+				EXEC("fnVPOutput(\"Fighter, Attack\");")			
+			);
+			
+			MapKeyUMD(&MyJoystick, H3D, 
+				EXEC("fnVPOutput(\"Fighter, Follow no fire\");"),
+				EXEC("fnVPOutput(\"PIP Manager, Balance PIPs\");"),
+				EXEC("fnVPOutput(\"Fighter, hold\");")
+			);
+			
+			MapKeyUMD(&MyJoystick, H3L, 
+				EXEC("fnVPOutput(\"Fighter, Defend\");"),
+				EXEC("fnVPOutput(\"PIP Manager, System Focussed\");"),
+				EXEC("fnVPOutput(\"Fighter, Follow\");")
+			);
+			
+			MapKeyUMD(&MyJoystick, H3R, 
+				EXEC("fnVPOutput(\"Fighter, Aggressive\");"),
+				EXEC("fnVPOutput(\"PIP Manager, Weapon Focussed\");"),
+				EXEC("fnVPOutput(\"Fighter, Aggressive\");")
+			);
+		}
 		
-	//		(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
-	//		-----------------------------------
+	//	(Countermeasures Management Switch)		// Countermeasures and camera/FSS Zoom
+	//	-----------------------------------
 
 		if (MapKeyProfile == BASIC) {
 			MapKey(&MyJoystick, H4U, EXEC("fnVPOutput(\"Shield cell bank\");"));
@@ -937,7 +986,9 @@
 			MapKey(&MyThrottle, MSD, EXEC("fnVPOutput(\"Not mapped\");"));
 			MapKey(&MyThrottle, MSL, EXEC("fnVPOutput(\"Not mapped\");"));
 			MapKey(&MyThrottle, MSR, EXEC("fnVPOutput(\"Not mapped\");"));		
-			MapKey(&MyThrottle, MSP, EXEC("fnVPOutput(\"Not mapped\");"));
+		//	MapKey(&MyThrottle, MSP, EXEC("fnVPOutput(\"Not mapped\");"));
+			MapKey(&MyThrottle, MSP, EXEC("fnPANIC();"));							// panic switch 
+
 		}
 		
 	
@@ -1125,8 +1176,15 @@
 			MapKey(&MyThrottle, APUOFF, EXEC("fnVPOutput(\"Not mapped\");"));
 		}
 		else {
-			MapKey(&MyThrottle, APUON, EXEC("fnVPOutput(\"Deploy SRV\");"));
-			MapKey(&MyThrottle, APUOFF, EXEC("fnVPOutput(\"Recover SRV\");"));
+			MapKeyIO(&MyThrottle, APUON, 
+				EXEC("fnVPOutput(\"Deploy Fighter\");"),
+				EXEC("fnVPOutput(\"Deploy SRV\");")
+			);
+
+			MapKeyIO(&MyThrottle, APUOFF, 
+				EXEC("fnVPOutput(\"Recover Fighter\");"),
+				EXEC("fnVPOutput(\"Recover SRV\");")
+			);
 		}
 	
 	//		(Engine Operate - Right)
@@ -1178,8 +1236,8 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnVPOutput(\"Print status page to Con-sole\");"),
 				EXEC("fnVPOutput(\"Reset status LEDs\");"),
-				EXEC("fnVPOutput(\"Save my status file\");")
-		//		EXEC("stfnMyStates(SAVE);")									// use this when manually updating states to file and don't want to run/exit the game
+		//		EXEC("fnVPOutput(\"Save my status file\");")
+				EXEC("stfnMyStates(SAVE);")									// use this when manually updating states to file and don't want to run/exit the game
 				);
 		}
 				
@@ -1217,7 +1275,7 @@
 		MapKey(&MyThrottle, IDLERON, 0);				// <not used>
 		MapKey(&MyThrottle, IDLEROFF, 0);				// <not used>
 
-		printf("\x0a\HOTAS Mode:	TRAINING\x0a");
+		printf("\x0a\HOTAS Mode:		TRAINING\x0a");
 
 	}	// end of TrainingMap
 
