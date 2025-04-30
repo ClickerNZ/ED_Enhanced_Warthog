@@ -1,91 +1,95 @@
 
-//----------------------------------------------------------------------//
-//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-//----------------------------------------------------------------------//
+	//----------------------------------------------------------------------//
+	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
+	//----------------------------------------------------------------------//
 
-// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Trailblazers)
 
-// Below are the global, static, state and boolean definitions used within the script package
-// Also contains global status.json integer variable flags for ease of maintenance and readability
+	// Below are the global, static, state and boolean definitions used within the script package
+	// Also contains global status.json integer variable flags for ease of maintenance and readability
 
-// LEGEND: 
-// ========================================================================
-// fnName()								refer to ED_Functions file
-// initName()							refer to ED_Initialise file
-// stfnName()							refer to ED_StateTracker file
-// tgName()								refer to ED_Toggles file
-// mName								refer to ED_Macros file
-// MapKey statements					refer to ED_MapKeyAssignment file
-// Global State and Boolean Defines		refer to ED_ScriptDefines file
-// Global Game Key Bind Defines			refer to ED_GameBindings file 
-// Global Script Variables				refer to ED_GlobalVars file
-// User Config Settings					refer to ED_UserSettings file
-// ========================================================================
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
 
 
 						//  -- WARNING --  //
 
-// Do not define a variable as ALT+F4 (L_ALT+USB[0x3D] or R_ALT+USB[0x3D])
-// Why??? - PULSE an ALT+F4 to the current active window will close it!
+	// Do not define a variable as ALT+F4 (L_ALT+USB[0x3D] or R_ALT+USB[0x3D])
+	// Why??? - PULSE an ALT+F4 to the current active window will close it!
 
 						//   -- NOTES --   //
 
-// Assigning ALT+F3 results in a 'brrringg' noise in TARGET Script Editor/GUI and is not advised
+	// Assigning ALT+F3 results in a 'brrringg' noise in TARGET Script Editor/GUI and is not advised
 
-// START
+	// START
 
 	define KBLayout 							KB_ENG					// Default Keyboard Layout. Options = KB_FR or KB_GER
 
-//----------------------------------------------------------------------//
-// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
-//----------------------------------------------------------------------//
+	//----------------------------------------------------------------------//
+	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
+	//----------------------------------------------------------------------//
 
 	define VMajor		 						5						// Script Version Major Value			ie. 2xx
 	define VMinor		 						1						// Script Version Minor Value			ie. x3x
 	define VPoint								0						// Script Version Point Update			ie. xx4
 	define VBranch								"dev"					// Script Version Branch				ie. xxx.01
 
-//---------//
-// Timings //
-//---------//
+	//---------//
+	// Timings //
+	//---------//
 
 	// These delay settings affect how fast the script executes key press sequences etc.
 	// If you find the macros are dropping characters, then the delay is too short.
 	// "LongPress" is a personal setting. I find a half second is about right for me when usisng with TEMPO.
 	
 	define 	PulseTime 			35						// PULSE+ Delay time (ms) - Used as key-hold-down time.
-	define 	DelayTime 			100						// D() Delay time 	 (ms) - Used in macros as the time between releasing one key and pressing the next. Increase from 75 for Odyssey
+	define 	DelayTime 			100						// D() Delay time 	 (ms) - Used in macros as the time between releasing one key and pressing the next
 	define 	LongPress	 		500						// Tempo Delay 		 (ms) - Used in Tempos. ie hold switch/button for 0.5 seconds for alternate function
 
-	define 	CompoDelay			9900					// Composite scanner 'hold-trigger' timer (10 seconds)		
-	define 	DiscoDelay			6100					// Discovery scanner 'hold-trigger' timer (6.1 seconds)	
-
-//-------------------//
-// PIPMAPPER DEFINES //
-//-------------------//
+	// Verify timers reqd for the below 
+	define 	CompoScanDelay		5000					// Composition scanner	'hold-trigger' timer (5 seconds)
+	define	DataLinkScanDelay	5000					// Datalink scanner		'hold-trigger' timer (5 seconds)
+	define	KWSDelay			5000					// Kill Warrant Scanner	'hold-trigger' timer (5 seconds)
+	define 	DiscoDelay			6100					// Discovery scanner	'hold-trigger' timer (6.1 seconds)	- VERIFIED 
+	define	WakeScanDelay		10100					// Wake Scanner			'hold-trigger' timer (10.1 seconds)	- VERIFIED
+	define	ManifestScanDelay	9000					// Manifest Scanner		'hold-trigger' timer (9 seconds)
+	
+	//-------------------//
+	// PIPMAPPER DEFINES //
+	//-------------------//
 
 	define SYS									1						// Used in fnPIPMapper for managing System  PIPs (see EDFunctions.tmh) (DO NOT modify!)
 	define ENG									2						// Used in fnPIPMapper for managing Engine  PIPs (see EDFunctions.tmh) (DO NOT modify!)
 	define WEP									3						// Used in fnPIPMapper for managing Weapon  PIPs (see EDFunctions.tmh) (DO NOT modify!)
 	define MID									4						// Used in fnPIPMapper for managing Balance PIPs (see EDFunctions.tmh) (DO NOT modify!)
 
-//------------------------------//
-// REXEC and AutoRepeat Handles //
-//------------------------------//
+	//------------------------------//
+	// REXEC and AutoRepeat Handles //
+	//------------------------------//
 
 	define hPWS									0						// Used in ED_Functions.tmh						- PWS fire option on primary/secondary trigger
 	define hReadStatusJson						1						// Used in ED_StateTracker.tmh					- main read ststus.json background loop
 	define hSRStrobe							2						// Used in ED_Toggles.tmh						- Silent Running Strobe
 	define hFSDCharge							3						// Used in ED_Toggles.tmh & ED_Functions.tmh	- FSD Charge detection
-	define hMassLocked							4						// Used in ED_Toggles.tmh & ED_Functions.tmh	- FSD Masslocked check/retry
-	define hSoundFX								5						// Used in ED_MapKeyAssignment.tmh 				- PSF & PSB reminder sound
-	define hBeepFX								6						// Used in ED_Toggles.tmh						- Reverse thrust
-	define hTerrain								7						// Used in ED_Toggles.tmh						- Terrain Following
-	define hReadMyJournalData					8						// Used in ED_StateTracker.tmh					- main read MyJournalData.json background loop
-
-//----------------------------------------------------------------------//
-// SCRIPT BOOLEAN and STATE DEFINES										//
-//----------------------------------------------------------------------//
+	define hSoundFX								4						// Used in ED_MapKeyAssignment.tmh 				- PSF & PSB reminder sound
+	define hBeepFX								5						// Used in ED_Toggles.tmh						- Reverse thrust
+	define hTerrain								6						// Used in ED_Toggles.tmh						- Terrain Following
+	define hReadMyJournalData					7						// Used in ED_StateTracker.tmh					- main read MyJournalData.json background loop
+	
+	//----------------------------------------------------------------------//
+	// SCRIPT BOOLEAN and STATE DEFINES										//
+	//----------------------------------------------------------------------//
 		
 	define OFF									0
 	define ON									1
@@ -127,6 +131,7 @@
 	define FLOAT								0
 	define INTEGER								1
 	define STRING								2
+	define BOOLEAN								4
 	
 	define NUL									0						// Should be '\x0' ??? so we can use to terminate strings?
 	define NONE									0						// used for fnSetCurves()
@@ -141,24 +146,24 @@
 	define SAVE									1						// used in stfnMyStates()
 	define LOAD									0						// used in stfnMyStates()	
 
-//---------------//
-// DEBUG DEFINES //
-//---------------//
+	//---------------//
+	// DEBUG DEFINES //
+	//---------------//
 
 	define ControllerCheck						ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 																		// DISABLED:	Won't abort script if compatible Joystick or Throttle not found
 
-//-----------------------------------------------------------------------------------------------------------------------------//
-//                                                                                                                             //
-//    The following defines align to the FLAGS and FLAGS2 masks within status.json as defined in the Journal Documentation     //
-//                                                                                                                             //
-//        STATUS.JSON : Refer Section 14 in http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf             //
-//                                                                                                                             //
-//-----------------------------------------------------------------------------------------------------------------------------//
+	//-----------------------------------------------------------------------------------------------------------------------------//
+	//                                                                                                                             //
+	//    The following defines align to the FLAGS and FLAGS2 masks within status.json as defined in the Journal Documentation     //
+	//                                                                                                                             //
+	//        STATUS.JSON : Refer Section 14 in http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf             //
+	//                                                                                                                             //
+	//-----------------------------------------------------------------------------------------------------------------------------//
 
-//-------------//
-// FLAGS MASKS //
-//-------------//
+	//-------------//
+	// FLAGS MASKS //
+	//-------------//
 
 	define ED_Docked               	0x0000000000000001
 	define ED_Landed               	0x0000000000000002
@@ -200,9 +205,9 @@
 	define ED_FSDJump				0x0000000040000000	
 	define ED_SRVHiBeam				0x0000000080000000	
 
-//---------------------------------//
-//  Corresponding Flags Variables  //
-//---------------------------------//
+	//---------------------------------//
+	//  Corresponding Flags Variables  //
+	//---------------------------------//
 
 	// These variables are used to check state of each of the above flags whilst game is running
 
@@ -242,9 +247,42 @@
 	int fFSDJump				=	0;
 	int fSRVHiBeam				=	0;
 
-//--------------//
-// FLAGS2 MASKS //
-//--------------//
+	int lDocked					=	0;
+	int lLanded					=	0;
+	int lLandingGear			=	0;
+	int lShieldsUp				=	0;
+	int lSupercruise			=	0;
+	int lFAOff					=	0;
+	int lHardpoints				=	0;
+	int lInWing					=	0;
+	int lLights					=	0;
+	int lCargoScoop				=	0;
+	int lSilentRunning			=	0;
+	int lFuelScoop				=	0;
+	int lSRVHandbrake			=	0;
+	int lSRVTurretView			=	0;
+	int lSRVTurretRetracted		=	0;
+	int lSRVDriveAssist			=	0;
+	int lMassLocked				=	0;
+	int lFSDCharging			=	0;
+	int lFSDCooldown			=	0;
+	int lLowFuel				=	0;
+	int lOverHeating			=	0;
+	int lLatLong				=	0;
+	int lDanger					=	0;
+	int lInterdicted			=	0;
+	int lMainShip				=	0;
+	int lFighter				=	0;
+	int lSRV					=	0;
+	int lHUDAnalysis			=	0;
+	int lNightVision			=	0;
+	int	lAltFromAvgRad			=	0;
+	int lFSDJump				=	0;
+	int lSRVHiBeam				=	0;
+
+	//--------------//
+	// FLAGS2 MASKS //
+	//--------------//
 
 	define ED_OnFoot               	0x0000000000000001
 	define ED_InTaxi               	0x0000000000000002
@@ -286,9 +324,9 @@
 	define ED_RESERVED31			0x0000000040000000	
 	define ED_RESERVED32			0x0000000080000000
 
-//----------------------------------//
-//  Corresponding Flags2 Variables  //
-//----------------------------------//
+	//----------------------------------//
+	//  Corresponding Flags2 Variables  //
+	//----------------------------------//
 
 	int Flags2					=	0;		// contains the Flags2 key value integer 
 	int OldFlags2				=	0;		// track when Flags2 key value changes 
@@ -333,9 +371,49 @@
 	int fRESERVED31				= 	0;
 	int fRESERVED32				= 	0;
 
-//--------------------//
-// GUIFocus Variables //
-//--------------------//
+	int lOnFoot					=	0;
+	int lInTaxi					=	0;
+	int lInMultiCrew			=	0;	      
+	int lOnFootInStation    	=	0;
+
+	int lOnFootOnPlanet     	=	0;
+	int lAimDownSight      		=	0;
+	int lLowOxygen				=	0;
+	int lLowHealth          	=	0;
+
+	int lCold	            	=	0;
+	int lHot					=	0;
+	int lVeryCold	        	=	0;
+	int lVeryHot	        	=	0;
+
+	int lGlideMode				= 	0;
+	int lOnFootInHanger			= 	0;
+	int lOnFootSocialSpace		= 	0;
+	int lOnFootExterior			= 	0;
+
+	int lBreathableAtmosphere	= 	0;
+	int lTelepresenceMulticrew	= 	0;
+	int lPhysicalMulticrew		= 	0;
+	int lFSDHyperdriveChg		= 	0;
+
+	int lSupercruiseOvercharge	= 	0;
+	int lSupercruiseAssist		= 	0;
+	int lNPCCrewActive			= 	0;
+	int lRESERVED24				= 	0;
+
+	int lRESERVED25				= 	0;
+	int lRESERVED26				= 	0;
+	int lRESERVED27				= 	0;
+	int lRESERVED28				= 	0;
+
+	int lRESERVED29				= 	0;
+	int lRESERVED30				= 	0;
+	int lRESERVED31				= 	0;
+	int lRESERVED32				= 	0;
+
+	//--------------------//
+	// GUIFocus Variables //
+	//--------------------//
 
 	define GUI_None				0
 	define GUI_SystemPanel		1
@@ -350,4 +428,4 @@
 	define GUI_SAAMode			10
 	define GUI_Codex			11
 
-//	END
+	//	END
