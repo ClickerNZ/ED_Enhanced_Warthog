@@ -1,47 +1,45 @@
 
-//----------------------------------------------------------------------//
-//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-//----------------------------------------------------------------------//
+	//----------------------------------------------------------------------//
+	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
+	//----------------------------------------------------------------------//
 
-// This file: ED_GlobalVars.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_GlobalVars.tmh ... supports Elite Dangerous (Trailblazers)
 
-// NOTE:	All user related settings can be found in the ED_UserSettings.tmh file
-//			Changing any of the below global variables will have significant effect on the script
-//			and may cause errors. Change these at your own risk
+	// NOTE:	All user related settings can be found in the ED_UserSettings.tmh file
+	//			Changing any of the below global variables will have significant effect on the script
+	//			and may cause errors. Change these at your own risk
 
-// LEGEND: 
-// ========================================================================
-// fnName()								refer to ED_Functions file
-// initName()							refer to ED_Initialise file
-// stfnName()							refer to ED_StateTracker file
-// tgName()								refer to ED_Toggles file
-// mName								refer to ED_Macros file
-// MapKey statements					refer to ED_MapKeyAssignment file
-// Global State and Boolean Defines		refer to ED_ScriptDefines file
-// Global Game Key Bind Defines			refer to ED_GameBindings file 
-// Global Script Variables				refer to ED_GlobalVars file
-// User Config Settings					refer to ED_UserSettings file
-// ========================================================================
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
 
-// START
+	// START
 
-	char 	CMDRName;					// Global CMDRName 
+	char 	CMDRName;					// Set via fnMyName() and read from MyJournalData.json 
+	char	StationName;				// Set via fnGetStationName() and read from MyJournalData.json 
+	char	DockingStatus;				// Set via fnDockingStatus() and read from MyJournalData.json 
 
-//--------------------//
-// Connected Hardware //
-//--------------------//
+	//--------------------//
+	// Connected Hardware //
+	//--------------------//
 
 	alias	MyJoystick;					// Global Joystick handle. Set in ED_Main depending on which compatible Joystic/Base is detected
 	alias	MyThrottle;					// Global Throttle handle. Set in ED_Main depending on which compatible Throttle is detected
 	alias	MyRudder;					// Global Rudder handle. Set in ED_Main depending on which compatible Rudder is detected	
 	
-//----------------//
-// DEFAULT STATES //   					// GLOBAL VARIABLE INITIALISATION, DESCRIPTION & USAGE
-//----------------//
-
-	int VoiceExists;					// Declared here and set in initTextToSpeech()
-	int SerialText			= 0;		// Default TextToSpeech action is Parallel (call voice.exe and immediately process next instruction)
-										// Set SerialText prior to calling fnVPOutput() or fnTextToSpeech() to call voice.exe and wait until complete
+	//----------------//
+	// DEFAULT STATES //   					// GLOBAL VARIABLE INITIALISATION, DESCRIPTION & USAGE
+	//----------------//
 	
 	int SounderExists;					// Declared here and set in initSoundFX()
 
@@ -59,7 +57,7 @@
 	int StartupLock			= 1;		// Prevent triggering keystrokes during initialisation
 	int GameLoaded			= 0;		// Set in fnGameStarted() when game is detected as running
 	
-	int Odyssey				= 0;		// 0 = Horizons, 1 = Odyssey. We check this when game starts running via presence of 'Flags2' Key in status.json
+//	int Odyssey				= 0;		// 0 = Horizons, 1 = Odyssey
 	
 	int ConnectionStatus	= 0;		// Track if "ShowConnectionStatus" is on or off to avoid accidental toggle off during mode switch
 	int ReverseThrust		= 0;		// Set/Reset in tgReverseThrust()
@@ -77,8 +75,19 @@
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	int GUIState			= 1;		// Used to track when ship's HUD GUI is turned off or on (default = ON)
 	
+	int SRVPresent			= 0;		// Set via fnSRVStatus(). Enables SRV related functions
+	int SCOPresent			= 0;		// set via fnSCO(). Enables SCO related functions
+	int FighterPresent		= 0;		// Set via fnFighterStatus(). Enables Fighter related functions
+	int ActiveFighter		= 0;		// Used to track when Fighter is active via NPC Pilot 
+	int HeatsinkLauncher	= 0;		// Set via fnHeatsinksLauncher(). Enables AutoHeatsink function 
+	int ChaffLauncher		= 0;		// Set via fnChaffLauncher(). Enables Chaff launcher function
+	int ShieldCellBank		= 0;		// Set via fnShieldCellBank(). Enables SCB function
+	int ECM 				= 0;		// Set via fnECM(). Enables ECM function
+	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
 	
 	int TerrainFollow		= 0;		// Global Flag to track Terrain Following ON/OFF
+	
+	int ThrustUpTime		= 1500;		// Used in m_Launch macro. Future feature = table of ships and thruster stats and modify on the fly
 				
-// END
+	// END
