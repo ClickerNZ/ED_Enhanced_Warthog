@@ -37,6 +37,10 @@
 	alias	MyThrottle;					// Global Throttle handle. Set in ED_Main depending on which compatible Throttle is detected
 	alias	MyRudder;					// Global Rudder handle. Set in ED_Main depending on which compatible Rudder is detected	
 	
+	char	NOJOYSTICK	= 0;			// Set during CheckControllers if no compatible device found
+	char	NOTHROTTLE	= 0;			// Set during CheckControllers if no compatible device found
+	char	NORUDDER	= 0;			// Set during CheckControllers if no compatible device found
+	
 	//----------------//
 	// DEFAULT STATES //   					// GLOBAL VARIABLE INITIALISATION, DESCRIPTION & USAGE
 	//----------------//
@@ -75,14 +79,9 @@
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	int GUIState			= 1;		// Used to track when ship's HUD GUI is turned off or on (default = ON)
 	
-	int SRVPresent			= 0;		// Set via fnSRVStatus(). Enables SRV related functions
-	int SCOPresent			= 0;		// set via fnSCO(). Enables SCO related functions
-	int FighterPresent		= 0;		// Set via fnFighterStatus(). Enables Fighter related functions
-	int ActiveFighter		= 0;		// Used to track when Fighter is active via NPC Pilot 
-	int HeatsinkLauncher	= 0;		// Set via fnHeatsinksLauncher(). Enables AutoHeatsink function 
-	int ChaffLauncher		= 0;		// Set via fnChaffLauncher(). Enables Chaff launcher function
-	int ShieldCellBank		= 0;		// Set via fnShieldCellBank(). Enables SCB function
-	int ECM 				= 0;		// Set via fnECM(). Enables ECM function
+	int DockingSequence		= 0;		// Set when docking request granted. Used for AutoHanger and reset when Docked
+
+	int ActiveFighter		= 0;		// Read from MyJournalData
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
 	
