@@ -31,6 +31,8 @@
 	Line 215: 	int initRudderAxis()
 	Line 229: 	int initTextToSpeech()
 	Line 240: 	int initSoundFX()
+	Line 267:	int initUserSettings()
+	Line 299:	int fnResetUserSettings()
 
 */
 
@@ -90,10 +92,13 @@
 			printf("	3) AVA Base with F16 Flight stick\x0a");
 			printf("	4) AVA Base with F18 Flight stick\x0a");
 			printf("	5) AVA Base with SolR Flight stick\x0a");
-
+			
 			if (ControllerCheck == ENABLED) {									// if DISABLED allows script to run without connected controllers. Refer ED_ScriptDefines.ttm 
 				fnSoundFX("wstop");
 				Abort();
+			}
+			else {
+				NOJOYSTICK = 1;
 			}
 		}
 
@@ -111,6 +116,9 @@
 			if (ControllerCheck == ENABLED) {									// if DISABLED allows script to run without connected controllers. Refer ED_ScriptDefines.ttm 
 				fnSoundFX("wstop");
 				Abort();
+			}
+			else {
+				NOTHROTTLE = 1;
 			}
 		}
 		else {
@@ -139,6 +147,7 @@
 			printf("++	No compatible rudder connected. Use alt YAW control.\x0a");
 			printf("	(Joystick S3 + Throttle Coolie Switch L & R)\x0a");
 			EnableMyRudder = DISABLED;
+			NORUDDER = 1;
 		}
 	}
 
@@ -252,5 +261,101 @@
 		}
 	}
 
+
+	// FUNCTION:	Save all changeable USERSETTINGS (refer ED_UserSettings.tmh
+	// Parameter:	dummy - allows calls from REXEC and DeferCall
+
+	// Global VARS
+		
+	//		Default User Settings	|||||||||||||||||||| Move these somewhere else.
+	int		defCurveInfo;			// PRINT/NOPRINT
+	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+	int		defChatTABS;			// 1 - 4
+	int		defAutoHanger;			// ENABLED/DISABLED
+	int		defAutoGearUP;			// ENABLED/DISABLED
+	int		defAutoGearDOWN;		// ENABLED/DISABLED
+	int		defAutoLandingLights;	// ENABLED/DISABLED
+	int		defAutoHeatsink;		// ENABLED/DISABLED
+	int		defAutoStrobe;			// ENABLED/DISABLED
+	int		defAutoHONK;			// ENABLED/DISABLED
+	int		defAutoRecall;			// ENABLED/DISABLED
+	int		defNVGUI;				// ON/OFF
+	int		defFSDGUI;				// ON/OFF 
+	int		defTrainingMode;		// ENABLED/DISABLED
+	int		defAnnounceTraining;	// ENABLED/DISABLED
+	int		defAltVoiceRate;		// -10 < 0 > +10 
+	int		defVoiceRate;			// -10 < 0 > +10
+	int		defUseAltVoice;			// YES/NO 
+	int		defEnableVoice;			// ENABLED/DISABLED 
+	int		defVoiceVolume;			// 0 - 100
+	int		defFlashLEDs;			// ENABLED/DISABLED
+	int		defLEDLevel;			// 0 - 5
+	int		defEnableSoundFX;		// ENABLED/DISABLED
+	int		defThrustUpTime;		// 0 - ???? (milliseconds)
+	
+	int initUserSettings(int dummy = 0) {
+	
+		printf("\x0a++ Save User Settings ...\x0a");
+		defCurveInfo			= CurveInfo;			// PRINT/NOPRINT
+		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
+		defChatTABS				= ChatTABs;				// 1 - 4
+		defAutoHanger			= AutoHanger;			// ENABLED/DISABLED
+		defAutoGearUP			= AutoGearUP;			// ENABLED/DISABLED
+		defAutoGearDOWN			= AutoGearDOWN;			// ENABLED/DISABLED
+		defAutoLandingLights	= AutoLandingLights;	// ENABLED/DISABLED
+		defAutoHeatsink			= AutoHeatsink;			// ENABLED/DISABLED
+		defAutoStrobe			= AutoStrobe;			// ENABLED/DISABLED
+		defAutoHONK				= AutoHONK;				// ENABLED/DISABLED
+		defAutoRecall			= AutoRecall;			// ENABLED/DISABLED
+		defNVGUI				= NVGUI;				// ON/OFF
+		defFSDGUI				= FSDGUI;				// ON/OFF 
+		defTrainingMode			= TrainingMode;			// ENABLED/DISABLED
+		defAnnounceTraining		= AnnounceTraining;		// ENABLED/DISABLED
+		defAltVoiceRate			= AltVoiceRate;			// -10 < 0 > +10 
+		defVoiceRate			= VoiceRate;			// -10 < 0 > +10
+		defUseAltVoice			= UseAltVoice;			// YES/NO 
+		defEnableVoice			= EnableVoice;			// ENABLED/DISABLED 
+		defVoiceVolume			= VoiceVolume;			// 0 - 100
+		defFlashLEDs			= FlashLEDs;			// ENABLED/DISABLED
+		defLEDLevel				= LEDLevel;				// 0 - 5
+		defEnableSoundFX		= EnableSoundFX;		// ENABLED/DISABLED
+		defThrustUpTime			= ThrustUpTime;			// 0 - ???? (milliseconds)
+		printf("++ User settings saved\x0a");
+		
+	}
+	
+	
+	// FUNCTION:	Restore all changeable USERSETTINGS to original settings (refer ED_UserSettings.tmh
+	// Parameter:	dummy - allows calls from REXEC and DeferCall
+	
+	int fnResetUserSettings(int dummy = 0) {
+	
+		printf("\x0a++ Restore User Settings to default...\x0a");
+		CurveInfo			= defCurveInfo;			// PRINT/NOPRINT
+		FAOFFCurves			= defFAOFFCurves;		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+		ChatTABs			= defChatTABS;			// 1 - 4
+		AutoHanger			= defAutoHanger;		// ENABLED/DISABLED
+		AutoGearUp			= defAutoGearUp;		// ENABLED/DISABLED
+		AutoGearDown		= defAutoGearDown;		// ENABLED/DISABLED
+		AutoLandingLights	= defAutoLandingLights;	// ENABLED/DISABLED
+		AutoHeatsink		= defAutoHeatsink;		// ENABLED/DISABLED
+		AutoStrobe			= defAutoStrobe;		// ENABLED/DISABLED
+		AutoHONK			= defAutoHONK;			// ENABLED/DISABLED
+		AutoRecall			= defAutoRecall;		// ENABLED/DISABLED
+		NVGUI				= defNVGUI;				// ON/OFF
+		FSDGUI				= defFSDGUI;			// ON/OFF 
+		TrainingMode		= defTrainingMode;		// ENABLED/DISABLED
+		AnnounceTraining	= defAnnounceTraining;	// ENABLED/DISABLED
+		AltVoiceRate		= defAltVoiceRate;		// -10 < 0 > +10 
+		VoiceRate			= defVoiceRate;			// -10 < 0 > +10
+		UseAltVoice			= defUseAltVoice;		// YES/NO 
+		EnableVoice			= defEnableVoice;		// ENABLED/DISABLED 
+		VoiceVolume			= defVoiceVolume;		// 0 - 100
+		FlashLEDs			= defFlashLEDs;			// ENABLED/DISABLED
+		LEDLevel			= defLEDLevel;			// 0 - 5
+		EnableSoundFX		= defEnableSoundFX;		// ENABLED/DISABLED
+		ThrustUpTime		= defThrustUpTime;		// 0 - ???? (milliseconds)
+		printf("++ User settings restored\x0a");
+	}
 	
 	//	END
