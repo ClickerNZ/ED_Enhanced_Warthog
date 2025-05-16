@@ -1,5 +1,4 @@
-# v28 – covert Modules present and store as a bitmask key value called Modules
-#		treat ActiveFighter separately
+# v27 – add tracking for 'SendText' events and grab 'Message' key-value as method to input into TARGET script  
 
 param (
     [string]$inputFolderPath    = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",
@@ -28,15 +27,15 @@ Import-Module TTS               -ErrorAction Stop
 $voice = "Microsoft Catherine"
 $rate  = 1
 $volume= 75
-[TTS]::SpeakText("Journal processor version 28 loading", $voice, $rate, $volume)
+[TTS]::SpeakText("Journal processor version 27 loading", $voice, $rate, $volume)
 
 # Set window title
-try { $host.UI.RawUI.WindowTitle = "Process Journal v28" } catch {}
+try { $host.UI.RawUI.WindowTitle = "Process Journal v27" } catch {}
 
 # Load lookup maps
 Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
 
-Write-Host "ProcessJournal v28" -ForegroundColor Green
+Write-Host "ProcessJournal v27" -ForegroundColor Green
 
 # === Global data initialization ===
 function Initialize-GlobalVariables {
@@ -46,7 +45,9 @@ function Initialize-GlobalVariables {
             StationName   = "not set"; StationType   = "not set"; SystemName    = "not set";
             BodyName      = "not set"; OrganicFound  = "not set";
             DockingStatus = "not set"; DeniedReason  = "not set"; LandingPad    = "not set";
-			Modules = 0; ActiveFighter = $false;
+            FighterPresent = $false; ActiveFighter = $false; SRVPresent = $false; 
+			Heatsinks = $false; ChaffLauncher = $false; ShieldCellBank = $false;
+			ElectronicCounterMeasure = $false; SCOPresent = $false;
 			InputCMD = "not set"; InputCMDParameter = "not set";
         }
         $defaults | ConvertTo-Json | Set-Content $JsonFilePath
@@ -55,17 +56,6 @@ function Initialize-GlobalVariables {
     foreach ($prop in $data.PSObject.Properties) {
         Set-Variable -Name $prop.Name -Value $prop.Value -Scope Global
     }
-	
-	$Global:moduleNames = @(
-		'SCOPresent','FighterPresent','SRVPresent','HeatsinkPresent','ChaffLauncherPresent','SCBPresent','ECMPresent'
-	)
-	$Global:moduleFlags = [ordered]@{}
-	foreach ($n in $Global:moduleNames) {
-	  $Global:moduleFlags[$n] = $false
-	}
-
-	# Still read the old bitmask for compare:
-	$Global:Modules = [int](Get-Content $JsonFilePath | ConvertFrom-Json).Modules
 }
 
 # Compare new vs old, then update JSON
@@ -73,7 +63,9 @@ function Compare-And-UpdateVariables {
     $keys = @(
         'CMDRName','ShipName','ShipType','StationName','StationType',
         'SystemName','BodyName','OrganicFound','DockingStatus',
-        'DeniedReason','LandingPad','Modules','ActiveFighter','InputCMD',"InputCMDParameter"
+        'DeniedReason','LandingPad','FighterPresent','ActiveFighter',
+		'SRVPresent', 'Heatsinks', 'ChaffLauncher', 'ShieldCellBank',
+		'ElectronicCounterMeasure', 'SCOPresent', 'InputCMD', "InputCMDParameter"
     )
     $changed = $false
     foreach ($k in $keys) {
@@ -100,21 +92,19 @@ function Compare-And-UpdateVariables {
             DockingStatus  = $Global:DockingStatus;
             DeniedReason   = $Global:DeniedReason;
             LandingPad     = $Global:LandingPad;
-			Modules        = $Global:Modules
-			ActiveFighter  = $Global:ActiveFighter
-			InputCMD       = $Global:InputCMD
+			SCOPresent     = $Global:SCOPresent;
+            FighterPresent = $Global:FighterPresent
+			ActiveFighter  = $Global:ActiveFighter 
+			SRVPresent     = $Global:SRVPresent
+			Heatsinks      = $Global:Heatsinks
+			ChaffLauncher  = $Global:ChaffLauncher
+			ShieldCellBank = $Global:ShieldCellBank
+			ElectronicCounterMeasure = $Global:ElectronicCounterMeasure
+			InputCMD        = $Global:InputCMD
 			InputCMDParameter = $Global:InputCMDParameter
         }
-#       $updated | ConvertTo-Json -Compress | Set-Content $JsonFilePath
-		$json = $updated | ConvertTo-Json -Compress
-		$json = $json -replace '\\u0027', "'"
-		[System.IO.File]::WriteAllText($JsonFilePath, $json, [System.Text.UTF8Encoding]::new($false))
-
-	#	$dec  = $Global:Modules
-    #   $hex  = ('0x{0:X}' -f $dec)
-    #   $bin  = [Convert]::ToString($dec,2).PadLeft($Global:moduleNames.Count,'0')
-    #   Write-Host "Modules changed: DEC:$dec  HEX:$hex  BIN:$bin" -ForegroundColor Magenta
-	#	Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] : Updated MyJournalData.json" -ForegroundColor Blue		
+        $updated | ConvertTo-Json -Compress | Set-Content $JsonFilePath
+        Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] : Updated MyJournalData.json" -ForegroundColor Blue
     }
 }
 
@@ -156,7 +146,6 @@ function Process-NewLines {
     $total     = $allLines.Count
     if ($total -le $prevCount) { return }
     $newLines = $allLines[$prevCount..($total-1)]
-		
     foreach ($line in $newLines) {
         try {
             $entry = $line | ConvertFrom-Json
@@ -258,49 +247,126 @@ function Process-NewLines {
 						}
 					}														
 				}
-
-			#	foreach ($name in $Global:moduleFlags.Keys) {
-				foreach ($name in $Global:moduleNames) {
-					$Global:moduleFlags[$name] = $false
-				}
 				foreach ($mod in $entry.Modules) {
-					switch -Wildcard ($mod.Item) {
-						"int_hyperdrive_overcharge*"       { $Global:moduleFlags.SCOPresent           = $true }
-						"int_fighterbay*"                  { $Global:moduleFlags.FighterPresent       = $true }
-						"int_buggybay*"                    { $Global:moduleFlags.SRVPresent           = $true }
-						"hpt_heatsinklauncher*"            { $Global:moduleFlags.HeatsinkPresent      = $true }
-						"hpt_chafflauncher*"               { $Global:moduleFlags.ChaffLauncherPresent = $true }
-						"int_shieldcellbank*"              { $Global:moduleFlags.SCBPresent           = $true }
-						"hpt_electroniccountermeasure*"    { $Global:moduleFlags.ECMPresent           = $true }
-						default { }  # nothing else to do
+					if ($mod.Item -like "int_hyperdrive_overcharge*") {
+						$Global:newSCOPresent = $true
+						break 
+					}
+					else {
+						$Global:newSCOPresent = $false 
 					}
 				}
-#				if ($Global:Debug) {
-#					for ($i = 0; $i -lt $Global:moduleNames.Count; $i++) {
-#						$n = $Global:moduleNames[$i]
-#						Write-Host ("Bit {0:D2} ({1,-20}): {2}" -f $i, $n, $Global:moduleFlags[$n])
-#					}
-#				}
-
-				# Right here—encode and immediately show the raw number:
-
-#				if ($Global:Debug) {
-#					Write-Host "=== Debug before encode ===" -ForegroundColor Cyan
-#					for ($i = 0; $i -lt $Global:moduleNames.Count; $i++) {
-#						$name  = $Global:moduleNames[$i]
-#						$value = $Global:moduleFlags[$name]
-#						Write-Host ("  {0,-20}: {1}" -f $name, $value)
-#					}
-#				}
-				$mask = Encode-ModulesBitmask -Flags $Global:moduleFlags
-				$bin  = [Convert]::ToString($mask,2).PadLeft($Global:moduleNames.Count,'0')
-				Write-Host ("->Encoded mask: DEC:{0}  BIN(msb->lsb):{1}" -f $mask, $bin) -ForegroundColor Magenta
-
-				$Global:newModules = $mask
-
-
-				$Global:newModules = Encode-ModulesBitmask -Flags $Global:moduleFlags
-			}	
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, SCO FSD = $Global:newSCOPresent" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, SCO FSD = $Global:newSCOPresent" -ForegroundColor Cyan 
+					}
+				}					
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "int_fighterbay*") {
+						$Global:newFighterPresent = $true
+						break 
+					}
+					else {
+						$Global:newFighterPresent = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Fighter Bay = $Global:newFighterPresent" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Fighter Bay = $Global:newFighterPresent" -ForegroundColor Cyan 
+					}
+				}	
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "int_buggybay*") {
+						$Global:newSRVPresent = $true
+						break
+					}
+					else {
+						$Global:newSRVPresent = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, SRV Hanger = $Global:newSRVPresent" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, SRV Hanger = $Global:newSRVPresent" -ForegroundColor Cyan 
+					}
+				}
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "hpt_heatsinklauncher*") {
+						$Global:newHeatsinks = $true
+						break
+					}
+					else {
+						$Global:newHeatsinks = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Heatsink Launcher = $Global:newHeatsinks" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Heatsink Launcher = $Global:newHeatsinks" -ForegroundColor Cyan 
+					}
+				}
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "hpt_chafflauncher*") {
+						$Global:newChaffLauncher = $true
+						break
+					}
+					else {
+						$Global:newChaffLauncher = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Chaff Launcher = $Global:newChaffLauncher" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Chaff Launcher = $Global:newChaffLauncher" -ForegroundColor Cyan 
+					}
+				}
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "int_shieldcellbank*") {
+						$Global:newShieldCellBank = $true
+						break
+					}
+					else {
+						$Global:newShieldCellBank = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Shield Cell Bank = $Global:newShieldCellBank" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Shield Cell Bank = $Global:newShieldCellBank" -ForegroundColor Cyan
+					}
+				}
+				foreach ($mod in $entry.Modules) {
+					if ($mod.Item -like "hpt_electroniccountermeasure*") {
+						$Global:newElectronicCounterMeasure = $true
+						break
+					}
+					else {
+						$Global:newElectronicCounterMeasure = $false 
+					}
+				}
+				if ($Global:Debug) {
+					if (-not $Global:GameRunning) {
+						Write-Host "[$localtime] : Event: Loadout, Electronic Counter Measure = $Global:newElectronicCounterMeasure" -ForegroundColor Yellow
+					}
+					else {
+						Write-Host "[$localtime] : Event: Loadout, Electronic Counter Measure = $Global:newElectronicCounterMeasure" -ForegroundColor Cyan 
+					}
+				}
+			}
 			"Location" {
 				if ("StarSystem" -in $entry.PSObject.Properties.Name) {
 					$Global:newSystemName = $entry.StarSystem
@@ -481,13 +547,13 @@ function Process-NewLines {
 				}
 			}
 			"LaunchFighter" {
-				$Global:newActiveFighter = $true
+				$Global:newActiveFighter = $true 
 				if ($Global:Debug) {
 					if (-not $Global:GameRunning) {
-						Write-Host "[$localtime] : Event: LaunchFighter, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Yellow 
+						Write-Host "[$localtime] : Event: LaunchFighter, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Yellow 
 					}
 					else {
-						Write-Host "[$localtime] : Event: LaunchFighter, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Cyan
+						Write-Host "[$localtime] : Event: LaunchFighter, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Cyan
 					}
 				}																											
 			}
@@ -495,10 +561,10 @@ function Process-NewLines {
 				$Global:newActiveFighter = $false 
 				if ($Global:Debug) {
 					if (-not $Global:GameRunning) {
-						Write-Host "[$localtime] : Event: FighterDestroyed, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Yellow 
+						Write-Host "[$localtime] : Event: FighterDestroyed, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Yellow 
 					}
 					else {
-						Write-Host "[$localtime] : Event: FighterDestroyed, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Cyan
+						Write-Host "[$localtime] : Event: FighterDestroyed, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Cyan
 					}
 				}																											
 			}
@@ -506,10 +572,10 @@ function Process-NewLines {
 				$Global:newActiveFighter = $false 
 				if ($Global:Debug) {
 					if (-not $Global:GameRunning) {
-						Write-Host "[$localtime] : Event: DockFighter, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Yellow 
+						Write-Host "[$localtime] : Event: DockFighter, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Yellow 
 					}
 					else {
-						Write-Host "[$localtime] : Event: DockFighter, ActiveFighter = $Global:newActiveFighter" -ForegroundColor Cyan
+						Write-Host "[$localtime] : Event: DockFighter, ActiveFighter = $Global:newFighterPresent" -ForegroundColor Cyan
 					}
 				}																											
 			}
@@ -569,73 +635,24 @@ function Get-NewestLogFile {
     return $logs | Select-Object -First 1
 }
 
-function Decode-ModulesBitmask {
-    [CmdletBinding()] param(
-        [Parameter(Mandatory)][int]   $Mask,
-        [Parameter(Mandatory)][string[]] $Names
-    )
-    $flags = [ordered]@{}
-    for ($i = 0; $i -lt $Names.Count; $i++) {
-        # test bit i
-        $flags[$Names[$i]] = ( ($Mask -band (1 -shl $i)) -ne 0 )
-    }
-    return $flags
-}
-
-function Encode-ModulesBitmask {
-    [CmdletBinding()] param(
-        # accept anything that supports lookup
-        [Parameter(Mandatory)] $Flags
-    )
-    [int]$mask = 0
-    for ($i = 0; $i -lt $Global:moduleNames.Count; $i++) {
-        $name = $Global:moduleNames[$i]
-        if ($Flags[$name]) {
-            # set bit at position $i
-            $mask = $mask -bor (1 -shl $i)
-        }
-    }
-    return $mask
-}
-
 # === Startup processing ===
-
 $Global:GameRunning = $false
 $Global:DEBUG       = $true
-
 Initialize-GlobalVariables
-
 # seed new* variables
-foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|Modules|ActiveFighter|InputCMD|InputCMDParameter)$')) {	
+foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|SCOPresent|FighterPresent|ActiveFighter|SRVPresent|Heatsinks|ChaffLauncher|ShieldCellBank|ElectronicCounterMeasure|InputCMD|InputCMDParameter)$')) {
     Set-Variable -Name "new$($prop.Name)" -Value $prop.Value -Scope Global
 }
-
-# Not sure this should go here...not sure above will seed this var with the init value of $false
-$Global:newActiveFighter = $false
 
 # Process existing journal file
 $first = Get-NewestLogFile
 if ($first) { Process-NewLines -filePath $first.FullName }
-
-$timer = New-Object System.Timers.Timer 500
-$timer.AutoReset = $true
-$timer.Enabled   = $true
-
-Register-ObjectEvent -InputObject $timer -EventName Elapsed -Action {
-    # ensure you only ever process the current journal
-    $log = Get-NewestLogFile
-    if ($log) { Process-NewLines -filePath $log.FullName }
-}
 
 # === FileSystemWatcher ===
 $watcher1 = New-Object System.IO.FileSystemWatcher
 $watcher1.Path                = $inputFolderPath
 $watcher1.Filter              = 'Journal*.log'
 $watcher1.IncludeSubdirectories= $false
-
-# watch for content changes
-$watcher1.NotifyFilter = [System.IO.NotifyFilters]'LastWrite, Size'
-
 $watcher1.EnableRaisingEvents = $true
 
 Register-ObjectEvent -InputObject $watcher1 -EventName Changed -Action {
@@ -653,6 +670,5 @@ Register-ObjectEvent -InputObject $watcher1 -EventName Created -Action {
     Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
 }
 
-#Write-Host "FileSystemWatcher is monitoring $inputFolderPath for new entries..." -ForegroundColor Yellow
-Write-Host "Monitoring journal (watcher + 500 ms poll)..." -ForegroundColor Yellow
+Write-Host "FileSystemWatcher is monitoring $inputFolderPath for new entries..." -ForegroundColor Yellow
 while ($true) { Wait-Event }

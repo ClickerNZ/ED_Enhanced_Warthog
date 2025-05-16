@@ -1,5 +1,5 @@
-# v28 – covert Modules present and store as a bitmask key value called Modules
-#		treat ActiveFighter separately
+# v29 – Simplify Modules detection
+#		add Limpet Controller detection to Modules 
 
 param (
     [string]$inputFolderPath    = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",
@@ -28,15 +28,15 @@ Import-Module TTS               -ErrorAction Stop
 $voice = "Microsoft Catherine"
 $rate  = 1
 $volume= 75
-[TTS]::SpeakText("Journal processor version 28 loading", $voice, $rate, $volume)
+[TTS]::SpeakText("Journal processor version 29 loading", $voice, $rate, $volume)
 
 # Set window title
-try { $host.UI.RawUI.WindowTitle = "Process Journal v28" } catch {}
+try { $host.UI.RawUI.WindowTitle = "Process Journal v29" } catch {}
 
 # Load lookup maps
 Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
 
-Write-Host "ProcessJournal v28" -ForegroundColor Green
+Write-Host "ProcessJournal v29" -ForegroundColor Green
 
 # === Global data initialization ===
 function Initialize-GlobalVariables {
@@ -47,7 +47,7 @@ function Initialize-GlobalVariables {
             BodyName      = "not set"; OrganicFound  = "not set";
             DockingStatus = "not set"; DeniedReason  = "not set"; LandingPad    = "not set";
 			Modules = 0; ActiveFighter = $false;
-			InputCMD = "not set"; InputCMDParameter = "not set";
+			InputCMD = "not set"; CMDParameter = "not set";
         }
         $defaults | ConvertTo-Json | Set-Content $JsonFilePath
     }
@@ -56,13 +56,13 @@ function Initialize-GlobalVariables {
         Set-Variable -Name $prop.Name -Value $prop.Value -Scope Global
     }
 	
-	$Global:moduleNames = @(
-		'SCOPresent','FighterPresent','SRVPresent','HeatsinkPresent','ChaffLauncherPresent','SCBPresent','ECMPresent'
-	)
-	$Global:moduleFlags = [ordered]@{}
-	foreach ($n in $Global:moduleNames) {
-	  $Global:moduleFlags[$n] = $false
-	}
+#	$Global:moduleNames = @(
+#		'SCOPresent','FighterPresent','SRVPresent','HeatsinkPresent','ChaffLauncherPresent','SCBPresent','ECMPresent'
+#	)
+#	$Global:moduleFlags = [ordered]@{}
+#	foreach ($n in $Global:moduleNames) {
+#	  $Global:moduleFlags[$n] = $false
+#	}
 
 	# Still read the old bitmask for compare:
 	$Global:Modules = [int](Get-Content $JsonFilePath | ConvertFrom-Json).Modules
@@ -73,7 +73,7 @@ function Compare-And-UpdateVariables {
     $keys = @(
         'CMDRName','ShipName','ShipType','StationName','StationType',
         'SystemName','BodyName','OrganicFound','DockingStatus',
-        'DeniedReason','LandingPad','Modules','ActiveFighter','InputCMD',"InputCMDParameter"
+        'DeniedReason','LandingPad','Modules','ActiveFighter','InputCMD','CMDParameter'
     )
     $changed = $false
     foreach ($k in $keys) {
@@ -103,7 +103,7 @@ function Compare-And-UpdateVariables {
 			Modules        = $Global:Modules
 			ActiveFighter  = $Global:ActiveFighter
 			InputCMD       = $Global:InputCMD
-			InputCMDParameter = $Global:InputCMDParameter
+			CMDParameter = $Global:CMDParameter
         }
 #       $updated | ConvertTo-Json -Compress | Set-Content $JsonFilePath
 		$json = $updated | ConvertTo-Json -Compress
@@ -259,39 +259,17 @@ function Process-NewLines {
 					}														
 				}
 
-			#	foreach ($name in $Global:moduleFlags.Keys) {
 				foreach ($name in $Global:moduleNames) {
 					$Global:moduleFlags[$name] = $false
 				}
 				foreach ($mod in $entry.Modules) {
-					switch -Wildcard ($mod.Item) {
-						"int_hyperdrive_overcharge*"       { $Global:moduleFlags.SCOPresent           = $true }
-						"int_fighterbay*"                  { $Global:moduleFlags.FighterPresent       = $true }
-						"int_buggybay*"                    { $Global:moduleFlags.SRVPresent           = $true }
-						"hpt_heatsinklauncher*"            { $Global:moduleFlags.HeatsinkPresent      = $true }
-						"hpt_chafflauncher*"               { $Global:moduleFlags.ChaffLauncherPresent = $true }
-						"int_shieldcellbank*"              { $Global:moduleFlags.SCBPresent           = $true }
-						"hpt_electroniccountermeasure*"    { $Global:moduleFlags.ECMPresent           = $true }
-						default { }  # nothing else to do
+					foreach ($fragment in $Global:moduleMap.Keys) {
+						if ($mod.Item -like "*$fragment*") {
+							$Global:moduleFlags[ $Global:moduleMap[$fragment] ] = $true
+						}
 					}
 				}
-#				if ($Global:Debug) {
-#					for ($i = 0; $i -lt $Global:moduleNames.Count; $i++) {
-#						$n = $Global:moduleNames[$i]
-#						Write-Host ("Bit {0:D2} ({1,-20}): {2}" -f $i, $n, $Global:moduleFlags[$n])
-#					}
-#				}
 
-				# Right here—encode and immediately show the raw number:
-
-#				if ($Global:Debug) {
-#					Write-Host "=== Debug before encode ===" -ForegroundColor Cyan
-#					for ($i = 0; $i -lt $Global:moduleNames.Count; $i++) {
-#						$name  = $Global:moduleNames[$i]
-#						$value = $Global:moduleFlags[$name]
-#						Write-Host ("  {0,-20}: {1}" -f $name, $value)
-#					}
-#				}
 				$mask = Encode-ModulesBitmask -Flags $Global:moduleFlags
 				$bin  = [Convert]::ToString($mask,2).PadLeft($Global:moduleNames.Count,'0')
 				Write-Host ("->Encoded mask: DEC:{0}  BIN(msb->lsb):{1}" -f $mask, $bin) -ForegroundColor Magenta
@@ -515,7 +493,6 @@ function Process-NewLines {
 			}
 			"SendText" {
 				if (("Message" -in $entry.PSObject.Properties.Name) -and $entry.Message.StartsWith("!set")) {
-#					$Global:newInputCMD = $entry.Message.Substring(5)   # chop off "!set "  
 					$msg = $entry.Message.Substring(5)   # chop off "!set "
 
 					# split on whitespace into at most 2 pieces
@@ -525,16 +502,16 @@ function Process-NewLines {
 
 					# assign to globals (or whatever scope you like)
 					$Global:newInputCMD				= $parts[0]
-					$Global:newInputCMDParameter    = $parts[1]
+					$Global:newCMDParameter    = $parts[1]
 
 					if ($Global:Debug) {
 						if (-not $Global:GameRunning) {
 							Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Yellow 
-							Write-Host "[$localtime] : Event: SendText, InputCMDParameter = $Global:newInputCMDParameter" -ForegroundColor Yellow 
+							Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:newCMDParameter" -ForegroundColor Yellow 
 						}
 						else {
 							Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Cyan
-							Write-Host "[$localtime] : Event: SendText, InputCMDParameter = $Global:InputCMDParameter" -ForegroundColor Cyan
+							Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:CMDParameter" -ForegroundColor Cyan
 						}
 					}																					
 				}
@@ -556,8 +533,10 @@ function Process-NewLines {
 			}
         }
     }
+	
     # update tracker
     Update-LastLineCount $fileName $total
+	
     # propagate changes
     Compare-And-UpdateVariables
 }
@@ -603,15 +582,47 @@ function Encode-ModulesBitmask {
 $Global:GameRunning = $false
 $Global:DEBUG       = $true
 
+# The array that defines your bit positions (bit 0 → SCOPresent, bit 1 → FighterPresent, …)
+$Global:moduleNames = @(
+    'SCOPresent',
+    'FighterPresent',
+    'SRVPresent',
+    'HeatsinkPresent',
+    'ChaffLauncherPresent',
+    'SCBPresent',
+    'ECMPresent',
+	'LimpetPresent'
+)
+
+# A simple map of “key fragment” → which flag to set
+$Global:moduleMap = @{
+    hyperdrive_overcharge      = 'SCOPresent'
+    fighterbay                 = 'FighterPresent'
+    buggybay                   = 'SRVPresent'
+    heatsinklauncher           = 'HeatsinkPresent'
+    chafflauncher              = 'ChaffLauncherPresent'
+    shieldcellbank             = 'SCBPresent'
+    electroniccountermeasure   = 'ECMPresent'
+	dronecontrol               = 'LimpetPresent'
+}
+
+# Initialize your flags table
+$Global:moduleFlags = [ordered]@{}
+foreach ($name in $Global:moduleNames) {
+    $Global:moduleFlags[$name] = $false
+}
+
 Initialize-GlobalVariables
 
 # seed new* variables
-foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|Modules|ActiveFighter|InputCMD|InputCMDParameter)$')) {	
+foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(CMDRName|ShipName|ShipType|StationName|StationType|SystemName|BodyName|OrganicFound|DockingStatus|DeniedReason|LandingPad|Modules|ActiveFighter|InputCMD|CMDParameter)$')) {	
     Set-Variable -Name "new$($prop.Name)" -Value $prop.Value -Scope Global
 }
 
 # Not sure this should go here...not sure above will seed this var with the init value of $false
 $Global:newActiveFighter = $false
+$Global:newInputCMD = "not set"
+$Global:newCMDParameter = "not set"  
 
 # Process existing journal file
 $first = Get-NewestLogFile
