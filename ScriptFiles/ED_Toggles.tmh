@@ -92,21 +92,18 @@
 			if (fFAOff) {															// Turn FA-OFF OFF, Set JSCurves to default  
 				if (CurveInfo == PRINT) {
 						printf("FA-ON Curves:\x0a");
-					}
-					fnSetCurves(OldCurves, CurveInfo, TRUE, FALSE);					// Announce curve profile, don't save curve info					
-	 
-			}
-			ActKey(KEYON+PULSE+FlightAssist);										// 'z' - FA-OFF On/Off 
-			if (fFAOff) {
+				}
+//				fnSetCurves(OldCurves, CurveInfo, TRUE, FALSE);					// Announce curve profile, don't save curve info
+				fnSetCurves(FAOFFCurves, CurveInfo, TRUE, TRUE);				// Announce curve profile, save curve info	 
 //				fnTextToSpeech("Flight assist, OFF");
 			}
 			else {
 //				fnTextToSpeech("Flight assist");
-			}			
-		}
-					
-		if (reason != 0) fnNotValid(fnName, reason);		
-	
+				fnSetCurves(OldCurves, CurveInfo, TRUE, FALSE);					// Announce curve profile, don't save curve info
+			}
+			ActKey(KEYON+PULSE+FlightAssist);										// 'z' - FA-OFF On/Off 
+		}					
+		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
 	// TOGGLE:		Cycle between 'Discovery Scanner', 'Mining Laser', 'Pulse Wave Scanner' and 'Composition Scanner' modes
@@ -442,11 +439,11 @@
 	
 	int tgBoost() {
 		int fnName = "Engine Boost";
-		int reason = "unknown";
+		int reason = 0;
 		
 		if (fSupercruise & fMainShip) {
-			fnSCO();																// Check for SCO FSD 
-			if (SCOPresent) {
+//			fnSCO();																// Check for SCO FSD 
+			if (fSCOPresent) {
 				ActKey(KEYON+PULSE+EngineBoost);
 			}
 			else {
@@ -464,9 +461,10 @@
 		if (reason !=0) fnNotValid(fnName, reason);
 	}
 
-	// TOGGLE:	Hardpoints
-
-	int tgHardpoints() {
+	//	TOGGLE:		Hardpoints
+	//	Parameter:	dummy - allows REXEC or DeferCall
+	
+	int tgHardpoints(int dummy = 0) {
 		int fnName;
 		int reason;
 		
@@ -512,7 +510,7 @@
 				FSSMode = OFF;
 			}
 			if (delayannounce) {
-				DeferCall(1000, &fnTextToSpeech, "Combat mode");			
+				DeferCall(2000, &fnTextToSpeech, "Combat mode");			
 			} 
 			else {
 				fnTextToSpeech("Combat mode");			
@@ -658,7 +656,7 @@
 		}
 		if (fDanger) {
 			if (DANGER == NO) {
-				fnVPOutput("Wait for danger to pass. Try again to over ride");
+				fnVPOutput("Override available otherwise wait for danger to pass");
 				DANGER = YES;
 				MLJumpType = JumpType;
 				return 0;
