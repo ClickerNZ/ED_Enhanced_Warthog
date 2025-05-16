@@ -1,49 +1,51 @@
 
-//----------------------------------------------------------------------//
-//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-//----------------------------------------------------------------------//
+	//----------------------------------------------------------------------//
+	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
+	//----------------------------------------------------------------------//
 
-// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Odyssey - Cobra V)
+	// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Trailblazers)
 
-// Refer Change Log.txt in parent folder
+	// Refer Change Log.txt in parent folder
 
-// LEGEND: 
-// ========================================================================
-// fnName()								refer to ED_Functions file
-// initName()							refer to ED_Initialise file
-// stfnName()							refer to ED_StateTracker file
-// tgName()								refer to ED_Toggles file
-// mName								refer to ED_Macros file
-// MapKey statements					refer to ED_MapKeyAssignment file
-// Global State and Boolean Defines		refer to ED_ScriptDefines file
-// Global Game Key Bind Defines			refer to ED_GameBindings file 
-// Global Script Variables				refer to ED_GlobalVars file
-// User Config Settings					refer to ED_UserSettings file
-// ========================================================================
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
 
-// START
+	// START
 
-	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one 
-
-//----------------//
-// MapKey Profile //
-//----------------//
+	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one
+	alias	MyFCName			= "Clicker's Folly";	// Replace with the name you've given to your Fleetcarrier
+	alias	FCOwner				= "Clicker";			// Commander's name who owns the 'MyFC'. Script will assume this CMDR owns this FC.
+														// This caters for players with multiple accounts (but only one fleetcarrier)
+	//----------------//									
+	// MapKey Profile //
+	//----------------//
 
 	define	MapKeyProfile		FULL					// Valid Settings are FULL or BASIC 
 														// FULL uses all the advanced functions available for Axis, Switches, Triggers and Buttons
 														// BASIC sends simple, plain keystrokes...no macro or function calls, no smarts...great for beginners
-//-------------------//
-// Hardware settings //
-//-------------------//
+	//-------------------//
+	// Hardware settings //
+	//-------------------//
 
 	int 	EnableMyRudder		= ENABLED;				// Set to DISABLED if you do not have a Thrustmaster TFRP or TFRPHA Rudder.
 
-//--------------//
-// LED settings //
-//--------------//
+	//--------------//
+	// LED settings //
+	//--------------//
 
-	define	FlashLEDs			ENABLED					// Flash the Status LEDs when status changes. ENABLED or DISABLED
-	int		LEDLevel			= 1;					// Default starting LED Level. Valid Levels = 0 - 5. Refer fnLEDBrightness()
+	int	FlashLEDs				= ENABLED;				// Flash the Status LEDs when status changes. ENABLED or DISABLED
+	int	LEDLevel				= 1;					// Default starting LED Level. Valid Levels = 0 - 5. Refer fnLEDBrightness()
 														// LEDLevel 0: 0	- 42 (off)
 														// LEDLevel 1: 43	- 85 (dimmest)
 														// LEDLevel 2: 86	- 128
@@ -51,9 +53,9 @@
 														// LEDLevel 4: 172	- 214
 														// LEDLevel 5: 215 	- 255 (brightest)
 
-//----------------//
-// Status.json    //		THIS SECTION IS CRITICAL FOR THE SCRIPT TO WORK
-//----------------//
+	//----------------//
+	// Status.json    //		THIS SECTION IS CRITICAL FOR THE SCRIPT TO WORK
+	//----------------//
 
 	// WARNING:		This script relies on and makes extensive use of 'status.json' key values
 	//				If the script cannot find status.json, it will abort.
@@ -68,9 +70,9 @@
 	define	StatusReadRate		500		// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
 										// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
 
-//----------------//
-// MyStatusFile   //
-//----------------//
+	//----------------//
+	//  MyStatusFile  //
+	//----------------//
 
 	// NOTE:		Set the 'alias' below to point to where you want to save and load script variables that are not tracked via status.json
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
@@ -78,78 +80,65 @@
 	
 	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";
 
-//-------------------//
-// EDMC Output files //
-//-------------------//
+	//---------------//
+	// MyJournalData //
+	//---------------//
 
-	// NOTE:		EDMC plugin StreamSource outputs text files which can be used by this script
-	//				I use an adapted version of this EDMC StreamSource plugin to include the Commander Name.
-	//				Refer to the EDMC plugins subfolder under EDMC for more details
-	
-	alias	EDMCCMDRName			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC CmdrName.txt";
-	alias	EDMCShipName			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC ShipName.txt";
-	alias	EDMCStation				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station.txt";
-	alias	EDMCStationBody			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station or Body.txt";
-	alias	EDMCStationBodySystem	= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC Station or Body or System.txt";
-	alias	EDMCSystem				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\EDMC\\Output\\EDMC System.txt";
-	
-//----------//
-// Identity //
-//----------//
+	alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
+	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
+												// You may see issues if this is set too small. If you do, raise this value.		
+																					   
+	//----------//
+	// Identity //
+	//----------//
 
-	// 'CMDRName' alias is declared and set via fnMyName() via EDMC using the StreamSource Plugin (with my commander name mod) which supports multiple Elite Dangerous accounts
+	// 'CMDRName' alias is declared here and extracted from MyJournalData.json supporting multiple Elite Dangerous accounts
 	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
 	
-	define	CMDRNameOverride	ENABLED 
-	int		MyName = "your commander name here";
+	define	CMDRNameOverride		DISABLED  
+	alias	MyName 					= "Clicker";
+	
+	//----------------//
+	// Text To Speech //
+	//----------------//
 
-//----------------//
-// Text To Speech //
-//----------------//
-
-	// Set VoicePath to where you copied voice.exe. Add any command line arguments you want within 'VoiceCMD'!
-	// Run voice.exe in a command prompt (from where you copied it) with no arguments etc to see a list of options
-	// Run voice.exe -l to get a list of installed voices. Additional voices available via download from microsoft.com
-	// voice.exe provided by: - https://elifulkerson.com/projects/commandline-text-to-speech.php
 	// https://support.microsoft.com/en-nz/help/22805/windows-10-supported-narrator-languages-voices 
-	// To make the voices visible to non MS apps including voice.exe, you need to tweak the registry using the method described here;
+	// To make the voices visible to non MS apps, you need to tweak the registry using the method described here;
 	// https://www.ghacks.net/2018/08/11/unlock-all-windows-10-tts-voices-system-wide-to-get-more-of-them/
 	// I have provided REGSCRAP files  to streamline the Registry editing part of the above.
 	// Regscrap files may be found within the SupportFiles\TTS Voice Registry Scraps folder of this package
 	//   
 	// VoiceVolume should be set to the relative volume level (%) for voice.exe 
-	// VoiceCMD is example on how to set command line arguments. -r <rate> ... range = -10 (slowest) to +10 (fastest)
 	// Refer fnTextToSpeech() function in ED_Functions.tmh for usage examples
 
-	int		EnableVoice			= ENABLED;				// ENABLED or DISABLED. Enable this if you wish to use "voice.exe". 
+	int		EnableVoice			= ENABLED;				// ENABLED or DISABLED. Enable this if you wish to use the Text To Speech Feature 
 														// Toggled via tgTxt2Speech();
-														
-	alias	VoicePath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\voice.exe";
 	
 	int		VoiceVolume			= 75;					// Default Volume set at 75% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
-
+	int		VoiceRate			= 1;					// Slightly faster than default. You can set this using DEBUG + InputCMD
+	int		AltVoiceRate		= 0;					// Default. You can set this using DEBUG + InputCMD
 	// Add or remove voices available on your PC.
 	// Run 'voice.exe -l" (lower case L) in a command line where you copied voice.exe to, to see which voices are installed
 	// I have installed all the English Language Voice options as per instructions from above links and merged all teh regscraps included in this package 
-	// The below are the voices available and tested on my PC...
+	// The below are the voices available and tested on my PC and must be enclosed in quotation marks...
 	
-	alias	Catherine			= "-n \"Microsoft Catherine\"";			// Adult, Female,	en-AU
-	alias	David				= "-n \"Microsoft David Desktop\"";		// Adult, Male,		en-US
-	alias	Zira				= "-n \"Microsoft Zira Desktop\"";		// Adult, Female,	en-US 
-	alias	Heera				= "-n \"Microsoft Heera\"";				// Adult, Male,		en-IN
-	alias	Ravi				= "-n \"Microsoft Ravi\"";				// Adult, Female,	en-IN 
-	alias 	Susan				= "-n \"Microsoft Susan\"";				// Adult, Female,	en-GB
-	alias	George				= "-n \"Microsoft George\"";			// Adult, Male,		en-GB	
-	alias	Hazel				= "-n \"Microsoft Hazel Desktop\"";		// Adult, Female,	en-GB
-	alias	James				= "-n \"Microsoft James\"";				// Adult, Male,		en-AU
-	alias	Mark				= "-n \"Microsoft Mark Desktop\"";		// Adult, Male,		en-US																			
-	alias	Sean				= "-n \"Microsoft Sean\"";				// Adult, Male,		en-IE
-	alias	Richard				= "-n \"Microsoft Richard\"";			// Adult, Male,		en-CA
-	alias	Linda				= "-n \"Microsoft Linda\"";				// Adult, Female,	en-CA
+	alias	Catherine			= "\"Microsoft Catherine\"";			// Adult, Female,	en-AU
+	alias	David				= "\"Microsoft David Desktop\"";		// Adult, Male,		en-US
+	alias	Zira				= "\"Microsoft Zira Desktop\"";			// Adult, Female,	en-US 
+	alias	Heera				= "\"Microsoft Heera\"";				// Adult, Male,		en-IN
+	alias	Ravi				= "\"Microsoft Ravi\"";					// Adult, Female,	en-IN 
+	alias 	Susan				= "\"Microsoft Susan\"";				// Adult, Female,	en-GB
+	alias	George				= "\"Microsoft George\"";				// Adult, Male,		en-GB	
+	alias	Hazel				= "\"Microsoft Hazel Desktop\"";		// Adult, Female,	en-GB
+	alias	James				= "\"Microsoft James\"";				// Adult, Male,		en-AU
+	alias	Mark				= "\"Microsoft Mark Desktop\"";			// Adult, Male,		en-US																			
+	alias	Sean				= "\"Microsoft Sean\"";					// Adult, Male,		en-IE
+	alias	Richard				= "\"Microsoft Richard\"";				// Adult, Male,		en-CA
+	alias	Linda				= "\"Microsoft Linda\"";				// Adult, Female,	en-CA
+
 	// Set your preferred voice below by removing // at start of line.
 	// The voice MUST BE installed by following the instructions in the links provided above.
-	
 	int		DefaultVoice		= &Catherine;			// Set your preferred (installed) voice here
 	int		AltVoice			= &James;				// Secondary Voice
 	int		UseAltVoice			= NO;					// Set to 'YES' prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used 
@@ -157,21 +146,19 @@
 	// NOTE:	I have used two or more voices in this script
 	//			I recommend that you search the script looking for 'fnTextToSpeech' to check which voices I have used and change if required
 	//			Sending a non-installed voice is not a critical error and simply results in TTS not saying anything
-
-	alias	VoiceCMD			= "-r 1";				// Command options used by voice.exe ... "-r 0" = normal rate. "-r 1" = speaks 10% faster
 	
-//------------------------//
-// Voice Enabled Training //
-//------------------------//
+	//------------------------//
+	// Voice Enabled Training //
+	//------------------------//
 	
-	define	TrainingMode		ENABLED					// ENABLED	= When game is not running, pressing a button/switch announces its function and prints same to console.
-														// DISABLED	= Training mode announcements and printouts are not sent
-	define	AnnounceTraining	DISABLED				// DISABLED	= Do not announce when training mode becomes enabled 
-														// ENABLED	= Announce training mode when available 
+	int	TrainingMode			= ENABLED;					// ENABLED	= When game is not running, pressing a button/switch announces its function and prints same to console.
+															// DISABLED	= Training mode announcements and printouts are not sent
+	int	AnnounceTraining		= DISABLED;					// DISABLED	= Do not announce when training mode becomes enabled 
+															// ENABLED	= Announce training mode when available 
 
-//------------------//
-// WAV Sound Player //
-//------------------//
+	//------------------//
+	// WAV Sound Player //
+	//------------------//
 
 	// Refer fnSoundFX() function for usage etc
 	// Set SoundPath to where you copied sounder.exe. 
@@ -186,10 +173,16 @@
 	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";
 	alias	SoundCMD			= "";
 
-//----------//
-// PIP Mode //
-//----------//
+	//------------------//
+	// AutoHUD Settings //
+	//------------------//
 
+	int NVGUI					= OFF;						// Turn HUD GUI off when using Night Vision. Set to OFF (0) to disable.
+	int FSDGUI					= ON;						// Turn HUD GUI off when Hyperjump. Set to OFF (0) to disable
+
+	//----------//
+	// PIP Mode //
+	//----------//
 	//	There are 6 PIPModes available.
 	//	You may set the Default mode below to one of the following values
 	//
@@ -205,26 +198,26 @@
 	define DefaultPIPMode		3						// Set this to your preferred PIPMode. Value is set on the fly via H4P (see fnPIPMode() in ED_Functions.tmh)
 
 
-//--------------------------//
-// General Status Variables //
-//--------------------------//
+	//--------------------------//
+	// General Status Variables //
+	//--------------------------//
 
-	define	AutoHanger			DISABLED				// !! TESTING !!	// ENABLED = Initiate Hanger+Station Services automatically when docked, DISABLED = don't
-														// !! TESTING !!	// Hanger services on Carrier is completely different to stations in Horizons and we cannot yet
-																			// dynamically determine if docked in station versus carrier
+	int	AutoHanger				= ENABLED;				// !! TESTING !!	// ENABLED = Initiate Hanger+Station Services automatically when docked, DISABLED = don't
 																			// ISSUE: currently triggered when reboarding ship from on foot when enabled
-															
-	define	AutoHUD				ENABLED					//	Enable to toggle HUD to Analysis Mode when FSD engaged
-	define	AutoGearUP			DISABLED				//	Enable to retract landing gear when lifting off using the script 'launch' function 
-	define	AutoGearDOWN		DISABLED				//	Enable to deploy landing gear when request docking
-	define	AutoHeatsink		ENABLED					//	Enable to fire a heatsink when temp > 100% (requires launcher and ammo)
-	define	AutoStrobe			DISABLED				//	Enable to strobe silent running if in danger and shields drop
+	int	AutoHUD					= ENABLED;				//	Enable to toggle HUD to Analysis Mode when FSD engaged
+	int	AutoGearUP				= ENABLED;				//	Enable to retract landing gear when lifting off using fDocked flag
+	int	AutoGearDOWN			= ENABLED;				//	Enable to deploy landing gear when docking request is granted
+	int	AutoLandingLights		= ENABLED;				//	Enable to turn on Landing Lights when docking request is granted
+	int	AutoHeatsink			= ENABLED;				//	Enable to fire a heatsink when temp > 100% (requires launcher and ammo)
+	int	AutoStrobe				= DISABLED;				//	Enable to strobe silent running if in danger and shields drop
+	int	AutoHONK				= ENABLED;				//	Enable to fire discovery scanner when entering new system.
+	int	AutoRecall				= ENABLED;				//	Enable to recall fighther if docking request is denied due to active fighter
+	int AutoAbort				= ENABLED;				//	Enables Abort() call to stop script 20 seconds after game stops.
 	
-	define	ChatTABs			2						//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
-
-//--------------------------//
-// Axis Curves and Settings //
-//--------------------------//
+	int	ChatTABs				= 2;					//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
+	//--------------------------//
+	// Axis Curves and Settings //
+	//--------------------------//
 
 	// Refer "Axes" chapter (p27) in the Target Script Editor Basics v1.5 manual for more detail
 	// The below constructs support S-Curves
@@ -246,8 +239,8 @@
 	define	Slew_R_DZ			0						// Set Slew 	Deadzone	Right
 	define	Slew_Zoom			0						// Set Slew 	Zoom factor 
 
-	define	FAOFFCurves			SLOW					// Set Curve profile desired for FA-OFF. Valid settings = OFF, MILD, MEDIUM or SLOW (see below) 
-	define	CurveInfo			NOPRINT					// Set if you want curve info printed to console each time we change. Valid settings = PRINT or NOPRINT
+	int	FAOFFCurves				= SLOW;		 			// Set Curve profile desired for FA-OFF. Valid settings = OFF, MILD, MEDIUM or SLOW (see below) 
+	int	CurveInfo				= NOPRINT;				// Set if you want curve info printed to console each time we change. Valid settings = PRINT or NOPRINT
 	
 	int		SwapRoll4Yaw		= DISABLED;				// Set to ENABLED if you wish to set X-Axis to Yaw (Default = Roll)
 	
@@ -267,4 +260,4 @@
 	short	Slew_Curve[]		= {	2,		2,		0,		2,		2 };	// Set Slew Curve
 	// --------------------------  MILD	  MEDIUM   NONE    SLOW   SLOWEST	//
 
-// END
+	// END
