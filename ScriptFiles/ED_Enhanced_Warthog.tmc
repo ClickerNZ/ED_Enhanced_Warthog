@@ -6,7 +6,7 @@
 	//----------------------------------------------------------------------//
 
 	// This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
-	// Supports:	Elite Dangerous 				v4.1.1.0				// Does not support Legacy Horizons
+	// Supports:	Elite Dangerous 				v4.1.2.100				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.127_rev1		// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
 	//				Throttle firmware 				v23
@@ -143,8 +143,10 @@
 		SetKBRate(PulseTime, DelayTime);										// Basic Settings 	(See ED_UserSettings.tmh)
 		SetKBLayout(KBLayout);													//					(See ED_ScriptDefines.ttm)
 
-		fnPIPMode(RESET);														// Reset PIPMode. Refer ED_UserSettings.tmh to set your preferred default PIP Mode
-																				// Do this before calling stfnMyStates(LOAD) call
+		fnPIPMode(RESET);														// Reset PIPMode before calling stfnMyStates(LOAD). Refer ED_UserSettings.tmh to set your preferred default PIP Mode
+																				
+		initUserSettings(0);													// Save default user settings. On the fly customisation available for most settings.
+		
 		printf("\x0a\++	Load MyStates from file...\x0a");
 		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json)
 		
@@ -162,16 +164,17 @@
 	// -------------------------- //
 
 		printf("\x0a\++	Initialise Joystick, Throttle and Rudder\x0a");
-		
+
+		fnStartupMapKeyMode();													// Enable Joystick and Throttle buttons and switches
+
 		initJoystickAxis();
 		initThrottleAxis();
 		initSliderAxis();
 		initSlewAxis();
 		initRudderAxis();
+		fnSetCurves(NONE, NOPRINT, FALSE);
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a\x0a");
-
-		fnStartupMapKeyMode();													// Enable Joystick and Throttle buttons and switches
 		
 	// ----------------- //
 	// Check Game State  //
