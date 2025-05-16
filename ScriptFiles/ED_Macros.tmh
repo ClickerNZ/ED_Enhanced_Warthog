@@ -67,13 +67,13 @@
 		
 		// Define macros...
 
-		// MACRO: Auto-Docking Request							Duration = 1950
+		// MACRO: Auto-Docking Request							Duration = 2750
 		m_RequestDock = CHAIN(
 			LOCK+PULSE+TargetPanel, D(500),						// Keystroke sequence = 1, e, e, left, right, spc, left, q, q, 1
-			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in
-			PULSE+UINextPanel, D(),								//			   default/orig position, else will produce spurious result.
-			PULSE+UILeft, D(),
-			PULSE+UIRight, D(),
+			PULSE+UINextPanel, D(200),								// Limitation: This will only work correctly if Target Panel cursor in
+			PULSE+UINextPanel, D(200),								//			   default/orig position, else will produce spurious result.
+			PULSE+UILeft, D(200),
+			PULSE+UIRight, D(200),
 			PULSE+UISelect, D(500),
 			PULSE+UIPrevPanel, D(),
 			PULSE+UIPrevPanel, D(),
@@ -190,7 +190,7 @@
 			PULSE+UIDown, D(),
 			PULSE+UIRight, D(),
 			PULSE+UIRight, D(),
-			PULSE+UISelect, D(500),
+			PULSE+UISelect, D(500),								// TEST REVIEW the macro stops where we'd hit select 
 			PULSE+UILeft, D(),		 							// send selector back to home position when done
 			PULSE+UILeft, D(),
 			PULSE+UIUp, D(),
@@ -215,7 +215,7 @@
 			PULSE+UIDown, D(),
 			PULSE+UISelect, D(500),
 			PULSE+UIDown, D(),
-			PULSE+UISelect, D(500),
+			PULSE+UISelect, D(500),								// TEST REVIEW the macro stops where we'd hit select 
 			PULSE+UIRight, D(),
 			PULSE+UIUp, D(),		 							// send selector back to home position when done <<-- TEST
 			PULSE+UIUp, D(),
@@ -241,7 +241,7 @@
 			PULSE+UIDown, D(),
 			PULSE+UIDown, D(),
 			PULSE+UISelect, D(750),								// Increase from 500
-			PULSE+UISelect, D(750),
+			PULSE+UISelect, D(750),								// TEST REVIEW the macro stops where we'd hit final select 
 			PULSE+UIRight, D(),
 			PULSE+UIUp, D(),		 							// send selector back to home position when done <<-- TEST
 			PULSE+UIUp, D(),
@@ -273,13 +273,13 @@
 		// Issue:		Tweak ThrustUP to suit ship.
 		// Development:	Retrieve shiptype and thruster stats from Journal to provide dynamic ThrustUP timer
 		m_Launch = CHAIN(
-			LOCK+PULSE+UIDown, D(500),							// Keystroke sequence = down, down, spc, (wait 20), R (hold for 1.5), L
+			LOCK+PULSE+UIDown, D(500),							// Keystroke sequence = down, down, spc, (wait 20), R (hold for 'ThrustUpTime'), L, NUMPAD 1
 			PULSE+UIDown, D(500),
 			PULSE+UISelect, D(20000),							// Wait 20 seconds
 			DOWN+ThrustUp, D(ThrustUpTime),						// Hold for customisable Thurst Up time 
 			UP+ThrustUp, D(500),
 			PULSE+LandingGear, D(500),							// Retract gear
-			PULSE+SetSpeed25,									// Forward 25%
+			PULSE+SetSpeed25, D(),								// Forward 25%
 			LOCK);
 			
 		// MACRO: Change Engine and Weapon Colours				Duration = 570
