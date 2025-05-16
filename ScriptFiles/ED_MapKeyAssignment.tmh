@@ -30,7 +30,7 @@
 	Line   50:		Joystick Triggers
 	Line  274:		Throttle Lever Switches
 	Line  424:		Throttle Base Buttons
-	Line  686: 	int TrainingMap()
+	Line  686: 	int TrainingKeyMap()
 	Line  689:		Joystick Triggers
 	Line  896:		Throttle Lever Switches
 	Line 1045:		Throttle Base Buttons 
@@ -247,7 +247,7 @@
 	
 			MapKeyUMD(&MyJoystick, H4L,
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
-				EXEC("fnECM(); if (ECM) {ActKey(KEYON+ChargeECM); printf(\"! ECM Charging...\");} else {fnVPOutput(\"ECM Module not installed in ship\");}"),	// M - Charge ECM (Electronic Counter Measures)
+				EXEC("if (fECMPresent){ActKey(KEYON+ChargeECM); printf(\"! ECM Charging...\");}	else {fnVPOutput(\"ECM Module not installed in ship\");}"),	// M - Charge ECM (Electronic Counter Measures)
 				CameraBlurOut																				// D - Camera Blur - OUT
 				);
 	
@@ -399,11 +399,13 @@
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
 				SEQ(PULSE+m_NAVBeaconWing, PULSE+m_NAVBeaconOff),											// U - NAV Beacon WING/OFF
-				EXEC("tgTerrainFollow(ON);"),																// M - Terrain following ON
+//				EXEC("tgTerrainFollow(ON);"),																// M - Terrain following ON
+				EXEC("tgAutoPilot(ON);"),																	// M - Auto Pilot ON
 				EXEC("tgTxt2Speech();")																		// D - Toggle EnableVoice (TextToSpeech)
 				);
 			
-			MapKeyR(&MyThrottle, BSF, EXEC("tgTerrainFollow(OFF);"));										// RELEASE				// Terrain following OFF
+//			MapKeyR(&MyThrottle, BSF, EXEC("tgTerrainFollow(OFF);"));										// RELEASE				// Terrain following OFF
+			MapKeyR(&MyThrottle, BSF, EXEC("tgAutoPilot(OFF);"));											// RELEASE				// Auto Pilot OFF
 			
 			MapKey(&MyThrottle, BSM, 0);																	// <not currently used>
 			
@@ -641,7 +643,7 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,	
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
+				EXEC("fnDEBUG(0);"),																		// U - Test function switch. Use fnDEBUG() to test code and calls etc.
 				PULSE+Screenshot,																			// M - Screen Capture
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
 				);	
@@ -683,7 +685,7 @@
 	// FUNCTION:	This MapKey set is called at startup if game is not running and user setting 'TrainingMode' is set to ENABLED in ED_UserSettings.tmh 
 	//				Also called from stfnProcessFlags() when we detect Game has halted
 
-	int TrainingMap() {
+	int TrainingKeyMap() {
 
 	// ---------------------------------------- //
 	// Map Joystick triggers, switches and hats //
@@ -1251,7 +1253,7 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
-				EXEC("fnVPOutput(\"Not mapped\");"),
+				EXEC("fnVPOutput(\"Function test switch\");"),
 				EXEC("fnVPOutput(\"Take screen shot\");"),
 				EXEC("fnVPOutput(\"Not mapped\");")
 				);	
@@ -1275,7 +1277,7 @@
 		MapKey(&MyThrottle, IDLERON, 0);				// <not used>
 		MapKey(&MyThrottle, IDLEROFF, 0);				// <not used>
 
-		printf("\x0a\HOTAS Mode:		TRAINING\x0a");
+		printf("\x0a\HOTAS Mode:		TRAINING - Press a button or flick a switch to see or hear what it does.\x0a");
 
-	}	// end of TrainingMap
+	}	// end of TrainingKeyMap
 
