@@ -150,8 +150,11 @@
 	// DEBUG DEFINES //
 	//---------------//
 
-	define ControllerCheck						ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
-																		// DISABLED:	Won't abort script if compatible Joystick or Throttle not found
+	int		DEBUG								= OFF;					// Turn on to enable InputCMD
+//	int		DEBUG								= ON;					// Turn on to enable InputCMD
+	
+	define	ControllerCheck						ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
+//	define	ControllerCheck						DISABLED				// DISABLED:	Won't abort script if compatible Joystick or Throttle not found
 
 	//-----------------------------------------------------------------------------------------------------------------------------//
 	//                                                                                                                             //
@@ -218,30 +221,37 @@
 	int fLanded					=	0;
 	int fLandingGear			=	0;
 	int fShieldsUp				=	0;
+	
 	int fSupercruise			=	0;
 	int fFAOff					=	0;
 	int fHardpoints				=	0;
 	int fInWing					=	0;
+
 	int fLights					=	0;
 	int fCargoScoop				=	0;
 	int fSilentRunning			=	0;
 	int fFuelScoop				=	0;
+
 	int fSRVHandbrake			=	0;
 	int fSRVTurretView			=	0;
 	int fSRVTurretRetracted		=	0;
 	int fSRVDriveAssist			=	0;
+
 	int fMassLocked				=	0;
 	int fFSDCharging			=	0;
 	int fFSDCooldown			=	0;
 	int fLowFuel				=	0;
+
 	int fOverHeating			=	0;
 	int fLatLong				=	0;
 	int fDanger					=	0;
 	int fInterdicted			=	0;
+
 	int fMainShip				=	0;
 	int fFighter				=	0;
 	int fSRV					=	0;
 	int fHUDAnalysis			=	0;
+
 	int fNightVision			=	0;
 	int	fAltFromAvgRad			=	0;
 	int fFSDJump				=	0;
@@ -251,30 +261,37 @@
 	int lLanded					=	0;
 	int lLandingGear			=	0;
 	int lShieldsUp				=	0;
+
 	int lSupercruise			=	0;
 	int lFAOff					=	0;
 	int lHardpoints				=	0;
 	int lInWing					=	0;
+
 	int lLights					=	0;
 	int lCargoScoop				=	0;
 	int lSilentRunning			=	0;
 	int lFuelScoop				=	0;
+
 	int lSRVHandbrake			=	0;
 	int lSRVTurretView			=	0;
 	int lSRVTurretRetracted		=	0;
 	int lSRVDriveAssist			=	0;
+
 	int lMassLocked				=	0;
 	int lFSDCharging			=	0;
 	int lFSDCooldown			=	0;
 	int lLowFuel				=	0;
+
 	int lOverHeating			=	0;
 	int lLatLong				=	0;
 	int lDanger					=	0;
 	int lInterdicted			=	0;
+
 	int lMainShip				=	0;
 	int lFighter				=	0;
 	int lSRV					=	0;
 	int lHUDAnalysis			=	0;
+
 	int lNightVision			=	0;
 	int	lAltFromAvgRad			=	0;
 	int lFSDJump				=	0;
@@ -410,6 +427,46 @@
 	int lRESERVED30				= 	0;
 	int lRESERVED31				= 	0;
 	int lRESERVED32				= 	0;
+
+
+	//---------------//
+	// MODULES MASKS //					// BCD encoded value within 'Modules' key in MyJournalData.json 
+	//---------------//					// These are updated by the PS_Journal script ecah time the 'Loadout' event appears in the ED Journal 
+
+	define ED_SCOPresent				0x0000000000000001	// 1	- Supercruise Overdrive Capable Frame Shift  Drive is installed 
+	define ED_FighterPresent			0x0000000000000002	// 2	- Fighter Bay (not actual fighter is installed on ship 
+	define ED_SRVPresent				0x0000000000000004	// 4	- SRV Bay is installed on ship
+	define ED_HeatsinkPresent			0x0000000000000008 	// 8	- Heatsink Launcher is installed on ship
+	
+	define ED_ChaffLauncherPresent		0x0000000000000010	// 16	- Chaff Launcher is installed on ship 
+	define ED_SCBPresent				0x0000000000000020 	// 32	- Shield Cell Bank is installed on ship 
+	define ED_ECMPresent				0x0000000000000040 	// 64	- Electronic Counter Measures installed on ship
+	define ED_LimpetPresent				0x0000000000000080	// 128	- Limpet controller installed on ship
+
+	//-----------------------------------//
+	//  Corresponding MODULES Variables  //
+	//-----------------------------------//
+
+	int Modules					=	0;						//  Read from MyJournalData.json 
+	int oldModules				=	0;						//	Track when changed via stfnProcessMyJournalData()
+	
+	int	fSCOPresent				=	0;						// Read and decode 'Modules' each time Modules != oldModules
+	int fFighterPresent			= 	0;
+	int fSRVPresent				=	0;	
+	int fHeatsinkPresent		=	0;
+	int	fChaffLauncherPresent	=	0;
+	int fSCBPresent				=	0;
+	int fECMPresent				=	0;
+	int fLimpetPresent			=	0;
+
+	int	lSCOPresent				=	0;						// Granular level - which module bits have changed
+	int lFighterPresent			= 	0;
+	int lSRVPresent				=	0;
+	int lHeatsinkPresent		=	0;
+	int	lChaffLauncherPresent	=	0;
+	int lSCBPresent				=	0;
+	int lECMPresent				=	0;
+	int lLimpetPresent			=	0;
 
 	//--------------------//
 	// GUIFocus Variables //
