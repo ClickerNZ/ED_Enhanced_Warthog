@@ -134,8 +134,8 @@
 	// ------------------------------------------------------------ //
 	// Initialise Hardware, LEDs, Software, variables and functions //
 	// ------------------------------------------------------------ //
-
-		printf("++	Connect our controllers ... \x0a\x0a");
+		
+		printf("\x0a\++	Connect our controllers ... \x0a");
 		CheckControllers();														// Refer ED_Initialise.tmh
 		
 		SetShiftButton(&MyJoystick, S3, &MyThrottle, PSF, PSB);					// ** DO NOT TOUCH **  Joystick Nosewheel Switch (S3) = IO, Throttle pinky switch (PSF/PSB) = UMD
@@ -156,8 +156,8 @@
 		initTextToSpeech();														// Initialise Text-To-Speech engine
 		initSoundFX();															// Initialise Sound Effects engine
 
-		printf("\x0a\++	Initialise Custom Commands...\x0a");
-		fnCustomCommands();														// Initialise Custom Macros (See ED_Macros.tmh)
+		printf("\x0a\++	Initialise Macro Chains...\x0a");
+		initMacroChains();														// Initialise Custom Macros (See ED_Macros.tmh)
 		
 	// -------------------------- //
 	// Initialise Flight controls //
@@ -172,7 +172,7 @@
 		initSliderAxis();
 		initSlewAxis();
 		initRudderAxis();
-		fnSetCurves(NONE, NOPRINT, FALSE);
+		fnSetCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a\x0a");
 		
