@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Root PresetName="Clicker-ENHANCED_Warthog" MajorVersion="4" MinorVersion="1">
+<Root PresetName="Clicker-ENHANCED_Warthog" MajorVersion="4" MinorVersion="2">
 	<KeyboardLayout>en-AU</KeyboardLayout>
 	<MouseXMode Value="Bindings_MouseYaw" />
 	<MouseXDecay Value="1" />
@@ -11,7 +11,7 @@
 			<Modifier Device="Keyboard" Key="Key_LeftShift" />
 		</Secondary>
 	</MouseReset>
-	<MouseSensitivity Value="2.5" />
+	<MouseSensitivity Value="2.50000000" />
 	<MouseDecayRate Value="10.00000000" />
 	<MouseDeadzone Value="0.00000000" />
 	<MouseLinearity Value="1.00000000" />
@@ -384,11 +384,11 @@
 	</SecondaryFire>
 	<CycleFireGroupNext>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="Keyboard" Key="Key_Period" />
+		<Secondary Device="Keyboard" Key="Key_Comma" />
 	</CycleFireGroupNext>
 	<CycleFireGroupPrevious>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="Keyboard" Key="Key_Comma" />
+		<Secondary Device="Keyboard" Key="Key_Period" />
 	</CycleFireGroupPrevious>
 	<DeployHardpointToggle>
 		<Primary Device="{NoDevice}" Key="" />
@@ -513,6 +513,10 @@
 			<Modifier Device="Keyboard" Key="Key_LeftAlt" />
 		</Secondary>
 	</NightVisionToggle>
+	<TriggerColonisationModule>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</TriggerColonisationModule>
 	<UIFocus>
 		<Primary Device="{NoDevice}" Key="" />
 		<Secondary Device="{NoDevice}" Key="" />
@@ -560,7 +564,7 @@
 		<ToggleOn Value="1" />
 	</ShowPGScoreSummaryInput>
 	<HeadLookToggle>
-		<Primary Device="Keyboard" Key="Key_O" />
+		<Primary Device="Keyboard" Key="Key_F11" />
 		<Secondary Device="{NoDevice}" Key="" />
 		<ToggleOn Value="1" />
 	</HeadLookToggle>
@@ -612,7 +616,7 @@
 	</UI_Back>
 	<UI_Toggle>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_Slash" />
 	</UI_Toggle>
 	<CycleNextPanel>
 		<Primary Device="Keyboard" Key="Key_Tab" />
@@ -626,11 +630,11 @@
 	</CyclePreviousPanel>
 	<CycleNextPage>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_Period" />
 	</CycleNextPage>
 	<CyclePreviousPage>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_Comma" />
 	</CyclePreviousPage>
 	<MouseHeadlook Value="0" />
 	<MouseHeadlookInvert Value="0" />
@@ -984,7 +988,7 @@
 	</EjectAllCargo_Buggy>
 	<RecallDismissShip>
 		<Primary Device="{NoDevice}" Key="" />
-		<Secondary Device="Keyboard" Key="Key_X">
+		<Secondary Device="Keyboard" Key="Key_K">
 			<Modifier Device="Keyboard" Key="Key_LeftAlt" />
 		</Secondary>
 	</RecallDismissShip>
@@ -1032,7 +1036,7 @@
 		<Secondary Device="Keyboard" Key="Key_Slash" />
 	</PlayerHUDModeToggle_Buggy>
 	<HeadLookToggle_Buggy>
-		<Primary Device="Keyboard" Key="Key_O" />
+		<Primary Device="Keyboard" Key="Key_F11" />
 		<Secondary Device="Mouse" Key="Mouse_3" />
 		<ToggleOn Value="1" />
 	</HeadLookToggle_Buggy>
@@ -1165,7 +1169,7 @@
 		<Secondary Device="{NoDevice}" Key="" />
 	</PhotoCameraToggle_Buggy>
 	<PhotoCameraToggle_Humanoid>
-		<Primary Device="{NoDevice}" Key="" />
+		<Primary Device="Keyboard" Key="Key_Numpad_5" />
 		<Secondary Device="{NoDevice}" Key="" />
 	</PhotoCameraToggle_Humanoid>
 	<VanityCameraScrollLeft>
@@ -1967,4 +1971,123 @@
 			<Modifier Device="Keyboard" Key="Key_Apps" />
 		</Secondary>
 	</HumanoidEmoteSlot8>
+	<PlaceSettlement>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_T" />
+	</PlaceSettlement>
+	<ChangeConstructionOption>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_J" />
+	</ChangeConstructionOption>
+	<RotateSettlement>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_XAxis" />
+		<Inverted Value="0" />
+		<Deadzone Value="0.01000000" />
+	</RotateSettlement>
+	<RotateSettlementLeft>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_W">
+			<Modifier Device="Keyboard" Key="Key_LeftShift" />
+		</Secondary>
+	</RotateSettlementLeft>
+	<RotateSettlementRight>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_S">
+			<Modifier Device="Keyboard" Key="Key_LeftShift" />
+		</Secondary>
+	</RotateSettlementRight>
+	<ExitSettlementPlacementCamera>
+		<Primary Device="Keyboard" Key="Key_Numpad_0" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</ExitSettlementPlacementCamera>
+	<MovePlacementCamY>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_RZAxis" />
+		<Inverted Value="1" />
+		<Deadzone Value="0.00000000" />
+	</MovePlacementCamY>
+	<MovePlacementCamForward>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_W" />
+	</MovePlacementCamForward>
+	<MovePlacementCamBackwards>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_S" />
+	</MovePlacementCamBackwards>
+	<MovePlacementCamX>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_RXAxis" />
+		<Inverted Value="0" />
+		<Deadzone Value="0.00000000" />
+	</MovePlacementCamX>
+	<MovePlacementCamRight>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_E" />
+	</MovePlacementCamRight>
+	<MovePlacementCamLeft>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_Q" />
+	</MovePlacementCamLeft>
+	<MovePlacementCamZ>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_RYAxis" />
+		<Inverted Value="1" />
+		<Deadzone Value="0.00000000" />
+	</MovePlacementCamZ>
+	<MovePlacementCamUp>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_R" />
+	</MovePlacementCamUp>
+	<MovePlacementCamDown>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_F" />
+	</MovePlacementCamDown>
+	<MovePlacementCamUpAxis>
+		<Binding Device="{NoDevice}" Key="" />
+		<Inverted Value="0" />
+		<Deadzone Value="0.00000000" />
+	</MovePlacementCamUpAxis>
+	<MovePlacementCamDownAxis>
+		<Binding Device="{NoDevice}" Key="" />
+		<Inverted Value="0" />
+		<Deadzone Value="0.00000000" />
+	</MovePlacementCamDownAxis>
+	<PitchPlacementCamera>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_YAxis" />
+		<Inverted Value="1" />
+		<Deadzone Value="0.01000000" />
+	</PitchPlacementCamera>
+	<PitchPlacementCameraUp>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</PitchPlacementCameraUp>
+	<PitchPlacementCameraDown>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</PitchPlacementCameraDown>
+	<YawPlacementCamera>
+		<Binding Device="ThrustMasterWarthogCombined" Key="Joy_ZAxis" />
+		<Inverted Value="1" />
+		<Deadzone Value="0.02000000" />
+	</YawPlacementCamera>
+	<YawPlacementCameraRight>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_E">
+			<Modifier Device="Keyboard" Key="Key_LeftShift" />
+		</Secondary>
+	</YawPlacementCameraRight>
+	<YawPlacementCameraLeft>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="Keyboard" Key="Key_Q">
+			<Modifier Device="Keyboard" Key="Key_LeftShift" />
+		</Secondary>
+	</YawPlacementCameraLeft>
+	<PlacementCamSpeedInc>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</PlacementCamSpeedInc>
+	<PlacementCamSpeedDec>
+		<Primary Device="{NoDevice}" Key="" />
+		<Secondary Device="{NoDevice}" Key="" />
+	</PlacementCamSpeedDec>
+	<PlacementCamMouseSensitivity Value="5.00000000" />
+	<PlacementCamMouseXDecay Value="1" />
+	<PlacementCamMouseYDecay Value="1" />
 </Root>
