@@ -1,5 +1,5 @@
-# v31 - Autopilot feature added
-#
+# v30 – Use LoadGameDetect counter to detect when game reloads via 'LoadGame' event
+#		(used in TARGET via menulog code)
 
 param (
     [string]$inputFolderPath    = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",
@@ -28,15 +28,15 @@ Import-Module TTS               -ErrorAction Stop
 $voice = "Microsoft Catherine"
 $rate  = 1
 $volume= 75
-[TTS]::SpeakText("Journal processor version 31 loading", $voice, $rate, $volume)
+[TTS]::SpeakText("Journal processor version 30 loading", $voice, $rate, $volume)
 
 # Set window title
-try { $host.UI.RawUI.WindowTitle = "Journal Processor v31" } catch {}
+try { $host.UI.RawUI.WindowTitle = "Process Journal v30" } catch {}
 
 # Load lookup maps
 Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
 
-Write-Host "ProcessJournal v31" -ForegroundColor Green
+Write-Host "ProcessJournal v30" -ForegroundColor Green
 
 # === Global data initialization ===
 function Initialize-GlobalVariables {
@@ -65,52 +65,50 @@ function Compare-And-UpdateVariables {
     $keys = @(
         'LoadGameDetect','CMDRName','ShipName','ShipType','StationName','StationType',
         'SystemName','BodyName','OrganicFound','DockingStatus',
-        'DeniedReason','LandingPad','Modules','ActiveFighter','InputCMD','CMDParameter',
-        'destHeading','destDistance'
+        'DeniedReason','LandingPad','Modules','ActiveFighter','InputCMD','CMDParameter'
     )
-
     $changed = $false
     foreach ($k in $keys) {
-        $old = Get-Variable -Name $k -Scope Global -ValueOnly
+        $old = Get-Variable -Name $k   -Scope Global -ValueOnly
         $new = Get-Variable -Name "new$k" -Scope Global -ValueOnly
-        if ($new -ne $old) {
-            $changed = $true
-            break
-        }
+        if ($new -ne $old) { $changed = $true; break }
     }
-
     if ($changed) {
         foreach ($k in $keys) {
             $val = Get-Variable -Name "new$k" -Scope Global -ValueOnly
             Set-Variable -Name $k -Value $val -Scope Global
         }
-
+        # Write out JSON
         $updated = [ordered]@{
-            timestamp      = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss')
-            LoadGameDetect = $Global:LoadGameDetect
-            CMDRName       = $Global:CMDRName
-            ShipName       = $Global:ShipName
-            ShipType       = $Global:ShipType
-            StationName    = $Global:StationName
-            StationType    = $Global:StationType
-            SystemName     = $Global:SystemName
-            BodyName       = $Global:BodyName
-            OrganicFound   = $Global:OrganicFound
-            DockingStatus  = $Global:DockingStatus
-            DeniedReason   = $Global:DeniedReason
-            LandingPad     = $Global:LandingPad
-            Modules        = $Global:Modules
-            ActiveFighter  = $Global:ActiveFighter
-            InputCMD       = $Global:InputCMD
-            CMDParameter   = $Global:CMDParameter
-            destHeading    = $Global:destHeading
-            destDistance   = $Global:destDistance
+            timestamp      = (Get-Date -Format 'yyyy-MM-dd HH:mm:ss');
+			LoadGameDetect = $Global:LoadGameDetect;
+            CMDRName       = $Global:CMDRName;
+            ShipName       = $Global:ShipName;
+            ShipType       = $Global:ShipType;
+            StationName    = $Global:StationName;
+            StationType    = $Global:StationType;
+            SystemName     = $Global:SystemName;
+            BodyName       = $Global:BodyName;
+            OrganicFound   = $Global:OrganicFound;
+            DockingStatus  = $Global:DockingStatus;
+            DeniedReason   = $Global:DeniedReason;
+            LandingPad     = $Global:LandingPad;
+			Modules        = $Global:Modules
+			ActiveFighter  = $Global:ActiveFighter
+			InputCMD       = $Global:InputCMD
+			CMDParameter = $Global:CMDParameter
         }
+#       $updated | ConvertTo-Json -Compress | Set-Content $JsonFilePath
+		$json = $updated | ConvertTo-Json -Compress
+		$json = $json -replace '\\u0027', "'"
+		[System.IO.File]::WriteAllText($JsonFilePath, $json, [System.Text.UTF8Encoding]::new($false))
 
-        $json = $updated | ConvertTo-Json -Compress
-        $json = $json -replace '\\u0027', "'"
-		[System.IO.File]::WriteAllText($JsonFilePath, $json, [System.Text.Encoding]::ASCII)
-	}
+	#	$dec  = $Global:Modules
+    #   $hex  = ('0x{0:X}' -f $dec)
+    #   $bin  = [Convert]::ToString($dec,2).PadLeft($Global:moduleNames.Count,'0')
+    #   Write-Host "Modules changed: DEC:$dec  HEX:$hex  BIN:$bin" -ForegroundColor Magenta
+	#	Write-Host "[$((Get-Date).ToString('HH:mm:ss'))] : Updated MyJournalData.json" -ForegroundColor Blue		
+    }
 }
 
 # === Tracking file helpers ===
@@ -509,84 +507,20 @@ function Process-NewLines {
 					#   part[1] = everything else
 					$part = $msg -split '\s+', 2
 
-					switch ($part[0].ToUpper()) {
-						"AP" {
-							# Normalize to upper-case so matching is simpler
-							$param = $part[1].ToUpper()
+					# assign to globals (or whatever scope you like)
+					$Global:newInputCMD				= $part[0]
+					$Global:newCMDParameter    = $part[1]
 
-							switch ($param) {
-								"ON" {
-									if ($Global:destLat -ne $null -and $Global:destLon -ne $null) {
-										if (-not $Global:autopilotEnabled) {
-											if (Test-AutopilotReady) {
-												$Global:autopilotEnabled = $true
-												$Global:autopilotTickCount   = 0
-												Invoke-AutopilotTick
-												$Global:autopilotTimer.Start()
-												Write-Host "[$localtime] : Autopilot enabled."
-												[TTS]::SpeakText("Set Autopilot ON")
-											} else {
-												Write-Host "[$localtime] : Invalid Autopilot conditions" -ForegroundColor Yellow
-												Write-Host "[$localtime] : $Global:APInvalidReason" -ForegroundColor Yellow
-											}
-										}
-									}
-									else {
-										Write-Host "[$localtime] : ERROR -- LAT and/or LON not set. Cannot enable autopilot." -ForegroundColor Red
-									}
-									break
-								}
-								"OFF" {
-									$Global:autopilotEnabled = $false
-									$Global:autopilotTimer.Stop()
-									Write-Host "[$localtime] : Autopilot disabled."
-									[TTS]::SpeakText("Set Autopilot OFF")
-									break
-								}
-								Default {
-									Write-Host "[$localtime] : ERROR - Invalid Autopilot parameter '$($part[1])'. Use ON or OFF." -ForegroundColor Yellow
-									break
-								}
-							}
-							break
+					if ($Global:Debug) {
+						if (-not $Global:GameRunning) {
+							Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Yellow 
+							Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:newCMDParameter" -ForegroundColor Yellow 
 						}
-						"LAT" {
-							if ($part.Count -ge 2 -and $part[1] -match '^-?\d+(\.\d+)?$') {
-								$Global:destLat = [double]$part[1]
-								Write-Host "[$localtime] : Autopilot LAT set to $($Global:destLat)"
-								[TTS]::SpeakText("Set latitude to $Global:destLat")
-							} else {
-								Write-Host "[$localtime] : ERROR - Invalid LAT value '$($part[1])'" -ForegroundColor Yellow
-							}
-							break
+						else {
+							Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Cyan
+							Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:CMDParameter" -ForegroundColor Cyan
 						}
-						"LON" {
-							if ($part.Count -ge 2 -and $part[1] -match '^-?\d+(\.\d+)?$') {
-								$Global:destLon = [double]$part[1]
-								Write-Host "[$localtime] : Autopilot LON set to $($Global:destLon)"
-								[TTS]::SpeakText("Set longitude to $Global:destLon")
-							} else {
-								Write-Host "[$localtime] : ERROR - Invalid LON value '$($part[1])'" -ForegroundColor Yellow
-							}
-							break
-						}
-						Default {
-							$Global:newInputCMD      = $part[0]
-							$Global:newCMDParameter  = $part[1]
-
-							if ($Global:Debug) {
-								if (-not $Global:GameRunning) {
-									Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Yellow 
-									Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:newCMDParameter" -ForegroundColor Yellow 
-								}
-								else {
-									Write-Host "[$localtime] : Event: SendText, InputCMD = $Global:newInputCMD" -ForegroundColor Cyan
-									Write-Host "[$localtime] : Event: SendText, CMDParameter = $Global:CMDParameter" -ForegroundColor Cyan
-								}
-							}
-							break
-						}
-					}
+					}																					
 				}
 			}
 			"Shutdown" {
@@ -655,165 +589,6 @@ function Encode-ModulesBitmask {
     return $mask
 }
 
-function Get-GroundDistance {
-    param (
-        [double]$Lat1,
-        [double]$Lon1,
-        [double]$Lat2,
-        [double]$Lon2,
-        [double]$Radius
-    )
-
-    # convert degrees to radians
-    $dLat = ($Lat2 - $Lat1) * [math]::PI / 180
-    $dLon = ($Lon2 - $Lon1) * [math]::PI / 180
-
-    # haversine formula
-    $sinLat = [math]::Sin($dLat / 2)
-    $sinLon = [math]::Sin($dLon / 2)
-
-    $a = [math]::Pow($sinLat, 2) `
-       + [math]::Cos($Lat1 * [math]::PI / 180) `
-       * [math]::Cos($Lat2 * [math]::PI / 180) `
-       * [math]::Pow($sinLon, 2)
-
-    $c = 2 * [math]::Atan2([math]::Sqrt($a), [math]::Sqrt(1 - $a))
-
-    return $Radius * $c
-}
-
-function Get-GroundHeading {
-    param ([double]$Lat1, [double]$Lon1, [double]$Lat2, [double]$Lon2)
-    $lat1Rad = $Lat1 * [math]::PI / 180
-    $lat2Rad = $Lat2 * [math]::PI / 180
-    $dLonRad = ($Lon2 - $Lon1) * [math]::PI / 180
-    $y = [math]::Sin($dLonRad) * [math]::Cos($lat2Rad)
-    $x = [math]::Cos($lat1Rad) * [math]::Sin($lat2Rad) - [math]::Sin($lat1Rad) * [math]::Cos($lat2Rad) * [math]::Cos($dLonRad)
-    return ([math]::Atan2($y, $x) * 180 / [math]::PI + 360) % 360
-}
-
-function Test-AutopilotReady {
-    # Load status
-    $statusFile = Join-Path $inputFolderPath 'Status.json'
-    if (-not (Test-Path $statusFile)) { 
-		$Global:APInvalidReason = "status.json not found"
-		return $false
-	}
-
-    try {
-        $status = Get-Content $statusFile -Raw | ConvertFrom-Json
-    } catch {
-        return $false
-    }
-
-    # Check docked (bit 1 of Flags)
-#    if ($status.Docked) { 
-    if (( $status.Flags -band 0x000001 ) -eq 1) {
-		$Global:APInvalidReason = "Ship is docked"
-		return $false 
-	}
-
-    # Check LAT LON available (bit 21 of Flags)
-    if (( $status.Flags -band 0x200000 ) -eq 0) {
-		$Global:APInvalidReason = "LAT/LON not present"
-		return $false
-	}
-
-    # Check critical keys
-    if ($null -eq $status.Latitude -or $null -eq $status.Longitude -or $null -eq $status.PlanetRadius) {
-		$Global:APInvalidReason = "Critical position info not found (LAT/LON/Radius)"
-        return $false
-    }
-
-    return $true
-}
-
-function Speak-ATCHeading {
-    param([double]$Heading)
-    $intHead = [int]([math]::Round($Heading))
-    $padded  = '{0:000}' -f $intHead
-    $spoken  = $padded.ToCharArray() | ForEach-Object {
-        switch ($_){
-            '9' { 'niner' }
-            '0' { 'zero' }
-            default { $_ }
-        }
-    }
-    [TTS]::SpeakText("Heading $($spoken -join ' ')")
-}
-
-function Invoke-AutopilotTick {
-    if (-not $Global:autopilotEnabled) {
-        $timer.Stop(); return
-    }
-    $statusFile = Join-Path -Path $inputFolderPath -ChildPath "Status.json"
-    $localtime = $((Get-Date).ToString('HH:mm:ss'))
-
-	Write-Host "[$localtime] : AutopilotLoop started."	
-	
-	if (Test-Path $statusFile) {
-		try {
-			$status = Get-Content $statusFile -Raw | ConvertFrom-Json
-
-#			$hasAltitudeData = ($status.Flags -band 0x20000000) -ne 0
-
-			# Validate planetary surface condition
-#			if ($status.Docked -eq $true) {
-			if (( $status.Flags -band 0x000001 ) -eq 1) {
-				Write-Host "[$localtime] : Autopilot disabled -- ship is docked."
-				$Global:autopilotEnabled = $false
-				break
-			}
-
-#			if (-not $hasAltitudeData) {
-#				Write-Host "[$localtime] : Autopilot disabled -- altitude data not present."
-#				$Global:autopilotEnabled = $false
-#				break
-#			}
-
-			# Extract and validate core values
-			$currentLat     = $status.Latitude
-			$currentLon     = $status.Longitude
-			$planetRadius   = $status.PlanetRadius
-
-			if ($null -eq $currentLat -or $null -eq $currentLon -or $null -eq $planetRadius) {
-				Write-Host "[$localtime] : Autopilot disabled -- required location data missing (Lat, Lon, or Radius)." -ForegroundColor Red
-				$Global:autopilotEnabled = $false
-				break
-			}
-
-			$distance = Get-GroundDistance -Lat1 $currentLat -Lon1 $currentLon -Lat2 $Global:destLat -Lon2 $Global:destLon -Radius $planetRadius
-			$heading  = Get-GroundHeading -Lat1 $currentLat -Lon1 $currentLon -Lat2 $Global:destLat -Lon2 $Global:destLon
-
-			$Global:newdestHeading  = [math]::Round($heading, 2)
-			$Global:newdestDistance = [math]::Round($distance, 2)
-			
-			Write-Host "[$localtime] : Head $Global:newdestHeading, Distance $Global:newdestDistance" -ForegroundColor - Yellow
-			
-			Compare-And-UpdateVariables
-
-			# --- announce only when tickCount % 3 == 0 ---
-			if ($Global:autopilotTickCount % 3 -eq 0) {
-				Speak-ATCHeading $Global:newDestHeading
-			}
-
-			# increment for next time
-			$Global:autopilotTickCount++
-			
-			if ($distance -le 1000) {
-				Write-Host "[$localtime] : Autopilot OFF -- Destination within 1km"
-				$Global:autopilotEnabled = $false
-				break
-			}
-		} 
-		catch {
-			Write-Host "[$localtime] : Autopilot error: $_" -ForegroundColor Red
-			$Global:autopilotEnabled = $false
-			break
-		}
-    }
-}
-
 # === Startup processing ===
 
 $Global:GameRunning    = $false
@@ -859,27 +634,11 @@ foreach ($prop in (Get-Variable -Scope Global | Where-Object Name -match '^(Load
 # Not sure this should go here...not sure above will seed this var with the init value of $false
 $Global:newActiveFighter = $false
 $Global:newInputCMD = "not set"
-$Global:newCMDParameter = "not set"
-
-$Global:destLat = $null
-$Global:destLon = $null
-$Global:autopilotEnabled = $false
-
-$Global:destHeading = $null
-$Global:newdestHeading = $null
-$Global:destDistance = $null
-$Global:newdestDistance = $null
-
-$Global:APInvalidReason = "not set"
+$Global:newCMDParameter = "not set"  
 
 # Process existing journal file
 $first = Get-NewestLogFile
 if ($first) { Process-NewLines -filePath $first.FullName }
-
-$Global:autopilotTimer = New-Object System.Timers.Timer 5000
-$Global:autopilotTimer.AutoReset = $true
-# When the timer elapses, run one tick
-$Global:autopilotTimer.Add_Elapsed({ Invoke-AutopilotTick })
 
 $timer = New-Object System.Timers.Timer 500
 $timer.AutoReset = $true
