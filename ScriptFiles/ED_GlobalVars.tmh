@@ -60,9 +60,8 @@
 
 	int StartupLock			= 1;		// Prevent triggering keystrokes during initialisation
 	int GameLoaded			= 0;		// Set in fnGameStarted() when game is detected as running
-	
-//	int Odyssey				= 0;		// 0 = Horizons, 1 = Odyssey
-	
+	int ShieldsDroppedShip	= 0;		// Track when shields drop whilst in Ship, so we can announce when they come back
+	int ShieldsDroppedSRV	= 0;		// Track when shields drop whilst in SRV, so we can announce when they come back
 	int ConnectionStatus	= 0;		// Track if "ShowConnectionStatus" is on or off to avoid accidental toggle off during mode switch
 	int ReverseThrust		= 0;		// Set/Reset in tgReverseThrust()
 	int SpeedbrakeDeployed	= 0;		// Set/Reset in tgReverseThrust() and used in tgLandingGear()
@@ -83,10 +82,13 @@
 
 	int ActiveFighter		= 0;		// Read from MyJournalData
 	
-	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg MassLocked when trying to go to supercruise)
+	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg target obscured, not enough fuel, target too far etc)
 	
 	int TerrainFollow		= 0;		// Global Flag to track Terrain Following ON/OFF
 	
 	int ThrustUpTime		= 1500;		// Used in m_Launch macro. Future feature = table of ships and thruster stats and modify on the fly
+
+	int	UseAltVoice			= NO;		// Set UseAltVoice = 'YES'; prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used
+
 				
 	// END
