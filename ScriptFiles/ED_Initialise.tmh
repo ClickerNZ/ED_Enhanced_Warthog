@@ -23,16 +23,16 @@
 
 /*
 	Index:		FUNCTION
-	Line  47:	int CheckControllers()	
-	Line 153: 	int initJoystickAxis()
-	Line 172: 	int initThrottleAxis()
-	Line 186: 	int initSliderAxis()
-	Line 199: 	int initSlewAxis()
-	Line 215: 	int initRudderAxis()
-	Line 229: 	int initTextToSpeech()
-	Line 240: 	int initSoundFX()
-	Line 267:	int initUserSettings()
-	Line 299:	int fnResetUserSettings()
+	Line  50:	int CheckControllers()	
+	Line 166: 	int initJoystickAxis() { 																	// Set Default Joystick Axis
+	Line 186: 	int initThrottleAxis() {																	// Set Default Throttle Axis
+	Line 203: 	int initSliderAxis() {
+	Line 219: 	int initSlewAxis() {
+	Line 236: 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
+	Line 250: 	int initTextToSpeech() {
+	Line 262: 	int initSoundFX() {
+	Line 309: 	int initUserSettings(int dummy = 0) {
+	Line 343:	int fnResetUserSettings(int dummy = 0) {
 
 */
 
@@ -68,19 +68,19 @@
 		}
 		else if (&JoystickF18 != &joy0) {
 			&MyJoystick = &JoystickF18;
-			printf("++	Connected joystick	is WARTHOG Base + F18 Flight stick.\x0a");
+			printf("\x0a\++	Connected joystick	is WARTHOG Base + F18 Flight stick.\x0a");
 		}
 		else if (&AVA_F16 != &joy0) {
 			&MyJoystick = &AVA_F16;		
-			printf("\x0a++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
+			printf("\x0a\++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
 		}
 		else if (&AVA_F18 != &joy0) {
 			&MyJoystick = &AVA_F18;
-			printf("++	Connected joystick	is AVA Base + F18 Flight stick.\x0a");
+			printf("\x0a\++	Connected joystick	is AVA Base + F18 Flight stick.\x0a");
 		}
 		else if (&AVA_SolR != &joy0) {
 			&MyJoystick = &AVA_SolR;
-			printf("++	Connected joystick	is AVA Base + SolR Flight stick.\x0a");
+			printf("\x0a\++	Connected joystick	is AVA Base + SolR Flight stick.\x0a");
 		}
 		else {
 			printf("\x0a\	///////////////////////////////////////////////////////////////////////////////\x0a\x0a");
@@ -145,7 +145,7 @@
 		}
 		else {
 			printf("++	No compatible rudder connected. Use alt YAW control.\x0a");
-			printf("	(Joystick S3 + Throttle Coolie Switch L & R)\x0a");
+			printf("++	(Joystick S3 + Throttle Coolie Switch L & R)\x0a");
 			EnableMyRudder = DISABLED;
 			NORUDDER = 1;
 		}
@@ -159,10 +159,13 @@
 	// INITIALISE all AXES //
 	// ------------------- //
 
+// REVIEW:	If only called once, perhaps we include  a call to fnSetCurves in each block???
+
 	// FUNCTION: Initialise Joystick Axes 
+	
 	int initJoystickAxis() { 																	// Set Default Joystick Axis
 		if (StartupLock) {
-			printf("\x0a\Initialising: v%d.%d.%d.%s\x0a", VMajor, VMinor, VPoint, VBranch);
+			printf("\x0a\++	Initialising: v%d.%d.%d.%s\x0a\x0a", VMajor, VMinor, VPoint, VBranch);
 			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
 		}	
 
@@ -179,6 +182,7 @@
 
 
 	//FUNCTION: Initialise Throttle Axes
+	
 	int initThrottleAxis() {																	// Set Default Throttle Axis
 		
 		// Throttle mapping...
@@ -193,6 +197,9 @@
 		}
 	}
 
+
+	//FUNCTION: Initialise Slider Axes
+
 	int initSliderAxis() {
 	
 		// Slider Mapping...
@@ -205,6 +212,9 @@
 			printf("Slider Axis	... re set\x0aa");
 		}
 	}
+
+
+	//FUNCTION: Initialise Slew Axes
 
 	int initSlewAxis() {
 	
@@ -222,6 +232,7 @@
 
 
 	// FUNCTION: Initialise Rudder Axis 
+	
 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
 		if(EnableMyRudder) {
 			MapAxis(&MyRudder, TRUDDER, DX_Z_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);
@@ -230,7 +241,7 @@
 		else {
 			if (StartupLock) printf("Rudder Axis	... disabled\x0a");		
 		}
-		if (StartupLock) printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+		if (StartupLock) printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a\x0a");
 	}
 
 
@@ -238,26 +249,27 @@
 	
 	int initTextToSpeech() {
 		if (EnableVoice) {
-			fnVPOutput("Text to speech function enabled");
+			fnVPOutput("Text to speech function enabled", 0, 1);
 		}
 		else {
-			printf("\x0a\Voice feedback via 'fnTextToSpeech()' not enabled\x0a");
+			printf("\x0a\++	Voice feedback via 'fnTextToSpeech()' not enabled\x0a");
 		}
 	}
 
 
 	// FUNCTION: Initialise Sound Effacts Engine 
+	
 	int initSoundFX() {
 		SounderExists = fopen(&SoundPath, "r");
 		if (SounderExists) {
 			fclose(SounderExists);
-			fnVPOutput("Script based sound FX enabled");			
+			fnVPOutput("Script based sound FX enabled", 0, 1);			
 		}
 		else {
 			EnableSoundFX = DISABLED;
-			printf("\x0a\Sounder.exe not present at %s\x0a", &SoundPath);
-			printf("Set correct path in ED_UserSettings.tmh if you want this script to use the fnSoundFX() function\x0a");
-			printf("\x0a\Sound Effects via fnSoundFX() not available\x0a");
+			printf("\x0a\++	Sounder.exe not present at %s\x0a", &SoundPath);
+			printf("!!	Set correct path in ED_UserSettings.tmh if you want this script to use the fnSoundFX() function\x0a");
+			printf("\x0a\++	Sound Effects via fnSoundFX() not available\x0a");
 		}
 	}
 
@@ -267,10 +279,11 @@
 
 	// Global VARS
 		
-	//		Default User Settings	|||||||||||||||||||| Move these somewhere else.
+	//		Default User Settings	|||||||||||||||||||| 	REVIEW: Move these somewhere else?
+	
 	int		defCurveInfo;			// PRINT/NOPRINT
 	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
-	int		defChatTABS;			// 1 - 4
+	int		defChatTABs;			// 1 - 4
 	int		defAutoHanger;			// ENABLED/DISABLED
 	int		defAutoGearUP;			// ENABLED/DISABLED
 	int		defAutoGearDOWN;		// ENABLED/DISABLED
@@ -295,10 +308,10 @@
 	
 	int initUserSettings(int dummy = 0) {
 	
-		printf("\x0a++ Save User Settings ...\x0a");
+		printf("\x0a++	Save User Settings ...\x0a");
 		defCurveInfo			= CurveInfo;			// PRINT/NOPRINT
 		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
-		defChatTABS				= ChatTABs;				// 1 - 4
+		defChatTABs				= ChatTABs;				// 1 - 4
 		defAutoHanger			= AutoHanger;			// ENABLED/DISABLED
 		defAutoGearUP			= AutoGearUP;			// ENABLED/DISABLED
 		defAutoGearDOWN			= AutoGearDOWN;			// ENABLED/DISABLED
@@ -320,7 +333,7 @@
 		defLEDLevel				= LEDLevel;				// 0 - 5
 		defEnableSoundFX		= EnableSoundFX;		// ENABLED/DISABLED
 		defThrustUpTime			= ThrustUpTime;			// 0 - ???? (milliseconds)
-		printf("++ User settings saved\x0a");
+		printf("++	User Settings saved\x0a");
 		
 	}
 	
@@ -333,7 +346,7 @@
 		printf("\x0a++ Restore User Settings to default...\x0a");
 		CurveInfo			= defCurveInfo;			// PRINT/NOPRINT
 		FAOFFCurves			= defFAOFFCurves;		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
-		ChatTABs			= defChatTABS;			// 1 - 4
+		ChatTABs			= defChatTABs;			// 1 - 4
 		AutoHanger			= defAutoHanger;		// ENABLED/DISABLED
 		AutoGearUp			= defAutoGearUp;		// ENABLED/DISABLED
 		AutoGearDown		= defAutoGearDown;		// ENABLED/DISABLED
@@ -355,7 +368,7 @@
 		LEDLevel			= defLEDLevel;			// 0 - 5
 		EnableSoundFX		= defEnableSoundFX;		// ENABLED/DISABLED
 		ThrustUpTime		= defThrustUpTime;		// 0 - ???? (milliseconds)
-		printf("++ User settings restored\x0a");
+		printf("++	User settings restored\x0a");
 	}
 	
 	//	END
