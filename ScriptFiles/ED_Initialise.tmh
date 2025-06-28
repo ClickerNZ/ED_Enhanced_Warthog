@@ -23,16 +23,20 @@
 
 /*
 	Index:		FUNCTION
-	Line  50:	int CheckControllers()	
-	Line 166: 	int initJoystickAxis() { 																	// Set Default Joystick Axis
-	Line 186: 	int initThrottleAxis() {																	// Set Default Throttle Axis
-	Line 203: 	int initSliderAxis() {
-	Line 219: 	int initSlewAxis() {
-	Line 236: 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
-	Line 250: 	int initTextToSpeech() {
-	Line 262: 	int initSoundFX() {
-	Line 309: 	int initUserSettings(int dummy = 0) {
-	Line 343:	int fnResetUserSettings(int dummy = 0) {
+	Line  54:	int CheckControllers()	
+	Line 170: 	int initJoystickAxis() { 																	// Set Default Joystick Axis
+	Line 190: 	int initThrottleAxis() {																	// Set Default Throttle Axis
+	Line 207: 	int initSliderAxis() {
+	Line 223: 	int initSlewAxis() {
+	Line 240: 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
+	Line 254: 	int initTextToSpeech() {
+	Line 266: 	int initSoundFX() {
+	Line 319: 	int initUserSettings(int dummy = 0) {	Line 315: 	int initUserSettings(int dummy = 0) {
+	Line 363: 	int fnResetUserSettings(int dummy = 0) {
+	Line 404: 	int fnEncodeUserSettings(int dummy = 0) {
+	Line 436: 	int fnDecodeUserSettings(int UserSettings) {
+	Line 464: 	int fnUserSettingsDelta(int dummy = 0)	{
+	Line 503: 	int fnCompareIntSettings(int dummy = 0) {
 
 */
 
@@ -280,10 +284,9 @@
 	// Global VARS
 		
 	//		Default User Settings	|||||||||||||||||||| 	REVIEW: Move these somewhere else?
-	
+
+	// Binary flag settings
 	int		defCurveInfo;			// PRINT/NOPRINT
-	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
-	int		defChatTABs;			// 1 - 4
 	int		defAutoHanger;			// ENABLED/DISABLED
 	int		defAutoGearUP;			// ENABLED/DISABLED
 	int		defAutoGearDOWN;		// ENABLED/DISABLED
@@ -296,22 +299,29 @@
 	int		defFSDGUI;				// ON/OFF 
 	int		defTrainingMode;		// ENABLED/DISABLED
 	int		defAnnounceTraining;	// ENABLED/DISABLED
-	int		defAltVoiceRate;		// -10 < 0 > +10 
-	int		defVoiceRate;			// -10 < 0 > +10
 	int		defUseAltVoice;			// YES/NO 
 	int		defEnableVoice;			// ENABLED/DISABLED 
-	int		defVoiceVolume;			// 0 - 100
 	int		defFlashLEDs;			// ENABLED/DISABLED
-	int		defLEDLevel;			// 0 - 5
 	int		defEnableSoundFX;		// ENABLED/DISABLED
+	int		defAutoAbort;			// ENABLED/DISABLED
+
+	// Integer settings
+	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+	int		defChatTABs;			// 1 - 4
+	int		defAltVoiceRate;		// -10 < 0 > +10 
+	int		defVoiceRate;			// -10 < 0 > +10
+	int		defVoiceVolume;			// 0 - 100
+	int		defLEDLevel;			// 0 - 5
 	int		defThrustUpTime;		// 0 - ???? (milliseconds)
+	int		defPIPMode;				// 0 - 5
+	int		defUserSettings;		// Binary encoded via fnEncodeUserSettings()
 	
 	int initUserSettings(int dummy = 0) {
 	
-		printf("\x0a++	Save User Settings ...\x0a");
+		printf("\x0a++	Record User Settings ...\x0a");
+
+		// Binary flag settings
 		defCurveInfo			= CurveInfo;			// PRINT/NOPRINT
-		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
-		defChatTABs				= ChatTABs;				// 1 - 4
 		defAutoHanger			= AutoHanger;			// ENABLED/DISABLED
 		defAutoGearUP			= AutoGearUP;			// ENABLED/DISABLED
 		defAutoGearDOWN			= AutoGearDOWN;			// ENABLED/DISABLED
@@ -324,16 +334,25 @@
 		defFSDGUI				= FSDGUI;				// ON/OFF 
 		defTrainingMode			= TrainingMode;			// ENABLED/DISABLED
 		defAnnounceTraining		= AnnounceTraining;		// ENABLED/DISABLED
-		defAltVoiceRate			= AltVoiceRate;			// -10 < 0 > +10 
-		defVoiceRate			= VoiceRate;			// -10 < 0 > +10
 		defUseAltVoice			= UseAltVoice;			// YES/NO 
 		defEnableVoice			= EnableVoice;			// ENABLED/DISABLED 
-		defVoiceVolume			= VoiceVolume;			// 0 - 100
 		defFlashLEDs			= FlashLEDs;			// ENABLED/DISABLED
-		defLEDLevel				= LEDLevel;				// 0 - 5
 		defEnableSoundFX		= EnableSoundFX;		// ENABLED/DISABLED
+		defAutoAbort			= AutoAbort;			// ENABLED/DISABLED
+
+		// Integer settings
+		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
+		defChatTABs				= ChatTABs;				// 1 - 4
+		defAltVoiceRate			= AltVoiceRate;			// -10 < 0 > +10 
+		defVoiceRate			= VoiceRate;			// -10 < 0 > +10
+		defVoiceVolume			= VoiceVolume;			// 0 - 100
+		defLEDLevel				= LEDLevel;				// 0 - 5
 		defThrustUpTime			= ThrustUpTime;			// 0 - ???? (milliseconds)
-		printf("++	User Settings saved\x0a");
+		defPIPMode				= PIPMode;				// 0 - 5
+
+		defUserSettings 		= fnEncodeUserSettings(0);
+		
+		printf("++	User Settings recorded\x0a");
 		
 	}
 	
@@ -344,12 +363,12 @@
 	int fnResetUserSettings(int dummy = 0) {
 	
 		printf("\x0a++ Restore User Settings to default...\x0a");
+		
+		// Binary flag settings
 		CurveInfo			= defCurveInfo;			// PRINT/NOPRINT
-		FAOFFCurves			= defFAOFFCurves;		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
-		ChatTABs			= defChatTABs;			// 1 - 4
 		AutoHanger			= defAutoHanger;		// ENABLED/DISABLED
-		AutoGearUp			= defAutoGearUp;		// ENABLED/DISABLED
-		AutoGearDown		= defAutoGearDown;		// ENABLED/DISABLED
+		AutoGearUP			= defAutoGearUP;		// ENABLED/DISABLED
+		AutoGearDOWN		= defAutoGearDOWN;		// ENABLED/DISABLED
 		AutoLandingLights	= defAutoLandingLights;	// ENABLED/DISABLED
 		AutoHeatsink		= defAutoHeatsink;		// ENABLED/DISABLED
 		AutoStrobe			= defAutoStrobe;		// ENABLED/DISABLED
@@ -359,16 +378,146 @@
 		FSDGUI				= defFSDGUI;			// ON/OFF 
 		TrainingMode		= defTrainingMode;		// ENABLED/DISABLED
 		AnnounceTraining	= defAnnounceTraining;	// ENABLED/DISABLED
-		AltVoiceRate		= defAltVoiceRate;		// -10 < 0 > +10 
-		VoiceRate			= defVoiceRate;			// -10 < 0 > +10
 		UseAltVoice			= defUseAltVoice;		// YES/NO 
 		EnableVoice			= defEnableVoice;		// ENABLED/DISABLED 
-		VoiceVolume			= defVoiceVolume;		// 0 - 100
 		FlashLEDs			= defFlashLEDs;			// ENABLED/DISABLED
-		LEDLevel			= defLEDLevel;			// 0 - 5
 		EnableSoundFX		= defEnableSoundFX;		// ENABLED/DISABLED
+		AutoAbort			= defAutoAbort;			// ENABLED/DISABLED
+
+		// Integer settings
+		FAOFFCurves			= defFAOFFCurves;		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+		ChatTABs			= defChatTABs;			// 1 - 4
+		AltVoiceRate		= defAltVoiceRate;		// -10 < 0 > +10 
+		VoiceRate			= defVoiceRate;			// -10 < 0 > +10
+		VoiceVolume			= defVoiceVolume;		// 0 - 100
+		LEDLevel			= defLEDLevel;			// 0 - 5
 		ThrustUpTime		= defThrustUpTime;		// 0 - ???? (milliseconds)
+		PIPMode				= defPIPMode;			// 0 - 5
+
 		printf("++	User settings restored\x0a");
+	}
+
+	// FUNCTION:	Encode all binary users ettings. Save via stfnMyStates()
+	//				This ensures settings carry over from last session
+	// Parameter:	dummy - allows calls from REXEC and DeferCall
+		
+	int fnEncodeUserSettings(int dummy = 0) {
+		
+		int UserSettings = 0;
+
+		if (CurveInfo)			UserSettings = UserSettings | (1 << 0);		// Bit 0
+		if (AutoHanger)         UserSettings = UserSettings | (1 << 1); 	// Bit 1
+		if (AutoGearUP)         UserSettings = UserSettings | (1 << 2); 	// Bit 2
+		if (AutoGearDOWN)       UserSettings = UserSettings | (1 << 3); 	// Bit 3
+		if (AutoLandingLights)  UserSettings = UserSettings | (1 << 4); 	// Bit 4
+		if (AutoHeatsink)		UserSettings = UserSettings | (1 << 5); 	// Bit 5
+		if (AutoStrobe)			UserSettings = UserSettings | (1 << 6); 	// Bit 6
+		if (AutoHONK)			UserSettings = UserSettings | (1 << 7); 	// Bit 7
+		if (AutoRecall)			UserSettings = UserSettings | (1 << 8); 	// Bit 8
+		if (NVGUI)				UserSettings = UserSettings | (1 << 9); 	// Bit 9
+		if (FSDGUI)				UserSettings = UserSettings | (1 << 10);	// Bit 10
+		if (TrainingMode)		UserSettings = UserSettings | (1 << 11);	// Bit 11
+		if (AnnounceTraining)	UserSettings = UserSettings | (1 << 12);	// Bit 12
+		if (UseAltVoice)		UserSettings = UserSettings | (1 << 13);	// Bit 13
+		if (EnableVoice)		UserSettings = UserSettings | (1 << 14);	// Bit 14
+		if (FlashLEDs)			UserSettings = UserSettings | (1 << 15);	// Bit 15
+		if (EnableSoundFX)		UserSettings = UserSettings | (1 << 16);	// Bit 16
+		if (AutoAbort)			UserSettings = UserSettings | (1 << 17);	// Bit 17
+		
+		printf("++	Encoded User Settings = %d\x0a", UserSettings);
+		
+		return UserSettings;
+
+	}
+
+	// FUNCTION:	Decode all usersettings retieved from stfnMystates()
+	// Parameter:	UserSettings. Encoded binary user settings flags loaded via stfnMyStates()
+	
+	int fnDecodeUserSettings(int UserSettings) {
+
+		if ((UserSettings & (1 << 0))	!= 0) CurveInfo = 1;
+		if ((UserSettings & (1 << 1))	!= 0) AutoHanger = 1;
+		if ((UserSettings & (1 << 2))	!= 0) AutoGearUP = 1;
+		if ((UserSettings & (1 << 3))	!= 0) AutoGearDOWN = 1;
+		if ((UserSettings & (1 << 4))	!= 0) AutoLandingLights = 1;
+		if ((UserSettings & (1 << 5))	!= 0) AutoHeatsink = 1;
+		if ((UserSettings & (1 << 6))	!= 0) AutoStrobe = 1;
+		if ((UserSettings & (1 << 7))	!= 0) AutoHONK = 1;
+		if ((UserSettings & (1 << 8))	!= 0) AutoRecall = 1;
+		if ((UserSettings & (1 << 9))	!= 0) NVGUI = 1;
+		if ((UserSettings & (1 << 10))	!= 0) FSDGUI = 1;
+		if ((UserSettings & (1 << 11))	!= 0) TrainingMode = 1;
+		if ((UserSettings & (1 << 12))	!= 0) AnnounceTraining = 1;
+		if ((UserSettings & (1 << 13))	!= 0) UseAltVoice = 1;
+		if ((UserSettings & (1 << 14))	!= 0) EnableVoice = 1;
+		if ((UserSettings & (1 << 15))	!= 0) FlashLEDs = 1;
+		if ((UserSettings & (1 << 16))	!= 0) EnableSoundFX = 1;
+		if ((UserSettings & (1 << 17))	!= 0) AutoAbort = 1;
+
+		printf("++	User settings decoded\x0a");
+		
+	}
+	
+	//	FUNCTION:	Print UserSettings delta to console
+	//	Parameter:	dummy:	Enables DeferCall and REXEC
+
+	int fnUserSettingsDelta(int dummy = 0)	{
+
+		printf("++	The following UserSettings vary from ED_UserSettings.tmh\x0a\x0a");
+		printf("	Setting			Value	(Default)\x0a");
+		printf("=============================================\x0a");
+		
+		// Binary user settings flags
+		if (CurveInfo			!= defCurveInfo)			printf("	CurvoInfo		= %d	(%d)\x0a",			CurveInfo, defCurveInfo);
+		if (AutoHanger			!= defAutoHanger)			printf("	AutoHanger		= %d	(%d)\x0a",			AutoHanger, defAutoHanger);
+		if (AutoGearUP			!= defAutoGearUP)			printf("	AutoGearUP		= %d	(%d)\x0a",			AutoGearUP, defAutoGearUP);
+		if (AutoGearDOWN		!= defAutoGearDOWN)			printf("	AutoGearDOWN		= %d	(%d)\x0a",		AutoGearDOWN, defAutoGearDOWN);
+		if (AutoLandingLights	!= defAutoLandingLights)	printf("	AutoLandingLights		= %d	(%d)\x0a",	AutoLandingLights, defAutoLandingLights);
+		if (AutoHeatsink		!= defAutoHeatsink)			printf("	AutoHeatsink		= %d	(%d)\x0a",		AutoHeatsink, defAutoHeatsink);
+		if (AutoStrobe			!= defAutoStrobe)			printf("	AutoStrobe		= %d	(%d)\x0a",			AutoStrobe, defAutoStrobe);
+		if (AutoHONK			!= defAutoHONK)				printf("	AutoHONK		= %d	(%d)\x0a",			AutoHONK, defAutoHONK);
+		if (AutoRecall			!= defAutoRecall)			printf("	AutoRecall		= %d	(%d)\x0a",			AutoRecall, defAutoRecall);
+		if (NVGUI				!= defNVGUI)				printf("	NVGUI		= %d	(%d)\x0a",				NVGUI, defNVGUI);
+		if (FSDGUI				!= defFSDGUI)				printf("	FSDGUI		= %d	(%d)\x0a",				FSDGUI, defFSDGUI);
+		if (TrainingMode		!= defTrainingMode)			printf("	TrainingMode		= %d	(%d)\x0a",		TrainingMode, defTrainingMode);
+		if (AnnounceTraining	!= defAnnounceTraining)		printf("	AnnounceTraining		= %d	(%d)\x0a",	AnnounceTraining, defAnnounceTraining);
+		if (UseAltVoice			!= defUseAltVoice)			printf("	UseAltVoice		= %d	(%d)\x0a",			UseAltVoice, defUseAltVoice);
+		if (EnableVoice			!= defEnableVoice)			printf("	EnableVoice		= %d	(%d)\x0a",			EnableVoice, defEnableVoice);
+		if (FlashLEDs			!= defFlashLEDs)			printf("	FlashLEDs		= %d	(%d)\x0a",			FlashLEDs, defFlashLEDs);
+		if (EnableSoundFX		!= defEnableSoundFX)		printf("	EnableSoundFX		= %d	(%d)\x0a",		EnableSoundFX, defEnableSoundFX);
+		if (AutoAbort			!= defAutoAbort)			printf("	AutoAbort		= %d	(%d)\x0a",			AutoAbort, defAutoAbort);
+			
+		// Integer user settings
+		if (FAOFFCurves			!= defFAOFFCurves)			printf("	FAOFFCurves		= %d	(%d)\x0a",			FAOFFCurves, defFAOFFCurves);	// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+		if (ChatTABs			!= defChatTABs)				printf("	ChatTABs		= %d	(%d)\x0a",			ChatTABs, defChatTABs);			// 1 - 4
+		if (AltVoiceRate		!= defAltVoiceRate)			printf("	AltVoiceRate		= %d	(%d)\x0a",		AltVoiceRate, defAltVoiceRate);	// -10 < 0 > +10 
+		if (VoiceRate			!= defVoiceRate)			printf("	VoiceRate		= %d	(%d)\x0a",			VoiceRate, defVoiceRate);		// -10 < 0 > +10
+		if (VoiceVolume			!= defVoiceVolume)			printf("	VoiceVolume		= %d	(%d)\x0a",			VoiceVolume, defVoiceVolume);	// 0 - 100
+		if (LEDLevel			!= defLEDLevel)				printf("	LEDLevel		= %d	(%d)\x0a",			LEDLevel, defLEDLevel);			// 0 - 5
+		if (ThrustUpTime		!= defThrustUpTime)			printf("	ThrustUpTime		= %d	(%d)\x0a",		ThrustUpTime, defThrustUpTime);	// 0 - ???? (milliseconds)		
+		if (PIPMode				!= defPIPMode)				printf("	PIPMode		= %d	(%d)\x0a",				PIPMode, defPIPMode);			// 0 - 5
+
+		printf("=============================================\x0a\x0a");
+
+	}
+
+	//	FUNCTION:	Compares non-binary integer based user settings with values in ED_UserSettings.tmh
+	//	Parameter:	dummy: enables REXEC and DeferCall
+	
+	int fnCompareIntSettings(int dummy = 0) {
+		int DeltaFound = 0;
+		
+		if (FAOFFCurves		!= defFAOFFCurves)	DeltaFound = 1;
+		if (ChatTABs		!= defChatTABs)		DeltaFound = 1;
+		if (AltVoiceRate	!= defAltVoiceRate)	DeltaFound = 1;
+		if (VoiceRate		!= defVoiceRate)	DeltaFound = 1;
+		if (VoiceVolume		!= defVoiceVolume)	DeltaFound = 1;
+		if (LEDLevel		!= defLEDLevel)		DeltaFound = 1;
+		if (ThrustUpTime	!= defThrustUpTime)	DeltaFound = 1;
+		if (PIPMode			!= defPIPMode)		DeltaFound = 1;
+		
+		return DeltaFound;
+		
 	}
 	
 	//	END
