@@ -899,12 +899,22 @@
 	}
 
 
-	// FUNCTION: Deploy Heatsink / FSS Zoom Out (FSSMode)
+	//	FUNCTION:	Deploy Heatsink / FSS Zoom Out (FSSMode)
+	//	Parameter:	param: 0 = Fire Heatsink, 1 = Toggle AutoHeatsink
 	
-	int fnHeatsink() {
+	int fnHeatsink(int param = 0) {
 		int fnName = "Heatsinks";
 		int reason = 0;
-		
+		if (param == 1) {
+			AutoHeatsink = !AutoHeatsink;
+			if (AutoHeatsink) {
+				fnVPOutput("Auto Heatsink set");
+			}
+			else {
+				fnVPOutput("Auto Heatsink reset");				
+			}
+			return 0;
+		}
 		if (fMainShip & !fDocked & !fLanded) {
 			stfnProcessGuiFocus();		
 			if(FSSMode) {
@@ -998,8 +1008,8 @@
 			else {
 				reason = "No SRV hanger found on ship";
 			}
-			if (reason !=0) fnNotValid(fnName, reason);
 		}
+		if (reason !=0) fnNotValid(fnName, reason);
 	}
 	
 
@@ -1098,7 +1108,7 @@
 
 
 	// FUNCTION: Enter/Exit Hanger
-	// Parameter: x = 0 (EXIT), 1 (ENTER)
+	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHanger setting
 	
 	int fnHangerServices(int x) {
 		int fnName = "Hanger Services";
@@ -1106,6 +1116,16 @@
 		int VoiceTxt;
 		
 		if (GameLoaded) {
+			if (x == 2) {
+				AutoHanger = !AutoHanger;
+				if (AutoHanger) {
+					fnVPOutput("Auto Hanger set");
+				}
+				else {
+					fnVPOutput("Auto Hanger reset");
+				}
+				return 0;
+			}
 			if(fDocked) {
 				if(x == ENTER) {
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
