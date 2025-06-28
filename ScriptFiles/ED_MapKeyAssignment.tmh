@@ -89,7 +89,8 @@
 			MapKeyUMD(&MyJoystick, S1,
 				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints();"),																	// M - Deploy/Retract Hard-points
-				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
+//				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
+				EXEC("tgHUDMode(0);")																		// D - Toggle - AutoHUD
 				);
 		}
 	
@@ -126,9 +127,10 @@
 		}
 		else {		
 			MapKeyUMD(&MyJoystick, S4,
-				EXEC("tgEnhancedFAOFF(1)"),																	// Engage JSMouseEmulation
-				EXEC("tgEnhancedFAOFF(0);"),																// TOGGLE: FA-OFF/ON
-				0
+				EXEC("tgEnhancedFAOFF(1)"),																	// U - Engage JSMouseEmulation
+				EXEC("tgEnhancedFAOFF(0);"),																// M - TOGGLE: FA-OFF/ON
+//				0
+				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
 				);
 		}
 
@@ -150,12 +152,16 @@
 	
 			MapKey(&MyJoystick, H1D, PULSE+PrevFireGroup);													// Select Previous Fire Group
 		
-			MapKey(&MyJoystick, H1L, TEMPO(0, EXEC("tgLandingGear(0);"), LongPress));						// Long Press = Toggle Landing Gear (avoids accidental toggle)
+			MapKeyUMD(&MyJoystick, H1L,
+				EXEC("tgLandingGear(2);"),																	// U - Toggle AutoGearUP Setting	(refer ED_UserSettings.tmh)
+				TEMPO(0, EXEC("tgLandingGear(0);"), LongPress),												// M - Long Press = Toggle Landing Gear (avoids accidental toggle)
+				EXEC("tgLandingGear(3);")																	// D - Toggle AutoGearDOWN Setting	(refer ED_UserSettings.tmh)
+				);
 		
 			MapKeyUMD(&MyJoystick, H1R,
-				EXEC("tgLights(ON);"),																		// U - Turn on Night Vision
-				TEMPO(0, EXEC("tgLights(OFF);"), LongPress),												// M - Long Press = Toggle Ship Lights (avoids accidental toggle)
-				EXEC("fnTextToSpeech(\"Not mapped\");")														// D - 
+				EXEC("tgLights(1);"),																		// U - Turn on Night Vision
+				TEMPO(0, EXEC("tgLights(0);"), LongPress),													// M - Long Press = Toggle Ship Lights (avoids accidental toggle)
+				EXEC("tgLights(2);")																		// D - Toggle AutoLandingLights setting (refer ED_UserSettings.tmh)
 				);
 		}
 		
@@ -244,8 +250,8 @@
 				);
 				
 			MapKeyUMD(&MyJoystick, H4D,
-				EXEC("fnTextToSpeech(\"Not mapped\");"),													// U -
-				EXEC("fnHeatsink();"),																		// M - Fire Heat Sink
+				EXEC("fnHeatsink(1);"),																		// U - Toggle AutoHeatsink setting (refer ED_UserSettings.tmh
+				EXEC("fnHeatsink(0);"),																		// M - Fire Heat Sink
 				CameraZoomOut																				// D - Camera/FSS Zoom - OUT
 				);
 	
@@ -471,8 +477,8 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, EACON,
-				0,																							// IU -
-				0,																							// OU -	Use to fix mis-aligned switch 
+				0,																							// IU -	Use to fix mis-aligned switch 
+				EXEC("tgSilentRunning(STROBE);"),															// OU -	Toggle AutoStrobe setting (refer ED_UserSettings.tmh) 
 				EXEC("tgSilentRunning(STROBE);"),															// IM - Strobe Silent running every 2 seconds
 				EXEC("tgSilentRunning(ON);"),																// OM - Engage Silent Running
 				0,																							// ID - 
@@ -522,9 +528,13 @@
 			MapKey(&MyThrottle, APENG, 0); 
 		}
 		else {
-			MapKeyIO(&MyThrottle, APENG,
-				EXEC("fnHangerServices(1);"),																// I - Hanger Services
-				EXEC("fnRequestDock();")																	// O - Request Docking
+			MapKeyIOUMD(&MyThrottle, APENG,
+				0,																							// IU - 
+				EXEC("fnHangerServices(2);"),																// OU - Hanger Services
+				EXEC("fnHangerServices(1);"),																// IM - Hanger Services
+				EXEC("fnRequestDock();"),																	// OM - Request Docking
+				0,																							// ID -
+				0																							// OD - 
 				);
 		}
 
