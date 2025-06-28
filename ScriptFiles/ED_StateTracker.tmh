@@ -946,7 +946,7 @@
 		if (fOverHeating != lOverHeating) {											// Detect when we start overheating
 			if (fMainShip & fOverHeating) {
 				if (fHeatsinkPresent) {
-					if (AutoHeatsink) {												// If 'AutoHeatSink' is set, fire a heatsink
+					if (AutoHeatsink) {												// If 'AutoHeatsink' is set, fire a heatsink
 						fnVPOutput("OVERHEATING: Auto Heat sink engaged!");
 						ActKey(KEYON+PULSE+DeployHeatSink);
 					}
@@ -1731,7 +1731,7 @@
 	}
 
 
-	// FUNCTION:	Save states not included in status.json
+	// FUNCTION:	Save certain global variables and states not included in status.json
 	// PURPOSE:		Save current status of certain variables when mode switching or restarting the game
 	// REQUIRES:	'MyStatusFile' path must be set correctly within ED_UserSettings.tmh file
 	// PARAMETERS:	action = SAVE or LOAD
@@ -1746,44 +1746,59 @@
 
 		int fnName = "MyStates";
 		int reason = 0;
+		int UserSettings;												// Binary encoded user settings
 		int fh;															// General File Pointer Variable 
 		int fpresult;
-		int buf = 128;
+		int buf = 256;													// Increase buf when required
+		int mySIZE;
 		
-		Dim(&MyStatesJson, 128);										// 128 is more than enough to start
+		Dim(&MyStatesJson, buf);
 		MyStatesJson[0] = 0;
 		
 		if (action == SAVE)	{
 
-			sprintf(&MyStatesJson, "{\"VoiceVolume\":%d,\"ShipDismissed\":%d,\"OldCurves\":%d,\"LEDLevel\":%d,\"NewMaxJson\":%d,\"PIPMode\":%d}", VoiceVolume, ShipDismissed, OldCurves, LEDLevel, NewMaxJson, PIPMode);
-			buf = strlen(&MyStatesJson);
-			MyStatesJson[buf] = 0;
+			UserSettings = fnEncodeUserSettings(0);
+			
+			sprintf(&MyStatesJson, "{\"ShipDismissed\":%d,\"NewMaxJson\":%d,\"VoiceVolume\":%d,\"VoiceRate\":%d,\"AltVoiceRate\":%d,\"ChatTABs\":%d,\"FAOFFCurves\":%d,\"OldCurves\":%d,\"LEDLevel\":%d,\"PIPMode\":%d,\"ThrustUpTime\":%d,\"UserSettings\":%d}", ShipDismissed, NewMaxJson, VoiceVolume, VoiceRate, AltVoiceRate, ChatTABs, FAOFFCurves, OldCurves, LEDLevel, PIPMode, ThrustUpTime, UserSettings);
+			mySIZE = strlen(&MyStatesJson);
+			if (mySIZE > buf) {
+				reason = "Buffer size too small";
+				goto EndOfSave;
+			}
+			MyStatesJson[mySIZE] = 0;
 						
 			fh = fopen(&MyStatusFile, "w");								// creates the file if it doesn't exist (refer ED_UserSettings.tmh for filename and path 
 			
 			if (fh) {
-				fpresult = fwrite(&MyStatesJson, buf, 1, fh);
+				fpresult = fwrite(&MyStatesJson, mySIZE, 1, fh);
 				fclose(fh);
 				
 				if (fpresult == -1) {
 					fnVPOutput("Error writing MyStates to status file", 100, 2);
 				}	
 				else {
-					printf("++	MyStates successfully saved @ %s\x0a\x0a", fnGetTOD());
-					printf("=============================\x0a\x0a");
-					printf("VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("ShipDismissed		= %d\x0a", ShipDismissed);
-					printf("OldCurves		= %d\x0a", OldCurves);
-					printf("LEDLevel		= %d\x0a", LEDLevel);
-					printf("NewMaxJson		= %d\x0a", NewMaxJson);
-					printf("PIPMode		= %d\x0a\x0a", PIPMode);
-					printf("=============================\x0a\x0a");
+					printf("++	MyStates successfully saved @ %s\x0a", fnGetTOD());
+					printf("=====================================\x0a\x0a");
+					printf("	ShipDismissed		= %d\x0a", ShipDismissed);
+					printf("	NewMaxJson		= %d\x0a", NewMaxJson);
+					printf("	VoiceVolume		= %d\x0a", VoiceVolume);
+					printf("	VoiceRate		= %d\x0a", VoiceRate);
+					printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
+					printf("	ChatTABs		= %d\x0a", ChatTABs);
+					printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
+					printf("	OldCurves		= %d\x0a", OldCurves);
+					printf("	LEDLevel		= %d\x0a", LEDLevel);
+					printf("	PIPMode		= %d\x0a", PIPMode); 
+					printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
+					printf("	UserSettings		= %d\x0a\x0a", UserSettings);
+					printf("=====================================\x0a\x0a");
 				}
 			}
 			else {
 				fnTextToSpeech("Error writing to My Status File");
 				printf("!!	Error opening file to write @ %s: %s\x0a", fnGetTOD(), &MyStatusFile);
-			}			
+			}
+			EndOfSave:
 		}
 		
 		else if (action == LOAD) {
@@ -1798,22 +1813,42 @@
 				if (fpresult > 0) {	// Read from file was successful
 
 					// Extract our variables from our struct array
-					VoiceVolume		= stfnGetKeyValue("VoiceVolume", INTEGER, 2);
 					ShipDismissed	= stfnGetKeyValue("ShipDismissed", INTEGER, 2);
+					NewMaxJson		= stfnGetKeyValue("NewMaxJson", INTEGER, 2);
+					VoiceVolume		= stfnGetKeyValue("VoiceVolume", INTEGER, 2);
+					VoiceRate		= stfnGetKeyValue("VoiceRate", INTEGER, 2);
+					AltVoiceRate	= stfnGetKeyValue("AltVoiceRate", INTEGER, 2);
+					ChatTABs		= stfnGetKeyValue("ChatTABs", INTEGER, 2);
+					FAOFFCurves		= stfnGetKeyValue("FAOFFCurves", INTEGER, 2);
 					OldCurves		= stfnGetKeyValue("OldCurves", INTEGER, 2);
 					LEDLevel		= stfnGetKeyValue("LEDLevel", INTEGER, 2);
-					NewMaxJson		= stfnGetKeyValue("NewMaxJson", INTEGER, 2);
 					PIPMode			= stfnGetKeyValue("PIPMode", INTEGER, 2);
+					ThrustUpTime	= stfnGetKeyValue("ThrustUpTime", INTEGER, 2);
+					UserSettings	= stfnGetKeyValue("UserSettings", INTEGER, 2);
 					
-					printf("\x0a\++	MyStates successfully loaded @ %s\x0a\x0a", fnGetTOD());
-					printf("==============================\x0a\x0a");
-					printf("VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("ShipDismissed		= %d\x0a", ShipDismissed);
-					printf("OldCurves		= %d\x0a", OldCurves);
-					printf("LEDLevel		= %d\x0a", LEDLevel);
-					printf("NewMaxJson		= %d\x0a", NewMaxJson);
-					printf("PIPMode		= %d\x0a\x0a", PIPMode);					
-					printf("==============================\x0a\x0a");
+					printf("\x0a\++	MyStates successfully loaded @ %s\x0a", fnGetTOD());
+					printf("=====================================\x0a");
+					printf("	ShipDismissed		= %d\x0a", ShipDismissed);
+					printf("	NewMaxJson		= %d\x0a", NewMaxJson);
+					printf("	VoiceVolume		= %d\x0a", VoiceVolume);
+					printf("	VoiceRate		= %d\x0a", VoiceRate);
+					printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
+					printf("	ChatTABs		= %d\x0a", ChatTABs);
+					printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
+					printf("	OldCurves		= %d\x0a", OldCurves);
+					printf("	LEDLevel		= %d\x0a", LEDLevel);
+					printf("	PIPMode		= %d\x0a", PIPMode); 
+					printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
+					printf("	UserSettings		= %d\x0a", UserSettings);
+					printf("====================================\x0a\x0a");
+					
+					if (UserSettings != defUserSettings) {
+						fnDecodeUserSettings(UserSettings);
+					}
+					if ((UserSettings != defUserSettings) | (fnCompareIntSettings(0))) {		// Print delta to console if settings are not same as ED_UserSettings.tmh
+						fnTextToSpeech("User settings not default");
+						fnUserSettingsDelta(0);
+					}
 				}
 				else {
 					fnVPOutput("Error reading MyStates from status file", 100, 2);
