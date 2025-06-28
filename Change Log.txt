@@ -82,8 +82,14 @@ v510	- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Clien
 			- retries after Fuelscoop is disengaged
 			- retries after Danger flag is cleared (eg heat drops to < 34% from >66%) , press Supercruise or Warpdrive again to override
 		-	Eject all cargo function now mapped to S3+PSB+RDRNRM
+		-	New functions:
+				-	fnEncodeUserSettings()	-	Encodes binary user setting flags into an integer and saved in MyWarthogStatusFile
+				-	fnDecodeUserSettings()	-	Decodes the binary coded user settings flags 
+				-	fnUserSettingsDelta()	-	Prints all any binary User Setting flags which do not match what's in ED_UserSettings.tmh 
+				-	fnCompareIntSettings()	-	Determines if the non-binary User Settings we save match what's in ED_UserSettings.tmh 
 		-	SAVE Mystates function mapped to PSB+EFRNORM (aids when changing structure or manually correcting max json length)
-			-	MyStatusFile converted to json format 
+			-	MyStatusFile converted to json format
+			-	MyStatusFile now includes all modifiable binary and non-binary user settings 
 		-	Fixed Deploy SRV and Board Ship Macros (again)
 		-	Add code to check existance of SRV and Fighter bays via MyJournalData.json. Enable/Disable Fighter/SRV DEPLOY/RECALL functions
 		-	Refactor fnModeSwitch to use Journal event LoadGame via "LoadGameDetect" key-value provided by ProcessJournal.ps1 instead of unreliable Reloadtimer
