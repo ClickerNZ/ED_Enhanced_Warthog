@@ -6,7 +6,7 @@
 	//----------------------------------------------------------------------//
 
 	// This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
-	// Supports:	Elite Dangerous 				v4.1.2.100				// Does not support Legacy Horizons
+	// Supports:	Elite Dangerous 				v4.1.2.102				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.127_rev1		// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
 	//				Throttle firmware 				v23
@@ -31,28 +31,28 @@
 	Line  94: 	int main()
 	Line 135:	initialise hardware
 	Line 191: 	int EventHandle(int type, alias o, int x)
+
+
+	PREFACE
+
+	This script is provided as is and without any warranties, explicit or implied.
+
+	This package contains a single required '.tmc' file (this is it), a '.ttm' which defines MANY constants and variables used by the rest
+	of the script. The whole package is coded within multiple '.tmh' files in order to (hopefully) make the code easier to follow and maintain.
+
+	Also included within the package is a change log to document where I've added features (intended and unintended!) and some sample 
+	Windows batch files to assist in lanching this script, the game itself and any attendant apps you may wish to use at run time.
+
+	Indexes near the top of each file should assist in finding functions of interest.
+
+	This script serves to create additional functionality and immersion within the game as well as serve as a reference on how better to utilise
+	TARGET script beyond what is supplied in the basic scripting guide provided by Thrustmaster.
+
+	Enjoy.
+
+	CMDR Clicker
+	
 */
-
-	// PREFACE
-	//
-	// This script is provided as is and without any warranties, explicit or implied.
-	//
-	// This package contains a single required '.tmc' file (this is it), a '.ttm' which defines MANY constants and variables used by the rest
-	// of the script. The whole package is coded within multiple '.tmh' files in order to (hopefully) make the code easier to follow and maintain.
-	//
-	// Also included within the package is a change log to document where I've added features (intended and unintended!) and some sample 
-	// Windows batch files to assist in lanching this script, the game itself and any attendant apps you may wish to use at run time.
-	//
-	// Indexes near the top of each file should assist in finding functions of interest.
-	//
-	// This script serves to create additional functionality and immersion within the game as well as serve as a reference on how better to utilise
-	// TARGET script beyond what is supplied in the basic scripting guide provided by Thrustmaster.
-	//
-	// Enjoy.
-	//
-	// CMDR Clicker
-	//
-
 	// START
 
 	// -------------- //
@@ -148,7 +148,7 @@
 		initUserSettings(0);													// Save default user settings. On the fly customisation available for most settings.
 		
 		printf("\x0a\++	Load MyStates from file...\x0a");
-		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json)
+		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json) and modified User Settings 
 		
 		fnLEDBrightness();														// Set initial LED Brightness levels
 
