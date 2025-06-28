@@ -162,7 +162,7 @@
 
 	
 	// TOGGLE: Ship Lights - LED2
-	// Parameter: 0 = Lights, 1 = Night Vision
+	// Parameter: 0 = Lights, 1 = Night Vision, 2 = Toggle AutoLandingLights setting tgLights (refer ED_UserSettings.tmh
 	// Uses Flags: fSRV, fLights, fSRVHiBeam, fNightVision
 
 	int tgLights(int x) {
@@ -210,17 +210,36 @@
 				fnVPOutput("!!	Night vision unhandled exception");
 			}
 		}
+		if (x == 2) {
+			AutoLandingLights = !AutoLandingLights;
+			if (AutoLandingLights) {
+				fnVPOutput("Auto landing lights set");
+			}
+			else {
+				fnVPOutput("Auto landing lights reset");
+			}
+		}
 	}
 
 
 	// TOGGLE: Silent Running - LED3
-	// Parameter: 'x' = OFF, ON, STROBE
+	// Parameter: 'x' = 0 (OFF), 1 (ON), 2 (STROBE), 3 Toggle AutoStrobe
 	// NOTE: Aligns across menulog/restart
 
 	int tgSilentRunning(int x) {
 		int fnName = "Silent Running";
 		int reason = 0;
-				
+		
+		if (x == 3) {
+			AutoStrobe = !AutoStrobe;
+			if (AutoStrobe) {
+				fnVPOutput("Auto strobe is set");
+			}
+			else {
+				fnVPOutput("Auto strobe is reset");				
+			}
+			return 0;
+		}
 		if (x == ON | x == STROBE) {													// Toggle Silent Running - ON 
 			if (fSupercruise) {
 				reason = "we are in supercruise";
@@ -321,16 +340,40 @@
 	
 	
 	// TOGGLE: Landing Gear - LED5
-	// Parameter: 'Speedbrake'. Valid: 0 = Gear, 1 = Speedbrake. Only used for printf purposes
+	// Parameter: 'Speedbrake'. Valid: 	0 = Gear, 
+	//									1 = Speedbrake. Only used for printf purposes
+	//									2 = Toggle AutoGearUP
+	//									3 = Toggle AutoGearDOWN
 
 	int tgLandingGear(int Speedbrake) {
 		int fnName = "Landing Gear";
 		int reason = 0;
 		int GearString= "Landing Gear";
 		
-		if (!fSupercruise & !fSRV & !fLanded & !fDocked) {							// Test for normal flight mode 
+		if (!fSupercruise & !fSRV & !fLanded & !fDocked & !fFighter) {							// Test for normal flight mode 
 								
-			if(Speedbrake) GearString = "Speed Brake";
+			if(Speedbrake == 1) GearString = "Speed Brake";
+			if(Speedbrake == 2) {
+				AutoGearUP = !AutoGearUP;
+				if (AutoGearUP) {
+					fnVPOutput("Auto gear up Set");
+				}
+				else {
+					fnVPOutput("Auto gear up Reset");					
+				}
+				return 0;
+			}
+			if(Speedbrake == 3) {
+				AutoGearDOWN = !AutoGearDOWN;
+				if (AutoGearDOWN) {
+					fnVPOutput("Auto gear down Set");
+				}
+				else {
+					fnVPOutput("Auto gear down Reset");					
+				}
+				return 0;				
+			}
+
 			if (!fLandingGear) {													// Was RETRACTED, Deploy...
 				printf("==	%s:		DEPLOYED\x0a", GearString);
 				if (!Speedbrake) fnTextToSpeech("Landing gear deployed");
@@ -345,18 +388,11 @@
 			ActKey(KEYON+PULSE+LandingGear);
 		}
 		else {																		// Landing gear / Speedbrake function not valid  
-			if (fSupercruise) {
-				reason = "we are in supercruise";
-			}
-			if (fSRV) {
-				reason = "we are in SRV";
-			}
-			if (fLanded) {
-				reason = "we are landed";
-			}
-			if (fDocked) {
-				reason = "we are docked";
-			}
+			if (fSupercruise) reason = "we are in supercruise";
+			if (fSRV)		reason = "we are in SRV";
+			if (fLanded)	reason = "we are landed";
+			if (fDocked)	reason = "we are docked";
+			if (fFighter) 	reason = "no landing gear in this fighter";
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
@@ -507,9 +543,20 @@
 
 
 	// TOGGLE: 		Analysis/Combat HUD Modes
-	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 1 second 
+	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 1 second, 2 = Toggle AutoHUD 
 
 	int tgHUDMode(int delayannounce=0) {
+		
+		if (delayannounce == 2) {
+			AutoHUD = !AutoHUD;
+			if (AutoHUD){
+				fnVPOutput("Auto hud set");
+			}
+			else {
+				fnVPOutput("Auto hud reset");				
+			}
+			return 0;
+		}
 		if (fHUDAnalysis) {
 			printf("==	HUD Mode:		COMBAT\x0a");			// Switching to Combat Mode
 			if (FSSMode) {
