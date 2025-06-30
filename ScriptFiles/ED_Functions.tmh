@@ -24,55 +24,55 @@
 /*
 	Index:		FUNCTION
 	Line   85: 	int fnNotValid(int fnName, int reason=0) {
-	Line  102: 	int fnStartupMapKeyMode() {
-	Line  130: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
+	Line  103: 	int fnStartupMapKeyMode() {
+	Line  134: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
 	Line  211: 	int fnSetSliderCurve(int x) {
 	Line  244: 	int fnGetFlightMode() {
 	Line  262: 	int fnLEDBrightness(int x = NOCHANGE) {
-	Line  282: 	int fnFlashLED(int x) {																				// Flashes LED# (parsed as parameter when calling) odd number of times.
+	Line  282: 	int fnFlashLED(int x) {	
 	Line  299: 	int fnSetLEDs(int dummy=NUL) {
 	Line  347: 	int fnFlashStart() {
-	Line  381: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
-	Line  408: 	int fnVoiceVolume(int x) {
-	Line  469: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
-	Line  547: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1) {
-	Line  564: 	int fnGameStarted(int dummy = 0) {
-	Line  652: 	int fnPIPMode(int x) {
-	Line  703: 	int fnPIPManager(int PwrPriority) {
-	Line  740: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
-	Line  780: 	int fnAdvFireControl(int x) {
-	Line  863: 	int fnAdvancedSCB(int x=0) {
-	Line  922: 	int fnHeatsink() {
-	Line  952: 	int fnChaff() {
-	Line  982: 	int fnDeploySRV(int x) {
-	Line 1031: 	int fnDeployFighter(int x) {
-	Line 1083: 	int fnDRShip() {
-	Line 1101: 	int fnRequestDock() {
-	Line 1125: 	int fnHangerServices(int x) {
-	Line 1167: 	int fnIdleLock(int x) {
-	Line 1191: 	int fnCheckFSDCharge(int EngineText) {
-	Line 1221: 	int fnCheckFiregroup() {
-	Line 1237: 	int fnClearChatBox(int mode = 0) {
-	Line 1301: 	int fnModeSwitch(int mode) {
-	Line 1379: 	int fnVPOutput(int VPOutput, int VolumeOverride=0) {
-	Line 1391: 	int fnPrintState() {
-	Line 1402: 	int fnStateDump() {
-	Line 1565: 	int fnGetTOD() {
-	Line 1616: 	int fnMyName() {
-	Line 1680: 	int fnTerrainFollow(int MinHeight = 100) {
-	Line 1704: 	int fnLowAltitude() {
-	Line 1711: 	int fnAscend() {
-	Line 1717: 	int fnDescend() {
-	Line 1727: 	int fnSelectFiregroup(int fg) {
-	Line 1766: 	int fnGetStationName(int dummy=0) {
-	Line 1782: 	int fnDockingStatus(int dummy) {
-	Line 1871: 	int fnFighterStatus(int dummy = 0) {
-	Line 1893: 	int fnInputCMD(int dummy = 0) {
-	Line 1959: 	int fnAutoPilot(int dummy = 0) {
-	Line 1981: 	int fnPANIC(int panic = 0) {
-	Line 2002:	int findstr()
-	Line 2027:	int strcpy
-	Line 2037:	int fnDEBUG()
+	Line  386: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
+	Line  413: 	int fnVoiceVolume(int x) {
+	Line  464: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
+	Line  535: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1) {
+	Line  552: 	int fnGameStarted(int dummy = 0) {
+	Line  638: 	int fnPIPMode(int x) {
+	Line  689: 	int fnPIPManager(int PwrPriority) {
+	Line  726: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
+	Line  766: 	int fnAdvFireControl(int x) {
+	Line  847: 	int fnAdvancedSCB(int x=0) {
+	Line  905: 	int fnHeatsink(int param = 0) {
+	Line  944: 	int fnChaff(int dummy = 0) {
+	Line  972: 	int fnDeploySRV(int x) {
+	Line 1024: 	int fnDeployFighter(int x) {
+	Line 1077: 	int fnDRShip() {
+	Line 1095: 	int fnRequestDock() {
+	Line 1119: 	int fnHangerServices(int x) {
+	Line 1170: 	int fnIdleLock(int x) {
+	Line 1194: 	int fnCheckFSDCharge(int EngineText) {
+	Line 1229: 	int fnCheckFiregroup() {
+	Line 1245: 	int fnClearChatBox(int mode = 0) {
+	Line 1309: 	int fnModeSwitch(int mode) {
+	Line 1386: 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
+	Line 1408: 	int fnPrintState() {
+	Line 1419: 	int fnStateDump() {
+	Line 1581: 	int fnGetTOD() {
+	Line 1632: 	int fnMyName() {
+	Line 1697: 	int fnTerrainFollow(int MinHeight = 100) {
+	Line 1721: 	int fnLowAltitude() {
+	Line 1728: 	int fnAscend() {
+	Line 1734: 	int fnDescend() {
+	Line 1744: 	int fnSelectFiregroup(int fg) {
+	Line 1783: 	int fnGetStationName(int dummy=0) {
+	Line 1799: 	int fnDockingStatus(int dummy) {
+	Line 1898: 	int fnFighterStatus(int dummy = 0) {
+	Line 1920: 	int fnInputCMD(int dummy = 0) {
+	Line 1982: 	int fnAutoPilot(int dummy = 0) {
+	Line 2004: 	int fnPANIC(int panic = 0) {
+	Line 2025:	int findstr(alias string, alias substring) {
+	Line 2050:	int strcpy(alias dst, alias src) {
+	Line 2060:	int fnDEBUG()
 */
 
 	//------------------//
@@ -94,7 +94,7 @@
 		fntxt[buf-1] = 0;													//terminate char array with a nul
 		
 		fnTextToSpeech(&fntxt);
-		printf("!! Function: %s !!!\x0a", &fntxt);		
+		printf("!!	Function: %s !!!\x0a", &fntxt);		
 	}
 
 
@@ -857,11 +857,11 @@
 		else {
 			if (fSCBPresent) {
 				if (!fSupercruise & fMainShip & !fDocked & !fLanded) {
-					if (x == 0) {
+					if (x == 0) {											// 1xSCB no cooling
 						ActKey(KEYON+PULSE+UseShieldCell);
 						printf("!!    SCB  Fired    !!\x0a");
 					}
-					if (x == 1) {
+					if (x == 1) {											// 1x SCB w/cooling (if available)
 						ActKey(KEYON+PULSE+UseShieldCell);
 						printf("!!    SCB  Fired    !!\x0a");
 						if (fHeatsinkPresent) {
@@ -872,7 +872,7 @@
 							fnVPOutput("No Heatsink launcher installed");
 						}
 					}
-					if (x == 2) {
+					if (x == 2) {											// 2x SCB w/cooling (don't fire second SCB if no cooling available)
 						ActKey(KEYON+PULSE+UseShieldCell);
 						printf("!!    SCB  Fired    !!!\x0a");
 						if (fHeatsinkPresent) {
@@ -905,6 +905,7 @@
 	int fnHeatsink(int param = 0) {
 		int fnName = "Heatsinks";
 		int reason = 0;
+		
 		if (param == 1) {
 			AutoHeatsink = !AutoHeatsink;
 			if (AutoHeatsink) {
@@ -913,33 +914,34 @@
 			else {
 				fnVPOutput("Auto Heatsink reset");				
 			}
-			return 0;
 		}
-		if (fMainShip & !fDocked & !fLanded) {
-			stfnProcessGuiFocus();		
-			if(FSSMode) {
-				ActKey(KEYON+PULSE+FSSZoomOUT);
-				printf("==	FSS Zoom:	OUT\x0a");
-			}
-			else {
-				if (fHeatsinkPresent) {
-					ActKey(KEYON+PULSE+DeployHeatSink);
-					printf("!!	Heatsink	Fired	!!!\x0a");
+		if (param == 0) {
+			if (fMainShip & !fDocked & !fLanded) {
+				stfnProcessGuiFocus();		
+				if(FSSMode) {
+					ActKey(KEYON+PULSE+FSSZoomOUT);
+					printf("==	FSS Zoom:	OUT\x0a");
 				}
-				else reason = "heatsink launcher not equipped";
+				else {
+					if (fHeatsinkPresent) {
+						ActKey(KEYON+PULSE+DeployHeatSink);
+						printf("!!	Heatsink	Fired	!!!\x0a");
+					}
+					else reason = "heatsink launcher not equipped";
+				}
 			}
+			else if (fDocked)		reason = "we are docked";
+			else if (fLanded)		reason = "we are landed";
+			else if (!fMainShip)	reason = "we are not in the ship";
 		}
-		else if (fDocked)		reason = "we are docked";
-		else if (fLanded)		reason = "we are landed";
-		else if (!fMainShip)	reason = "we are not in the ship";
-		
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
 
-	// FUNCTION: Deploy Chaff
+	//	FUNCTION:	Deploy Chaff
+	//	Parameter:	dummy. enables DeferCall and REXEC
 	
-	int fnChaff() {
+	int fnChaff(int dummy = 0) {
 		int fnName = "Chaff";
 		int reason = 0;
 
@@ -964,19 +966,22 @@
 	}
 
 
-	// FUNCTION: Deploy/Recover SRV. Set Slider Curve and Lights flag.
-	// Parameter: DEPLOY (0) = Deploy SRV, RECOVER (1) = Board ship
+	//	FUNCTION:	Deploy/Recover SRV. Set Slider Curve and Lights flag.
+	//	Parameter:	x: DEPLOY (1) = Deploy SRV, RECOVER (0) = Board ship
 
 	int fnDeploySRV(int x) {
-		int fnName;
+		int fnName = "deploy or recall fighter";
 		int reason = 0;
 
-		if (!StartupLock) {
+		if (x) fnName = "Deploy SRV";
+		else fnName = "Recover SRV";
+
+		if (!StartupLock & fMainShip) {
 			if (fSRVPresent) {
 				if (x == DEPLOY) {
-					fnName = "Deploy SRV";
-					if (!fSRV) {				
-						if (fLanded & fMainShip) {									// DEPLOY
+					if (!fSRV) {
+						if (fLanded) {												// DEPLOY
+							printf("!!	DEBUG: Call m_DeploySRV from fnDeploySRV() line 992\x0a");
 							ActKey(KEYON+PULSE+m_DeploySRV);
 						}
 						else {
@@ -989,15 +994,15 @@
 					}
 				}
 				else {																// RECOVER and set PIPs to shields in case we're under fire 
-					fnName = "Recover SRV";
-					if (fSRV & fSRVTurretRetracted) {	
+					if (fSRV & fSRVTurretRetracted) {
+						printf("!!	DEBUG: Call m_BoardShip from fnDeploySRV() line 1011\x0a");
 						ActKey(KEYON+PULSE+m_BoardShip);							// Duration = 1395 + in Game animation
 						printf("==	SRV:			RECOVERED\x0a");
 						DeferCall(8000, &fnPIPMapper, SYS);							// PIPs to Shields ... is 8 seconds long enough (was 14)?
 					}
 					else {
 						if (!fSRV) {
-							reason = "not in SRV";
+							reason = "SRV not deployed";
 						}
 						else if (fSRV & !fSRVTurretRetracted) {
 							reason = "turret not retracted";
@@ -1009,29 +1014,31 @@
 				reason = "No SRV hanger found on ship";
 			}
 		}
-		if (reason !=0) fnNotValid(fnName, reason);
+		if (reason != 0) fnNotValid(fnName, reason);
 	}
 	
 
-	//	FUNCTION: Deploy/Recover Fighter
-	//	Parameter: DEPLOY (0) = Deploy Fighter, RECOVER (1) = Recover Fighter
+	//	FUNCTION:	Deploy/Recover Fighter
+	//	Parameter:	x - DEPLOY (1) = Deploy Fighter, RECOVER (0) = Recover Fighter
 
 	int fnDeployFighter(int x) {
-		int fnName;
+		int fnName = "deploy or recall fighter";
 		int reason = 0;
+
+		if (x) fnName = "Deploy Fighter";
+		else fnName = "Recover Fighter";
 
 		if (!StartupLock) {
 			if (fFighterPresent) {
-				fnFighterStatus(0);
+				fnFighterStatus(0);																				// Determines if Fighter is active 
 				if (x == DEPLOY) {
-					fnName = "Deploy Fighter";
 					if (fMainShip & !fSupercruise & !fLanded & !fDocked & !ActiveFighter) {						// DEPLOY
 						if (fNPCCrewActive) {
-							printf("!! DEBUG: Call m_DeployNPCFighter from fnDeployFighter() line 1095\x0a");
+							printf("!! DEBUG: Call m_DeployNPCFighter from fnDeployFighter() line 1035\x0a");
 							ActKey(KEYON+PULSE+m_DeployNPCFighter);												// Duration 2185
 						}
 						else {
-							printf("!! DEBUG: Call m_DeployFighter from fnDeployFighter() line 1099\x0a");
+							printf("!! DEBUG: Call m_DeployFighter from fnDeployFighter() line 1039\x0a");
 							ActKey(KEYON+PULSE+m_DeployFighter);												// Duration 2185
 						}
 					}
@@ -1045,7 +1052,6 @@
 					}
 				}
 				else {																							// RECOVER
-					fnName = "Recover Fighter";
 					if (ActiveFighter) {	
 						ActKey(KEYON+PULSE+FighterDock);
 						printf("==	Fighter:		RECOVERED\x0a");
@@ -1103,7 +1109,7 @@
 		}
 		DeferCall(6000, &fnDockingStatus, 0);									// Wait for Journal to be written with a result and delay announcement
 		
-		if (reason !=0) fnNotValid(fnName, reason);
+		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
 
@@ -1840,9 +1846,9 @@
 			printf("==	Docking request DENIED\x0a");
 			DeniedReason = stfnGetKeyValue("DeniedReason", STRING, 1);
 			if (strcmp(DeniedReason, "ActiveFighter") == 0) {
-				if (AutoRecall) {										// untested 
+				if (AutoRecall) {														// TEST  
 					printf("==	Autorecalling fighter\x0a");
-					fnFighterStatus();
+					fnFighterStatus(0);													// Determines if Fighter is active 
 					if (ActiveFighter) {
 						fnDeployFighter(RECOVER);
 						printf("!! DEBUG: Fighter Recall - ActiveFighter = TRUE\x0a");
@@ -2051,7 +2057,7 @@
 	//	Parameter:	dummy - enables REXEC or DeferCall
 	//	Usage:		PSF+EFLNORM calls this function
 	
-	int	fnDEBUG(int dummy = 0) {
+	int fnDEBUG(int dummy = 0) {
 
 		char c;
 		Dim(&c, 64);
