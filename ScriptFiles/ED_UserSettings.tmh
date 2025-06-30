@@ -23,6 +23,37 @@
 
 	// START
 
+	//-----------------------------//									
+	// CRITICAL File Path Settings //		REFER TO DEDICATED SECTIONS BELOW FOR EXPLANATIONS
+	//-----------------------------//
+
+	// Refer 'status.json' section
+	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
+	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
+
+	// Refer 'MyStatusFile' section																								// If you unzipped the package to 'c:\Thrustmaster\ED_TargetScript_Warthog\' as suggested...
+	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";	// ... this won't need changing
+
+	// Refer 'MyJournalData' section
+	alias	MyJournalData		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";		// ... this won't need changing
+
+	// Refer 'Text To Speech' section
+	alias	TTSQueue 			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\TTSQueue\\";				// ... this won't need changing
+
+	// Refer 'WAV Sound Player' section 
+	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";						// ... this won't need changing
+	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";							// ... this won't need changing
+	
+	//----------//
+	// Identity //
+	//----------//
+
+	// 'CMDRName' alias is declared here and extracted from MyJournalData.json supporting multiple Elite Dangerous accounts
+	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
+	
+	define	CMDRNameOverride	DISABLED  
+	alias	MyName 				= "Clicker";
+
 	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one
 	alias	MyFCName			= "Clicker's Folly";	// Replace with the name you've given to your Fleetcarrier
 	alias	FCOwner				= "Clicker";			// Commander's name who owns the 'MyFC'. Script will assume this CMDR owns this FC.
@@ -44,8 +75,8 @@
 	// LED settings //
 	//--------------//
 
-	int	FlashLEDs				= ENABLED;				// Flash the Status LEDs when status changes. ENABLED or DISABLED
-	int	LEDLevel				= 1;					// Default starting LED Level. Valid Levels = 0 - 5. Refer fnLEDBrightness()
+	int		FlashLEDs			= ENABLED;				// Flash the Status LEDs when status changes. ENABLED or DISABLED
+	int		LEDLevel			= 1;					// Default starting LED Level. Valid Levels = 0 - 5. Refer fnLEDBrightness()
 														// LEDLevel 0: 0	- 42 (off)
 														// LEDLevel 1: 43	- 85 (dimmest)
 														// LEDLevel 2: 86	- 128
@@ -64,8 +95,9 @@
 	//				The below path is usually where the Elite Dangerous journal files can be found.
 	//				Just replace '<username>' with your Windows username, NOT your CMDR Name!!!
 	
-	alias	StatusFile			= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
-	alias	MaxStatusFile		= "C:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
+	// Set at top in CRITICAL Settings
+	// alias	StatusFile			= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
+	// alias	MaxStatusFile		= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
 	
 	define	StatusReadRate		500		// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
 										// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
@@ -77,27 +109,20 @@
 	// NOTE:		Set the 'alias' below to point to where you want to save and load script variables that are not tracked via status.json
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//				Saves the script states after a game restart or relog. 
-	
-	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";
+
+	// Set at top in CRITICAL Settings	
+	// alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";
 
 	//---------------//
 	// MyJournalData //
 	//---------------//
-
-	alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
+	
+	// Set above in CRITICAL Settings
+	// alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
+	
 	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
-												// You may see issues if this is set too small. If you do, raise this value.		
-																					   
-	//----------//
-	// Identity //
-	//----------//
-
-	// 'CMDRName' alias is declared here and extracted from MyJournalData.json supporting multiple Elite Dangerous accounts
-	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
-	
-	define	CMDRNameOverride		DISABLED  
-	alias	MyName 					= "Clicker";
-	
+												// You may see issues if this is set too small. If you do, raise this value.
+													
 	//----------------//
 	// Text To Speech //
 	//----------------//
@@ -105,23 +130,28 @@
 	// https://support.microsoft.com/en-nz/help/22805/windows-10-supported-narrator-languages-voices 
 	// To make the voices visible to non MS apps, you need to tweak the registry using the method described here;
 	// https://www.ghacks.net/2018/08/11/unlock-all-windows-10-tts-voices-system-wide-to-get-more-of-them/
-	// I have provided REGSCRAP files  to streamline the Registry editing part of the above.
+	//
+	// I have provided REGSCRAP files to streamline the Registry editing part of the above.
 	// Regscrap files may be found within the SupportFiles\TTS Voice Registry Scraps folder of this package
 	//   
-	// VoiceVolume should be set to the relative volume level (%) for voice.exe 
+	// VoiceVolume should be set to the relative volume level (%) 
 	// Refer fnTextToSpeech() function in ED_Functions.tmh for usage examples
 
 	int		EnableVoice			= ENABLED;				// ENABLED or DISABLED. Enable this if you wish to use the Text To Speech Feature 
 														// Toggled via tgTxt2Speech();
-	
-	int		VoiceVolume			= 75;					// Default Volume set at 75% Settable via fnVoiceVolume()
+															
+	int		VoiceVolume			= 100;					// Default Volume set at 100% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
 	int		VoiceRate			= 1;					// Slightly faster than default. You can set this using DEBUG + InputCMD
 	int		AltVoiceRate		= 0;					// Default. You can set this using DEBUG + InputCMD
-	// Add or remove voices available on your PC.
-	// Run 'voice.exe -l" (lower case L) in a command line where you copied voice.exe to, to see which voices are installed
-	// I have installed all the English Language Voice options as per instructions from above links and merged all teh regscraps included in this package 
-	// The below are the voices available and tested on my PC and must be enclosed in quotation marks...
+
+	// Run 'voice.exe -l" (lower case L) in a command line to see which voices are installed
+	// 'voice.exe' is located under the SupportFiles folder
+	// Add or remove the below voices to match what's available on your PC.
+	// The below are the voices available and tested on my PC and must be enclosed in quotation marks.
+	// I installed these English Language Voice options using instructions via above links then merged the associated regscraps.
+	// Regscraps can be found here - C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\TTS Voice Registry Scraps
+
 	
 	alias	Catherine			= "\"Microsoft Catherine\"";			// Adult, Female,	en-AU
 	alias	David				= "\"Microsoft David Desktop\"";		// Adult, Male,		en-US
@@ -137,16 +167,13 @@
 	alias	Richard				= "\"Microsoft Richard\"";				// Adult, Male,		en-CA
 	alias	Linda				= "\"Microsoft Linda\"";				// Adult, Female,	en-CA
 
-	// Set your preferred voice below by removing // at start of line.
-	// The voice MUST BE installed by following the instructions in the links provided above.
+	// 'DefaultVoice' and 'AltVoice' MUST BE installed by following the instructions in the links provided above	
 	int		DefaultVoice		= &Catherine;			// Set your preferred (installed) voice here
-	int		AltVoice			= &James;				// Secondary Voice
-	int		UseAltVoice			= NO;					// Set to 'YES' prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used 
+	int		AltVoice			= &James;				// Secondary Voice refer fnTextToSpeech() on usage.
 	
 	// NOTE:	I have used two or more voices in this script
 	//			I recommend that you search the script looking for 'fnTextToSpeech' to check which voices I have used and change if required
 	//			Sending a non-installed voice is not a critical error and simply results in TTS not saying anything
-	
 	//------------------------//
 	// Voice Enabled Training //
 	//------------------------//
@@ -167,10 +194,12 @@
 	// Run sounder.exe in a command prompt window (from where you copied it) with no arguments etc to see a list of options
 	// sounder.exe utility provided by https://elifulkerson.com/projects/commandline-wav-player.php
 
-	int		EnableSoundFX		= ENABLED; 				// ENABLED or DISABLED. Enable this if you wish to use "sounder.exe"
+	int		EnableSoundFX		= ENABLED;	 				// ENABLED or DISABLED. Enable this if you wish to use "sounder.exe"
 	
-	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";
-	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";
+	// Set at top in CRITICAL Settings
+	// alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";
+	// alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";
+
 	alias	SoundCMD			= "";
 
 	//------------------//
@@ -183,6 +212,7 @@
 	//----------//
 	// PIP Mode //
 	//----------//
+
 	//	There are 6 PIPModes available.
 	//	You may set the Default mode below to one of the following values
 	//
@@ -197,17 +227,15 @@
 	
 	define DefaultPIPMode		3						// Set this to your preferred PIPMode. Value is set on the fly via H4P (see fnPIPMode() in ED_Functions.tmh)
 
-
 	//--------------------------//
 	// General Status Variables //
 	//--------------------------//
 
-	int	AutoHanger				= ENABLED;				// !! TESTING !!	// ENABLED = Initiate Hanger+Station Services automatically when docked, DISABLED = don't
-																			// ISSUE: currently triggered when reboarding ship from on foot when enabled
+	int	AutoHanger				= ENABLED;				//	Enable to initiate Hanger+Station Services automatically when docked, DISABLED = don't
 	int	AutoHUD					= ENABLED;				//	Enable to toggle HUD to Analysis Mode when FSD engaged
 	int	AutoGearUP				= ENABLED;				//	Enable to retract landing gear when lifting off using fDocked flag
-	int	AutoGearDOWN			= ENABLED;				//	Enable to deploy landing gear when docking request is granted
-	int	AutoLandingLights		= ENABLED;				//	Enable to turn on Landing Lights when docking request is granted
+	int	AutoGearDOWN			= DISABLED;				//	Enable to deploy landing gear when docking request is granted
+	int	AutoLandingLights		= DISABLED;				//	Enable to turn on Landing Lights when docking request is granted
 	int	AutoHeatsink			= ENABLED;				//	Enable to fire a heatsink when temp > 100% (requires launcher and ammo)
 	int	AutoStrobe				= DISABLED;				//	Enable to strobe silent running if in danger and shields drop
 	int	AutoHONK				= ENABLED;				//	Enable to fire discovery scanner when entering new system.
@@ -215,6 +243,7 @@
 	int AutoAbort				= ENABLED;				//	Enables Abort() call to stop script 20 seconds after game stops.
 	
 	int	ChatTABs				= 2;					//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
+
 	//--------------------------//
 	// Axis Curves and Settings //
 	//--------------------------//
