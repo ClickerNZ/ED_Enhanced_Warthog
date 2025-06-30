@@ -23,21 +23,20 @@
 
 /*
 	Index:		FUNCTION
-	Line  54:	int CheckControllers()	
-	Line 170: 	int initJoystickAxis() { 																	// Set Default Joystick Axis
-	Line 190: 	int initThrottleAxis() {																	// Set Default Throttle Axis
+	Line  54:	int CheckControllers() {
+	Line 170: 	int initJoystickAxis() { 
+	Line 190: 	int initThrottleAxis() {
 	Line 207: 	int initSliderAxis() {
 	Line 223: 	int initSlewAxis() {
-	Line 240: 	int initRudderAxis() {																		// Initialise Thrustmaster TFRP or TFRPHA Rudder
+	Line 240: 	int initRudderAxis() {	
 	Line 254: 	int initTextToSpeech() {
 	Line 266: 	int initSoundFX() {
-	Line 319: 	int initUserSettings(int dummy = 0) {	Line 315: 	int initUserSettings(int dummy = 0) {
-	Line 363: 	int fnResetUserSettings(int dummy = 0) {
-	Line 404: 	int fnEncodeUserSettings(int dummy = 0) {
-	Line 436: 	int fnDecodeUserSettings(int UserSettings) {
-	Line 464: 	int fnUserSettingsDelta(int dummy = 0)	{
-	Line 503: 	int fnCompareIntSettings(int dummy = 0) {
-
+	Line 319: 	int initUserSettings(int dummy = 0) {
+	Line 362: 	int fnResetUserSettings(int dummy = 0) {
+	Line 403: 	int fnEncodeUserSettings(int dummy = 0) {
+	Line 435: 	int fnDecodeUserSettings(int UserSettings) {
+	Line 463: 	int fnUserSettingsDelta(int dummy = 0)	{
+	Line 506: 	int fnCompareIntSettings(int dummy = 0) {
 */
 
 	// START
