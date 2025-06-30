@@ -23,40 +23,39 @@
 
 /*
 	Index:			FUNCTION
-	Line  66:		int initMacroChains()				REDUNDANT ?
-	Line  71: 		m_RequestDock = CHAIN(
-	Line  84: 		m_DeploySRV = CHAIN(
-	Line  96: 		m_BoardShip = CHAIN(
-	Line 107: 		m_DeployNPCFighter = CHAIN(
-	Line 121: 		m_DeployFighter = CHAIN(
-	Line 135: 		m_ShowGameStats = CHAIN(
-	Line 140: 		m_FastModeSwitch0 = CHAIN(
-	Line 151: 		m_FastModeSwitch1 = CHAIN(
-	Line 171: 		m_FastModeSwitch2 = CHAIN(
-	Line 184: 		m_ReportCrimesToggle = CHAIN(
-	Line 206: 		m_WingBeaconTeam = CHAIN(
-	Line 233: 		m_WingBeaconOff = CHAIN(
-	Line 258: 		m_EnterHanger = CHAIN(
-	Line 275: 		m_Launch = CHAIN(
-	Line 286: 		m_ChangeColours = CHAIN(
-	Line 292: 		m_NextFG = CHAIN(
-	Line 297: 		m_PrevFG = CHAIN(
-	Line 302: 		m_PullUp = CHAIN(
-	Line 312: 		m_Ascend = CHAIN(
-	Line 320: 		m_Descend = CHAIN(
+	Line  63:		int initMacroChains()
+	Line  70: 		m_RequestDock
+	Line  83: 		m_DeploySRV
+	Line  95: 		m_BoardShip
+	Line 106: 		m_DeployNPCFighter
+	Line 120: 		m_DeployFighter
+	Line 134: 		m_ShowGameStats
+	Line 140: 		m_FastModeSwitch0
+	Line 151: 		m_FastModeSwitch1
+	Line 171: 		m_FastModeSwitch2
+	Line 184: 		m_ReportCrimesToggle
+	Line 206: 		m_WingBeaconTeam
+	Line 233: 		m_WingBeaconOff
+	Line 258: 		m_EnterHanger
+	Line 274: 		m_Launch
+	Line 285: 		m_ChangeColours
+	Line 291: 		m_NextFG
+	Line 296: 		m_PrevFG
+	Line 301: 		m_PullUp
+	Line 311: 		m_Ascend
+	Line 319: 		m_Descend
+	Line 327: 		m_AutoPilotOn
+	Line 343: 		m_AutoPilotOff
 */
 
 	// START
 
 	// Declare macros (must be declared as global)
 	
-//	REVIEW:		Why can't we simply declare all the macros at this level to be consistent with rest of script.
-//	Example:	int m_NextFG = CHAIN(PULSE+NextFireGroup, D(400));
-//				TEST THIS once we get m_NextFG actually working.
-
-	int	m_RequestDock, m_DeploySRV, m_ShowGameStats, m_ReportCrimesToggle, m_WingBeaconTeam, m_WingBeaconOff;
-	int	m_FastModeSwitch0, m_FastModeSwitch1, m_FastModeSwitch2, m_BoardShip, m_EnterHanger, m_Launch, m_ChangeColours;
-	int m_NextFG, m_PrevFG, m_PullUp, m_Ascend, m_Descend, m_DeployNPCFighter, m_DeployFighter, m_AutoPilotOn, m_AutoPilotOff;
+	int	m_RequestDock,		m_DeploySRV,		m_ShowGameStats,	m_ReportCrimesToggle,	m_WingBeaconTeam,	m_WingBeaconOff;
+	int m_FastModeSwitch0,	m_FastModeSwitch1,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHanger,		m_ChangeColours;
+	int m_Launch,			m_NextFG,			m_PrevFG,			m_PullUp,				m_Ascend,			m_Descend;
+	int m_DeployNPCFighter,	m_DeployFighter,	m_AutoPilotOn,		m_AutoPilotOff;
 
 	//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
 	// CUSTOM MACROS //			// The action identifiers (keystroke labels) used below can be found within the 'ED_Defines.ttm' file.
