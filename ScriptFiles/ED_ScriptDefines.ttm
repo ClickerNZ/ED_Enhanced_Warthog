@@ -447,8 +447,8 @@
 
 	int Modules					=	0;						//  Read from MyJournalData.json 
 	int oldModules				=	0;						//	Track when changed via stfnProcessMyJournalData()
-	
-	int	fSCOPresent				=	0;						// Read and decode 'Modules' each time Modules != oldModules
+															// Read and decode 'Modules' each time Modules != oldModules
+	int	fSCOPresent				=	0;
 	int fFighterPresent			= 	0;
 	int fSRVPresent				=	0;	
 	int fHeatsinkPresent		=	0;
