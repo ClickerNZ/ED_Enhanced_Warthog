@@ -25,26 +25,26 @@
 	Index:		FUNCTION
 	Line  58: 	int tgTxt2Speech() {
 	Line  74: 	int tgEnhancedFAOFF(int dummy = 0) {
-	Line 117: 	int tgTriggerMode(int x) {
-	Line 165: 	int tgLights(int x) {
-	Line 217: 	int tgSilentRunning(int x) {
-	Line 263: 	int tgCargoScoop(int x) {
-	Line 322: 	int tgLandingGear(int Speedbrake) {
-	Line 368: 	int tgReverseThrust(int EnableSpeedBrake) {				////////////// NEEDS FURTHER TESTING
-	Line 443: 	int tgBoost() {
-	Line 470: 	int tgHardpoints(int dummy = 0) {
-	Line 510: 	int tgHUDMode(int delayannounce=0) {
-	Line 538: 	int tgFSSMode() {
-	Line 565: 	int tgPlanetView() {
-	Line 598: 	int tgWarpDrive(int JumpType) {
-	Line 705: 	int tgExtCamera() {
-	Line 725: 	int tgXAxis(int param = RESET) {
-	Line 751: 	int tgTerrainFollow(int Engage = ON) {
-	Line 786: 	int tgAutoPilot(int dummy = 0) {
-	Line 806: 	int tgGALMap (int action) {
-	Line 826: 	int tgSYSMap (int action) {
-	Line 850: 	int tgWingBeacon(int dummy = 0) {
-	Line 873: 	int tgReportCrimes(int dummy = 0) {
+	Line 120: 	int tgTriggerMode(int x) {
+	Line 168: 	int tgLights(int x) {
+	Line 229: 	int tgSilentRunning(int x) {
+	Line 286: 	int tgCargoScoop(int x) {
+	Line 348: 	int tgLandingGear(int Speedbrake) {
+	Line 408: 	int tgReverseThrust(int EnableSpeedBrake) {				////////////// NEEDS FURTHER TESTING
+	Line 481: 	int tgBoost() {
+	Line 508: 	int tgHardpoints(int dummy = 0) {
+	Line 548: 	int tgHUDMode(int delayannounce=0) {
+	Line 587: 	int tgFSSMode() {
+	Line 614: 	int tgPlanetView() {
+	Line 647: 	int tgWarpDrive(int JumpType) {
+	Line 759: 	int tgExtCamera() {
+	Line 779: 	int tgXAxis(int param = RESET) {
+	Line 805: 	int tgTerrainFollow(int Engage = ON) {
+	Line 840: 	int tgAutoPilot(int dummy = 0) {
+	Line 858: 	int tgGALMap (int action) {
+	Line 878: 	int tgSYSMap (int action) {
+	Line 902: 	int tgWingBeacon(int dummy = 0) {
+	Line 924: 	int tgReportCrimes(int dummy = 0) {
 */
 	
 	// START
@@ -506,7 +506,7 @@
 	//	Parameter:	dummy - allows REXEC or DeferCall
 	
 	int tgHardpoints(int dummy = 0) {
-		int fnName;
+		int fnName = "t g hardpoints";
 		int reason = 0;
 		
 		if (!fSupercruise) {
@@ -647,7 +647,7 @@
 	int tgWarpDrive(int JumpType) {
 		int EngineText;
 		int WarpDrive;
-		int fnName;
+		int fnName = "t g warp drive";
 		int reason = 0;
 		int VoiceTxt;
 				
