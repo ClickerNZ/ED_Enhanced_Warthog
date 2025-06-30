@@ -30,7 +30,7 @@
 	Line  62:	include statements
 	Line  94: 	int main()
 	Line 135:	initialise hardware
-	Line 191: 	int EventHandle(int type, alias o, int x)
+	Line 194: 	int EventHandle(int type, alias o, int x)
 
 
 	PREFACE
