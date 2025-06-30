@@ -27,13 +27,13 @@
 	/*
 	Index:		FUNCTION
 	Line   47: 	int LiveKeyMap()
-	Line   50:		Joystick Triggers
-	Line  274:		Throttle Lever Switches
-	Line  424:		Throttle Base Buttons
-	Line  686: 	int TrainingKeyMap()
-	Line  689:		Joystick Triggers
-	Line  896:		Throttle Lever Switches
-	Line 1045:		Throttle Base Buttons 
+	Line   52:		Joystick Triggers
+	Line  285:		Throttle Lever Switches
+	Line  443:		Throttle Base Buttons
+	Line  712: 	int TrainingKeyMap()
+	Line  717:		Joystick Triggers
+	Line  932:		Throttle Lever Switches
+	Line 1087:		Throttle Base Buttons 
 	*/
 
 	// START
@@ -129,7 +129,6 @@
 			MapKeyUMD(&MyJoystick, S4,
 				EXEC("tgEnhancedFAOFF(1)"),																	// U - Engage JSMouseEmulation
 				EXEC("tgEnhancedFAOFF(0);"),																// M - TOGGLE: FA-OFF/ON
-//				0
 				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
 				);
 		}
@@ -604,11 +603,11 @@
 			MapKey(&MyThrottle, EORIGN, 0);
 		}
 		else {
-			MapKey(&MyThrottle, EORIGN, EXEC("fnDRShip();"));												// From SRV - Recall/Dismiss Ship
+			MapKey(&MyThrottle, EORIGN, EXEC("fnDRShip();"));												// Momentary Contact (UP) - From SRV - Recall/Dismiss Ship
 		}
 		
 		if (MapKeyProfile == BASIC) {
-			MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);
+			MapKey(&MyThrottle, EORMOTOR, PULSE+HideShipGUI);												// (DOWN) Toggle Heads up display GUI 
 		}
 		else {		
 			MapKeyIO(&MyThrottle, EORMOTOR, 
@@ -651,10 +650,10 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFRNORM,
-				EXEC("fnPrintState();"),																	// U - Print Status Page
-				EXEC("fnSetLEDs();"),																		// M - Reset Status LEDs manually
-				EXEC("stfnMyStates(SAVE);")																	// D - Save MyStates to MyWarthogStatusFile.json
-				);
+				EXEC("fnPrintState();"),																	// U -	Print Status Page
+				EXEC("fnSetLEDs();"),																		// M -	Reset Status LEDs manually
+				EXEC("stfnMyStates(SAVE);")																	// D -	Save MyStates to MyWarthogStatusFile.json
+				);																							//		This is usefull when adding or removing vars to json file 
 		}
 				
 		MapKey(&MyThrottle, EFROVER, 0);																	// <not currently used>
@@ -667,7 +666,7 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,	
-				EXEC("fnDEBUG(0);"),																		// U - Test function switch. Use fnDEBUG() to test code and calls etc.
+				EXEC("fnDEBUG(0);"),																		// U - Test function switch. Runs fnDEBUG() to test code and calls etc.
 				PULSE+Screenshot,																			// M - Screen Capture
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
 				);	
@@ -746,7 +745,7 @@
 			MapKeyUMD(&MyJoystick, S1, 
 				EXEC("fnVPOutput(\"Toggle HUD Mode\", 0, 1);"),
 				EXEC("fnVPOutput(\"Toggle Hardpoints\", 0, 1);"),
-				EXEC("fnVPOutput(\"Toggle Joystick X Axis between Roll and Yaw\", 0, 1);")
+				EXEC("fnVPOutput(\"Toggle Auto hud user setting\", 0, 1);")
 				);
 		}
 	
@@ -780,7 +779,7 @@
 		MapKeyUMD(&MyJoystick, S4,
 			EXEC("fnVPOutput(\"Toggle Flight Assist with joystick mouse emulation\", 0, 1);"),
 			EXEC("fnVPOutput(\"Toggle Flight Assist\", 0, 1);"),
-			EXEC("fnVPOutput(\"Arrrr,ummmmm, no, Not mapped\", 0, 1);")
+			EXEC("fnVPOutput(\"Toggle Joystick X Axis between Roll and Yaw\", 0, 1);")
 			);
 
 	//		China Hat (Trim Switch)
@@ -801,13 +800,17 @@
 	
 			MapKey(&MyJoystick, H1D, EXEC("fnVPOutput(\"Select previous fire group\", 0, 1);"));
 			
-			MapKey(&MyJoystick, H1L, EXEC("fnVPOutput(\"Hold for half second to toggle landing gear\", 0, 1);"));
+			MapKeyUMD(&MyJoystick, H1L,
+				EXEC("fnVPOutput(\"Toggle Auto gear up user setting\", 0, 1);"),
+				EXEC("fnVPOutput(\"Hold for half second to toggle landing gear\", 0, 1);"),
+				EXEC("fnVPOutput(\"Toggle Auto gear down user setting\", 0, 1);")
+				);
 	
 			
 			MapKeyUMD(&MyJoystick, H1R,
 				EXEC("fnVPOutput(\"Toggle Night Vision\", 0, 1);"),
 				EXEC("fnVPOutput(\"Hold for half second to toggle ship lights\", 0, 1);"),
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")
+				EXEC("fnVPOutput(\"Toggle auto landing lights user setting\", 0, 1);")
 				);
 		}
 	
@@ -899,7 +902,7 @@
 				);
 				
 			MapKeyUMD(&MyJoystick, H4D,
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),
+				EXEC("fnVPOutput(\"Toggle Auto heat sink user setting\", 0, 1);"),
 				EXEC("fnVPOutput(\"Fire a heat sink\", 0, 1);"),
 				EXEC("fnVPOutput(\"Camera zoom out\", 0, 1);")
 				);
@@ -1116,8 +1119,8 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, EACON,
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),
-				EXEC("fnVPOutput(\"Fix mis aligned switch\", 0, 1);"),				
+				EXEC("fnVPOutput(\"Fix mis aligned switch\", 0, 1);"),
+				EXEC("fnVPOutput(\"Toggle auto strobe user setting\", 0, 1);"),
 				EXEC("fnVPOutput(\"Engage Silent running strobe function\", 0, 1);"),
 				EXEC("fnVPOutput(\"Engage Silent running\", 0, 1);"),
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),
@@ -1166,9 +1169,13 @@
 			MapKey(&MyThrottle, APENG, EXEC("fnVPOutput(\"Not mapped\", 0, 1);")); 
 		}
 		else {
-			MapKeyIO(&MyThrottle, APENG,
+			MapKeyIOUMD(&MyThrottle, APENG,
+				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// IU - 
+				EXEC("fnVPOutput(\"Toggle auto hanger user setting\", 0, 1);"),										// OU -
 				EXEC("fnVPOutput(\"Enter Hanger services\", 0, 1);"),												// IM - 
-				EXEC("fnVPOutput(\"Request docking permission\", 0, 1);")											// OM -
+				EXEC("fnVPOutput(\"Request docking permission\", 0, 1);"),											// OM -
+				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// ID - 
+				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")															// OD - 
 				);
 		}
 	
@@ -1293,6 +1300,7 @@
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
 				EXEC("fnVPOutput(\"Function test switch\", 0, 1);"),
+	//			EXEC("fnDEBUG(0);"),
 				EXEC("fnVPOutput(\"Take screen shot\", 0, 1);"),
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")
 				);	
