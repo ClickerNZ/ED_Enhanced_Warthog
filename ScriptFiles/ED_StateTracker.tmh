@@ -30,11 +30,11 @@
 	Line  451: 	int stfnDecodeFlags() {
 	Line  555: 	int stfnDecodeFlags2() {
 	Line  660: 	int stfnProcessFlags(int UpdateLEDs = NO) {
-	Line 1496: 	int stfnDecodeModules(int dummy = 0) {
-	Line 1539: 	int stfnProcessMyJournalData(int dummy = 0) {
-	Line 1615: 	int stfnProcessGuiFocus() {
-	Line 1644: 	int stfnStartCheck() {
-	Line 1711: 	int stfnMyStates(int action) {
+	Line 1526: 	int stfnDecodeModules(int dummy = 0) {
+	Line 1569: 	int stfnProcessMyJournalData(int dummy = 0) {
+	Line 1639: 	int stfnProcessGuiFocus() {
+	Line 1668: 	int stfnStartCheck() {
+	Line 1735: 	int stfnMyStates(int action) {
 */
 	// START
 
@@ -1047,22 +1047,12 @@
 
 		if (fAltFromAvgRad != lAltFromAvgRad) {
 			if (fAltFromAvgRad) {													// This is set when we are in supercruise or at "higher altitudes" (how high???)
-				printf("==	Altitude based on planet radius\x0a");
 				if (TerrainFollow) {
 					tgTerrainFollow(OFF);
-				}
-// DEBUG +++++++++++++++
-				fnDEBUG(0);
-// DEBUG +++++++++++++++
-				
+				}				
 			}
 			else {
-				printf("==	Altitude based on raycast to surface\x0a");				// fAltFromAvgRad is reset when in normal flight or when between 1 - ??? meters
-				
-// DEBUG +++++++++++++++
-				fnDEBUG(0);
-// DEBUG +++++++++++++++
-
+				// nothing to do
 			}				
 		}
 
@@ -1587,7 +1577,7 @@
 	// Keys marked with ** are decoded within existing functions 
 		
 			stfnDecodeModules(0);																	// Individual flags used to enable trigger and switch functions etc
-			fnFighterStatus(0);
+			fnFighterStatus(0);																		// Determines if Fighter is active 
 			LoadGameDetect = stfnGetKeyValue("LoadGameDetect", INTEGER, 1);
 
 //	DEBUG +++++++++++++++++++++++++++++++
