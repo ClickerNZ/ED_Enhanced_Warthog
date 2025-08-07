@@ -48,7 +48,7 @@
 	Line 1024: 	int fnDeployFighter(int x) {
 	Line 1077: 	int fnDRShip() {
 	Line 1095: 	int fnRequestDock() {
-	Line 1119: 	int fnHangerServices(int x) {
+	Line 1119: 	int fnHangarServices(int x) {
 	Line 1170: 	int fnIdleLock(int x) {
 	Line 1194: 	int fnCheckFSDCharge(int EngineText) {
 	Line 1229: 	int fnCheckFiregroup() {
@@ -459,7 +459,7 @@
 	//	GLOBAL VARS
 	int		TTSSeq		= 0;					// Resets TTSSeq to 0 each time we restart script.	
 	alias	TTSFilename = "TTSMsg0000.json";	// Creates the template 
-	char	TTS;								// Dynamic char array for individual file names 
+	char	TTSFile;							// Dynamic char array for actual file names 
 	
 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
 
@@ -494,13 +494,13 @@
 		if (TTSSeq > 99		& TTSSeq < 1000)	sprintf(&TTSFilename, "TTSMsg0%d.json",		TTSSeq);
 		if (TTSSeq > 999	& TTSSeq < 10000)	sprintf(&TTSFilename, "TTSMsg%d.json",		TTSSeq);
 
-		Dim(&TTS, strlen(&TTSQueue)+strlen(&TTSFilename)+1);
-		TTS[0] = 0;
+		Dim(&TTSFile, strlen(&TTSQueue)+strlen(&TTSFilename)+1);
+		TTSFile[0] = 0;
 		
-		sprintf(&TTS, "%s%s", &TTSQueue, &TTSFilename);
-		TTS[strlen(&TTS)] = 0;
+		sprintf(&TTSFile, "%s%s", &TTSQueue, &TTSFilename);
+		TTSFile[strlen(&TTSFile)] = 0;
 		
-		fp = fopen(&TTS, "w");
+		fp = fopen(&TTSFile, "w");
 		if (fp) {
 			myResult = fwrite(&TTSExport, 1, buf, fp);
 			fclose(fp);
@@ -570,7 +570,7 @@
 
 		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
 				
-		if (fDocked) 			InHanger = YES;										// TEST - Are we really InHanger though? Maybe check GUIMode? 
+		if (fDocked) 			InHangar = YES;										// TEST - Are we really InHangar though? Maybe check GUIMode? 
 		
 		if (!ConnectionStatus) {
 			ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
@@ -611,7 +611,7 @@
 		
 		// Issue personalised greeting when present at Clicker's Folly
 		fnGetStationName(0);
-		if (strcmp(&MyFC, &StationName) == 0 & ((fMainShip & fDocked) | fOnFootInStation | fOnFootInHanger | fOnFootSocialSpace)) {		
+		if (strcmp(&MyFC, &StationName) == 0 & ((fMainShip & fDocked) | fOnFootInStation | fOnFootInHangar | fOnFootSocialSpace)) {		
 			fnGreetCMDR();
 		}
 
@@ -844,7 +844,7 @@
 	//				Camera Mode:		Zoom IN function
 	// Parameter:	x = 0 (1xSCB, 0xHS), 1 (1xSCB, 1xHS) or 2 (2xSCB, 1xHS)
 
-	int fnAdvancedSCB(int x=0) {
+	int fnAdvancedSCB(int x = 0) {
 		int fnName = "Shield Cell Bank";
 		int reason = 0;
 
@@ -892,7 +892,7 @@
 				else if (fLanded)		reason = "can not use SCB whilst landed";
 			}
 			else {
-				reason = "no shieeld cell bank fitted to ship";
+				reason = "no shield cell bank module installed";
 			}
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
@@ -1011,7 +1011,7 @@
 				}
 			}
 			else {
-				reason = "No SRV hanger found on ship";
+				reason = "No SRV hangar found on ship";
 			}
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
@@ -1113,32 +1113,32 @@
 	}
 
 
-	// FUNCTION: Enter/Exit Hanger
-	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHanger setting
+	// FUNCTION: Enter/Exit Hangar
+	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHangar setting
 	
-	int fnHangerServices(int x) {
-		int fnName = "Hanger Services";
+	int fnHangarServices(int x) {
+		int fnName = "Hangar Services";
 		int reason = 0;
 		int VoiceTxt;
 		
 		if (GameLoaded) {
 			if (x == 2) {
-				AutoHanger = !AutoHanger;
-				if (AutoHanger) {
-					fnVPOutput("Auto Hanger set");
+				AutoHangar = !AutoHangar;
+				if (AutoHangar) {
+					fnVPOutput("Auto Hangar set");
 				}
 				else {
-					fnVPOutput("Auto Hanger reset");
+					fnVPOutput("Auto Hangar reset");
 				}
 				return 0;
 			}
 			if(fDocked) {
 				if(x == ENTER) {
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
-						if(!InHanger) {
-							VoiceTxt = "Enter Hanger and Station Services";							
-							ActKey(KEYON+PULSE+m_EnterHanger);
-							InHanger = YES;
+						if(!InHangar) {
+							VoiceTxt = "Enter Hangar and Station Services";							
+							ActKey(KEYON+PULSE+m_EnterHangar);
+							InHangar = YES;
 						}
 					}
 				}
@@ -1150,7 +1150,7 @@
 					else {	
 						VoiceTxt = "Initiating launch sequence";
 						ActKey(KEYON+PULSE+m_Launch);
-						InHanger = NO;
+						InHangar = NO;
 					}
 				}
 				fnVPOutput(VoiceTxt);
@@ -1163,15 +1163,15 @@
 	}
 
 
-	// FUNCTION:	If in Ship Enter Hanger/Lift Off Macros
+	// FUNCTION:	If in Ship Enter Hangar/Lift Off Macros
 	//				if in SRV apply/release handbrake
-	// Parameter:	x = ENTER (Hanger Services), EXIT (Lift off) 
+	// Parameter:	x = ENTER (Hangar Services), EXIT (Lift off) 
 
 	int fnIdleLock(int x) {
 		int fnName = "Idle Lock";
 		
 		if (fMainShip) {
-			fnHangerServices(x);
+			fnHangarServices(x);
 		}
 		else if (fSRV) {
 			ActKey(KEYON+PULSE+SRVHandbrake);		// Toggle SRV Handbrake
@@ -1368,12 +1368,18 @@
 				printf(".");								// note: no newline
 				Sleep(1000);																		// Sleep is ok here as game is not effectively running
 				stfnReadMyJournalData();
+				counter = counter + 1;
+				if (counter > 30) {																	// Something has hung
+						reason = "Game restart was not detected";
+						goto error;
+				}
 			}
 
 		//	fnTextToSpeech("Load game detected");													// Give it another 8-10 seconds before greetings
 			printf("\x0a\x0a\++	Game has reloaded\x0a");
 			fnGameStarted(0);
 		}
+		error:
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
@@ -1536,7 +1542,7 @@
 				if (fVeryCold)				Body2 		= "Very Cold";
 				if (fVeryHot)				Body2 		= "Very Hot";
 				if (fGlideMode)				Glide 		= "YES"; 		else Glide 			= "NO";
-				if (fOnFootInHanger)		Locn2 		= "in Hanger";
+				if (fOnFootInHangar)		Locn2 		= "in Hangar";
 				if (fOnFootSocialSpace)		Locn2 		= "in Social Space";
 				if (fOnFootExterior)		Locn2 		= "outside";
 				if (fBreathableAtmosphere)	Atmos 		= "Breathable"; else Atmos 			= "Unbreathable";
@@ -1816,7 +1822,7 @@
 		if (strcmp(&DockingStatus, "Granted") == 0) {
 			printf("==	Docking request GRANTED\x0a");
 			fnGetStationName(0);
-			DockingSequence = TRUE;										// Required for AutoHanger
+			DockingSequence = TRUE;										// Required for AutoHangar
 			
 			// Gear, PIPs and Lights blocked if using a Docking Computer
 			if (AutoGearDOWN & !fLandingGear) {
@@ -1860,7 +1866,7 @@
 				}
 			}
 			else if (strcmp(DeniedReason, "NoSpace") == 0) {
-				printf("==	All hanger bays are occupied.\x0a");
+				printf("==	All hangar bays are occupied.\x0a");
 				fnTextToSpeech("No space. All hangar bays are full");
 			}
 			else if (strcmp(DeniedReason, "TooLarge") == 0) {
@@ -1884,7 +1890,7 @@
 				fnTextToSpeech("We need to move in a little closer commander");
 			}
 			else {
-				fnVPOutput("Docking Denied, reason unknnwn");
+				fnVPOutput("Docking Denied, reason unknown");			// "Do not meet set permissions"
 			}
 		}
 		else if (strcmp(&DockingStatus, "TimeOut") == 0)	printf("==	Docking request timed out\x0a");
@@ -2075,6 +2081,17 @@
 		
 		fnVPOutput(&c, 0, 2);
 
+	}
+
+	//	FUNCTION:	Expansion on printf to enable VERBOSE and LOGGED outputs
+	//	Parameters:	ttp - text to print
+	//	Requires:	DEBUG to be set within Script defines to one of OFF, ON, VERBOSE, LOG
+	//	Output:		Outputs text to console if DEBUG > 0.
+	//				Some output will be supressed unless VERBOSE is set
+	//				LOG will output to console as well as a file
+	
+	int fnPrint(alias ttp) {
+			printf(&ttp);
 	}
 	
 // END
