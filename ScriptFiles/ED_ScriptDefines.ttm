@@ -93,6 +93,9 @@
 		
 	define OFF						0
 	define ON						1
+	define LOG						2						// DEBUG Levels
+	define VERBOSE					3						// DEBUG Levels
+	
 	define STROBE					2						// Used in tgSilentRunning()
 	
 	define TRUE						1
@@ -107,7 +110,7 @@
 	define SET						1
 	define RESET					0
 	
-	define PREVIOUS					0
+	define PREVIOUS					2
 	define NEXT						1
 
 	define HOLD						0
@@ -150,7 +153,8 @@
 	// DEBUG DEFINES //
 	//---------------//
 
-	int		DEBUG					= ON;					// Turn on to enable InputCMD
+	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+//	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
 	
 	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
@@ -315,7 +319,7 @@
 	define ED_VeryHot	         	0x0000000000000800
 	
 	define ED_GlideMode	         	0x0000000000001000
-	define ED_OnFootInHanger       	0x0000000000002000
+	define ED_OnFootInHangar       	0x0000000000002000
 	define ED_OnFootSocialSpace	 	0x0000000000004000
 	define ED_OnFootExterior     	0x0000000000008000
 
@@ -348,7 +352,7 @@
 	
 	int fOnFoot					=	0;
 	int fInTaxi					=	0;
-	int fInMultiCrew			=	0;	      
+	int fInMultiCrew			=	0;
 	int fOnFootInStation    	=	0;
 
 	int fOnFootOnPlanet     	=	0;
@@ -362,7 +366,7 @@
 	int fVeryHot	        	=	0;
 
 	int fGlideMode				= 	0;
-	int fOnFootInHanger			= 	0;
+	int fOnFootInHangar			= 	0;
 	int fOnFootSocialSpace		= 	0;
 	int fOnFootExterior			= 	0;
 
@@ -402,7 +406,7 @@
 	int lVeryHot	        	=	0;
 
 	int lGlideMode				= 	0;
-	int lOnFootInHanger			= 	0;
+	int lOnFootInHangar			= 	0;
 	int lOnFootSocialSpace		= 	0;
 	int lOnFootExterior			= 	0;
 
