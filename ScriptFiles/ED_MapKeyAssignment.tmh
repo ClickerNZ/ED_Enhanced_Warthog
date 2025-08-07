@@ -398,7 +398,7 @@
 	
 			MapKeyR(&MyThrottle, SPDF, EXEC("tgReverseThrust(3);"));										// RELEASE - Turn off Reverse Throttle
 			
-			MapKey(&MyThrottle, SPDB, EXEC("tgBoost();"));													// Boost and SCO Engage 
+			MapKey(&MyThrottle, SPDB, EXEC("tgBoost(0);"));													// Boost and SCO Engage 
 		}
 		
 	//	(Boat Switch)		//
@@ -529,8 +529,8 @@
 		else {
 			MapKeyIOUMD(&MyThrottle, APENG,
 				0,																							// IU - 
-				EXEC("fnHangerServices(2);"),																// OU - Hanger Services
-				EXEC("fnHangerServices(1);"),																// IM - Hanger Services
+				EXEC("fnHangarServices(2);"),																// OU - Hangar Services
+				EXEC("fnHangarServices(1);"),																// IM - Hangar Services
 				EXEC("fnRequestDock();"),																	// OM - Request Docking
 				0,																							// ID -
 				0																							// OD - 
@@ -682,8 +682,8 @@
 			MapKey(&MyThrottle, IDLELOFF, 0);
 		}
 		else {
-			MapKey(&MyThrottle, IDLELON, EXEC("fnIdleLock(1);"));											// Enter Hanger and Station Services if Ship else Handbrake if SRV
-			MapKey(&MyThrottle, IDLELOFF, EXEC("fnIdleLock(0);"));											// Exit Hanger, Lift off if in Ship, else Handbrake off if in SRV
+			MapKey(&MyThrottle, IDLELON, EXEC("fnIdleLock(1);"));											// Enter Hangar and Station Services if Ship else Handbrake if SRV
+			MapKey(&MyThrottle, IDLELOFF, EXEC("fnIdleLock(0);"));											// Exit Hangar, Lift off if in Ship, else Handbrake off if in SRV
 		}
 
 	//	(Engine Idle - Right)																				// NOTE: You can use these if Throttles are decoupled
@@ -1171,8 +1171,8 @@
 		else {
 			MapKeyIOUMD(&MyThrottle, APENG,
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// IU - 
-				EXEC("fnVPOutput(\"Toggle auto hanger user setting\", 0, 1);"),										// OU -
-				EXEC("fnVPOutput(\"Enter Hanger services\", 0, 1);"),												// IM - 
+				EXEC("fnVPOutput(\"Toggle auto hangar user setting\", 0, 1);"),										// OU -
+				EXEC("fnVPOutput(\"Enter Hangar services\", 0, 1);"),												// IM - 
 				EXEC("fnVPOutput(\"Request docking permission\", 0, 1);"),											// OM -
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// ID - 
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")															// OD - 
@@ -1314,8 +1314,8 @@
 			MapKey(&MyThrottle, IDLELOFF, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
 		}
 		else {
-			MapKey(&MyThrottle, IDLELON, EXEC("fnVPOutput(\"If in ship, Enter hanger services. If in SRV, handbrake\", 0, 1);"));
-			MapKey(&MyThrottle, IDLELOFF, EXEC("fnVPOutput(\"If in ship, Exit Hanger services and lift off. If in SRV release handbrake\", 0, 1);"));
+			MapKey(&MyThrottle, IDLELON, EXEC("fnVPOutput(\"If in ship, Enter hangar services. If in SRV, handbrake\", 0, 1);"));
+			MapKey(&MyThrottle, IDLELOFF, EXEC("fnVPOutput(\"If in ship, Exit Hangar services and lift off. If in SRV release handbrake\", 0, 1);"));
 		}
 	
 	//		(Engine Idle - Right)
