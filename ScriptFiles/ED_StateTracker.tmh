@@ -134,6 +134,7 @@
 	int		loop;
 	int		maxjson;
 	int		NewMaxJson;					// Saved and Loaded via stfnMyStates()
+	int		myTTS;						// simple TTS string
 	
 	// ------------
 	
@@ -146,7 +147,7 @@
 		int 	json100;
 		int		json10;
 		int		json1;
-		int 	TTS;
+//		int 	myTTS;					// Local TTS variable
 		char	json; Dim(&json, 16); json[0] = 0;
 
 		if (!initmyJson) {
@@ -211,22 +212,24 @@
 				
 				newJson = strcmp(&myJson, &lastJson);
 				if (newJson != 0) {													// Has myJson changed since last read?
-					Flags = stfnGetKeyValue("Flags", INTEGER);
+					Flags	= stfnGetKeyValue("Flags", INTEGER);
+					Flags2	= stfnGetKeyValue("Flags2", INTEGER);
+
 	
 					if (strlen(&myJson) <= 68) {									// When Game is halted, string length of status.json = 68 chars 
 						if(GameLoaded) {											// Detects when Game halts
 							GameLoaded = NO;										// Reset GameLoaded flag 
 
-							TTS = "GAME HALTED";
+							myTTS = "GAME HALTED";
 							if(TrainingMode == ENABLED){
 								TrainingKeyMap();									// Load KeyMap profile for training
 								if (AnnounceTraining) {
-									TTS = "GAME HALTED, Controller training mode enabled";
+									myTTS = "GAME HALTED, Controller training mode enabled";
 								}
 							}
 							
 //							printf("\x0a++	");
-							fnVPOutput(TTS, 0, 1);
+							fnVPOutput(myTTS, 0, 1);
 							printf("\x0a");
 										
 							if (ReverseThrust) {
@@ -576,7 +579,7 @@
 		lVeryHot				= fVeryHot;
 
 		lGlideMode				= fGlideMode;
-		lOnFootInHanger 		= fOnFootInHanger;
+		lOnFootInHangar 		= fOnFootInHangar;
 		lOnFootSocialSpace 		= fOnFootSocialSpace;
 		lOnFootExterior 		= fOnFootExterior;
 
@@ -627,7 +630,7 @@
 		fVeryHot				= ((Flags2 & ED_VeryHot) > 0);
 
 		fGlideMode				= ((Flags2 & ED_GlideMode) > 0);
-		fOnFootInHanger			= ((Flags2 & ED_OnFootInHanger) > 0);
+		fOnFootInHangar			= ((Flags2 & ED_OnFootInHangar) > 0);
 		fOnFootSocialSpace		= ((Flags2 & ED_OnFootSocialSpace) > 0);
 		fOnFootExterior			= ((Flags2 & ED_OnFootExterior) > 0);
 
@@ -667,8 +670,8 @@
 				fnGetStationName(0);										// May not need to call this again as we set this when making docking request
 				if (!StartupLock) {
 				
-					if (AutoHanger & DockingSequence) {						// TESTING - What happens when docked at a planetary port?
-							DeferCall(3000, &fnHangerServices, 1);			// DEBUG: Throws an error when AutoHanger is SET
+					if (AutoHangar & DockingSequence) {						// TESTING - What happens when docked at a planetary port?
+							DeferCall(3000, &fnHangarServices, 1);			// DEBUG: Throws an error when AutoHangar is SET
 					}
 				
 					printf("==	Docked: %s @ %s\x0a\x0a", &StationName, fnGetTOD());
@@ -682,7 +685,7 @@
 				}
 			}
 			else	{	
-				InHanger = NO;
+				InHangar = NO;
 				if (AutoGearUP) {
 					DeferCall(1500, &ActKey, KEYON+PULSE+LandingGear);
 				}
@@ -753,12 +756,15 @@
 				// Maybe create dedicated external function???
 				if (SelectDrop == NO) {													// Uninitiated drop				
 					if (OrbitalCruise & !fInterdicted) {
-						TTS = "Entering Glide Mode";
+						myTTS = "Entering Glide Mode";
+					}
+					else if(fSupercruiseAssist != lSupercruiseAssist) {
+						myTTS = "Drop due to supercruise assist";
 					}
 					else { 
-						TTS = "Drop detected";
+						myTTS = "Drop detected";										// Too close to sun or planet, Interdicted or Supercruise Assisted Drop?
 					}
-					fnVPOutput(TTS);													//  Announce drop type
+					fnVPOutput(myTTS);													//  Announce drop type
 					if (fInterdicted | fDanger) {
 						if (fHUDAnalysis) {	
 							tgHUDMode(1);												// Select Combat HUD, delay announce 
@@ -774,11 +780,12 @@
 					}
 				}
 				else {																	// Initiated drop
-					SelectDrop  = NO;
+//					SelectDrop = NO;													// Reset SelectDrop flag 
 				}
 				UpdateLEDs = YES;
 			}	
 			fnGetFlightMode();															// Line up slider curves
+			SelectDrop = NO;															// Reset SelectDrop flag 
 		}
 
 		if (fFAOff != lFAOff) {															// Handled within tgAdvancedFAOff()	
@@ -1119,13 +1126,12 @@
 		if (OldFlags2 != Flags2) {
 			if (fOnFoot != lOnFoot) {									// Track when on foot
 				if(fOnFoot){
-					if (!StartupLock) printf("==	On Foot\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot");
-// DEBUG +++++++++++
+					if (!StartupLock & DEBUG) printf("==	On Foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot");
 				}
 				else {
-					// not on foot
+					// no longer on foot
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot");
 				}
 				UpdateLEDs = YES;
 			}
@@ -1150,30 +1156,27 @@
 
 			if (fOnFootInStation != lOnFootInStation) {
 				if (fOnFootInStation) {
-					printf("==	We've entered the station on foot\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot In Station");
-// DEBUG +++++++++++
-
+					if (DEBUG) printf("==	We've entered the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Station");
 				}
 				else {
-					printf("==	We've left the station on foot\x0a");
+					if (DEBUG) printf("==	We've left the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Station");
 				}
 			}
 
 			if (fOnFootOnPlanet != lOnFootOnPlanet) {
 				if (fOnFootOnPlanet) {
-					printf("==	We've set foot on planet surface\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot On Planet");
-// DEBUG +++++++++++
+					if (DEBUG) printf("==	We've set foot on planet surface\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot On Planet");
 				}
 				else {
-					printf("==	We've left the planet surface on foot\x0a");
+					if (DEBUG) printf("==	We've left the planet surface on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot On Planet");
 				}
 			}
 
-			if (fAimDownSight != lAimDownSight) {						// I cannot think of a use for reporting this 
+			if (fAimDownSight != lAimDownSight) {						// I cannot think of a use for reporting this yet
 				if (fAimDownSight) {
 					// do nothing					
 				}
@@ -1223,7 +1226,7 @@
 					DeferCall(1000, &fnVPOutput, "Its bloody freezing!");					
 				}
 				else {
-					// nothing to do 
+					// nothing to do - getting warmer
 				}
 			}
 
@@ -1232,7 +1235,7 @@
 					DeferCall(1000, &fnVPOutput, "Geezz its flamin hot");					
 				}
 				else {
-					// nothing to do 							
+					// nothing to do - getting cooler			
 				}
 			}
 
@@ -1245,44 +1248,39 @@
 				}
 			}
 
-			if (fOnFootInHanger != lOnFootInHanger) {
-				if (fOnFootInHanger) {
-					printf("==	We've entered the hanger on foot\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot In Hanger");
-// DEBUG +++++++++++
-					
+			if (fOnFootInHangar != lOnFootInHangar) {
+				if (fOnFootInHangar) {
+					if (DEBUG) printf("==	We've entered the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Hangar");					
 				}
 				else {
-					printf("==	We've left the hanger on foot\x0a");
+					if (DEBUG) printf("==	We've left the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Hangar");
 				}
 			}
 
 			if (fOnFootSocialSpace != lOnFootSocialSpace) {
 				if (fOnFootSocialSpace) {
-					printf("==	We've entered the social space on foot\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot In Sicial Space");
-// DEBUG +++++++++++
-
+					if (DEBUG) printf("==	We've entered the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Social Space");
 				}
 				else {
-					printf("==	We've left the social space on foot\x0a");
+					if (DEBUG) printf("==	We've left the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Social Space");
 				}
 			}
 
 			if (fOnFootExterior != lOnFootExterior) {					// Is this the same as fOnFootOnPlanet ???
 				if (fOnFootExterior) {
-					printf("==	We're outside on foot\x0a");
-// DEBUG +++++++++++
-					fnTextToSpeech("Flag: On Foot Exterior");
-// DEBUG +++++++++++
+					if (DEBUG) printf("==	We're outside on foot\x0a");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot Exterior");
 				}
 				else {
-					printf("==	We're inside ");
-					if(fSRV) printf("SRV\x0a");
-					else if(fMainShip) printf("Ship\x0a");
-					else printf("somehwere...where are we?\x0a");
+					if (DEBUG) printf("==	We're inside ");
+					if (DEBUG == VERBOSE) fnTextToSpeech("Flag off: On Foot Exterior");
+					if(DEBUG & fSRV) printf("SRV\x0a");
+					else if(DEBUG & fMainShip) printf("Ship\x0a");
+					else if (DEBUG) printf("somehwere...where are we?\x0a");
 				}
 			}
 
@@ -1333,7 +1331,7 @@
 			
 			if (fSupercruiseAssist != lSupercruiseAssist) {
 				if (fSupercruiseAssist) {
-					fnVPOutput("Supercruise Assist");
+					fnVPOutput("Supercruise Assist Active");
 				}
 				else {
 					fnVPOutput("Supercruise Assist OFF");				
@@ -1355,14 +1353,14 @@
 				if (fRESERVED24) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 24");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 24");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 24 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 24 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1372,14 +1370,14 @@
 				if (fRESERVED25) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 25");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 25");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1389,14 +1387,14 @@
 				if (fRESERVED26) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 26");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 26");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 26 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 26 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1406,14 +1404,14 @@
 				if (fRESERVED27) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 27");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1423,14 +1421,14 @@
 				if (fRESERVED28) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 28");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 28");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 28 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 28 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1440,14 +1438,14 @@
 				if (fRESERVED29) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 29");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 29");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 29 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 29 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1457,14 +1455,14 @@
 				if (fRESERVED30) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 30");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 30");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 30 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 30 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1474,14 +1472,14 @@
 				if (fRESERVED31) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 31");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 31");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 31 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 31 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1491,14 +1489,14 @@
 				if (fRESERVED32) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 32");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 32");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					fnVPOutput("F2 Bit 32 OFF");
+					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 32 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1713,7 +1711,7 @@
 ////	TEST AREA --- Copy code below here to test at end of script start
 //		printf("\x0a+++++ TEST AREA +++++\x0a\x0a");
 
-//		fnDEBUG(0);
+//		
 		
 //		printf("\x0a+++++ TEST AREA +++++\x0a");
 ////	TEST AREA --- Copy code above here to test at end of script start
