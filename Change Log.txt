@@ -177,7 +177,7 @@ v5.0.1	- New Point Release
 		- Add check and announce Masslock changes when in ship 
 		- Add check for and announce (debug) FSDJump toggle
 		- Add check for and announce (debug Supercruise toggle
-		- Adjust "Enter Hanger and Station Services" macro (now works for all stations and Fleetcarriers
+		- Adjust "Enter Hangar and Station Services" macro (now works for all stations and Fleetcarriers
 		- Add check for boarding ship, SRV or disembark
 		- Fix game start/stop detection code when on foot
 		- Fix SilentStrobe code by adding additional condition checks (was firing when disembarking from Ship)
@@ -253,7 +253,7 @@ v4.2.1	- New Point Release
 
 v4.2.0	- New Minor Release (Elite Dangerous 3.7 - Fleet Carriers)
 		- Ported code from 4.1.0b
-		- Update Enter Hanger Macro to cater for new menus
+		- Update Enter Hangar Macro to cater for new menus
 		- Added index section to function .tmh files
 		- Refactor some toggles to remove unnecessary flag assignments
 		- Add second parameter, 'reason' to fnNotValid ()
@@ -307,10 +307,10 @@ v4.1.0b	- created forked branch - this version uses REXEC to read status.json in
 		- (it no longer uses TCPCallback)
 		- Add more voice feedback
 		- Create fnCommsControl() - TESTING
-		- Update fnHangerServices() - TESTING 
-		- Fix mEnterHanger macro (non-Fleet Carriers)
-		- Create new mEnterHanger Macro for Fleet Carriers (ED v3.7)
-		- (add AutoHanger option when docking at starport or station - in development)
+		- Update fnHangarServices() - TESTING 
+		- Fix mEnterHangar macro (non-Fleet Carriers)
+		- Create new mEnterHangar Macro for Fleet Carriers (ED v3.7)
+		- (add AutoHangar option when docking at starport or station - in development)
 		- Create tgTriggerMode() function to cycle between 6.1 second auto fire (disco scanner) and press-to-fire/press-to-stop (mining laser)
 		- Expand fnAdvFireControl() function to cater for tgTriggerMode()
 		- Modify MapKey for TG1 (primary fire) and S2 (secondary fire) buttons.
@@ -352,7 +352,7 @@ v4.1.0 	- major change to processing status.json using GameCallBack TCP sockets
 	Maintenance, Updates & fixes:
 		Modify Voice path to include switch usage (use alt voice as example)
 		Add space {" ") when building SysCmd in fnTextToSpeech() between path and text 
-		Alter timings in mEnterHanger and mLaunch macros
+		Alter timings in mEnterHangar and mLaunch macros
 		Change ED_TCPCallback console output. Print time + Flags value instead of entire status.json
 		ED_TCPCallback amended to send Flags=0 and...
 		Modify stfnProcessFlags() to detect when game stops
@@ -410,9 +410,9 @@ v4.0.0
 	Create tgExtCamera() and map to Throttle LTB (Down)
 	Create ShowFlags global flag. Set/Reset in fnDebug and used in fnProcessFlags()
 	Fix mFastModeSwitch1 macro for Private Group 
-	Create fnHangerServices(). Mapped to IDLELON/OFF. 
-		- Enters Hanger and Station Services + buys fuel, repairs, restock
-		- Exit Hanger and Launch ship (rise 3.5 seconds, retract gear, quarter impulse)
+	Create fnHangarServices(). Mapped to IDLELON/OFF. 
+		- Enters Hangar and Station Services + buys fuel, repairs, restock
+		- Exit Hangar and Launch ship (rise 3.5 seconds, retract gear, quarter impulse)
 			(issue with rise for 3.5 seconds is different ships have different thrust-up rates)
 			(issue if lifting off from front pads if height isn't achieved)
 	Correct some minor syntactical inaccuracies for KEYON
