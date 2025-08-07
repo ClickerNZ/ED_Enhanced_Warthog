@@ -143,7 +143,7 @@
 	int		VoiceVolume			= 100;					// Default Volume set at 100% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
 	int		VoiceRate			= 1;					// Slightly faster than default. You can set this using DEBUG + InputCMD
-	int		AltVoiceRate		= 0;					// Default. You can set this using DEBUG + InputCMD
+	int		AltVoiceRate		= 1;					// Default. You can set this using DEBUG + InputCMD
 
 	// Run 'voice.exe -l" (lower case L) in a command line to see which voices are installed
 	// 'voice.exe' is located under the SupportFiles folder
@@ -231,16 +231,17 @@
 	// General Status Variables //
 	//--------------------------//
 
-	int	AutoHanger				= ENABLED;				//	Enable to initiate Hanger+Station Services automatically when docked, DISABLED = don't
+	int	AutoHangar				= ENABLED;				//	Enable to initiate Hangar+Station Services automatically when docked, DISABLED = don't
 	int	AutoHUD					= ENABLED;				//	Enable to toggle HUD to Analysis Mode when FSD engaged
 	int	AutoGearUP				= ENABLED;				//	Enable to retract landing gear when lifting off using fDocked flag
 	int	AutoGearDOWN			= DISABLED;				//	Enable to deploy landing gear when docking request is granted
 	int	AutoLandingLights		= DISABLED;				//	Enable to turn on Landing Lights when docking request is granted
 	int	AutoHeatsink			= ENABLED;				//	Enable to fire a heatsink when temp > 100% (requires launcher and ammo)
 	int	AutoStrobe				= DISABLED;				//	Enable to strobe silent running if in danger and shields drop
-	int	AutoHONK				= ENABLED;				//	Enable to fire discovery scanner when entering new system.
+	int	AutoHONK				= ENABLED;				//	Enable to fire discovery scanner when entering new system
 	int	AutoRecall				= ENABLED;				//	Enable to recall fighther if docking request is denied due to active fighter
-	int AutoAbort				= ENABLED;				//	Enables Abort() call to stop script 20 seconds after game stops.
+	int AutoAbort				= DISABLED;				//	Enables Abort() call to stop script 20 seconds after game stops
+	int AutoBOOST				= ENABLED;				//	Enable to retract Landing Gear or Cargo Scoop if deployed and try to boost
 	
 	int	ChatTABs				= 2;					//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
 
