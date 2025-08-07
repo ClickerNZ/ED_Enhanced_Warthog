@@ -27,7 +27,7 @@ Import-Module TTS               -ErrorAction Stop
 # TTS startup
 $voice = "Microsoft Catherine"
 $rate  = 1
-$volume= 75
+$volume= 100
 [TTS]::SpeakText("Journal processor version 31 loading", $voice, $rate, $volume)
 
 # Set window title
