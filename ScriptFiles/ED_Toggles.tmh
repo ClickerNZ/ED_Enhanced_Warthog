@@ -475,10 +475,11 @@
 	}
 	
 	
-	// TOGGLE:	Engine Boost in normal flight mode. 
-	//			Activate/Deactivate Supercruise Overcharge (if SCO FSD present) when in Supercruise 
+	//	TOGGLE:		Engine Boost in normal flight mode. 
+	//				Supercruise Overcharge in supercruise (if SCO FSD present)
+	//	Parameter:	dummy. Enables REXEC and DeferCall 
 	
-	int tgBoost() {
+	int tgBoost(int dummy = 0) {
 		int fnName = "Engine Boost";
 		int reason = 0;
 		
@@ -490,11 +491,30 @@
 				reason = "SCO enabled FSD not installed";
 			}
 		}
-		else if (!fLandingGear | fFighter) {										// TEST: for normal flight mode 
+		else if ((fMainShip & !fLandingGear & !fCargoScoop) | fFighter) {			// TEST: for normal flight mode 
 			ActKey(KEYON+PULSE+EngineBoost);
 		}
 		else {																		// Boost function not valid 
-			if (fLandingGear)	reason = "Landing gear";
+			if (fLandingGear) {
+				if (AutoBOOST) {
+					fnTextToSpeech("Landing gear");
+					ActKey(KEYON+PULSE+LandingGear);
+					DeferCall(1500, &tgBoost, 0);
+				}
+				else {
+					reason = "Landing gear";					
+				}
+			}
+			if (fCargoScoop) {
+				if (AutoBOOST) {
+					fnTextToSpeech("Cargo scoop");
+					ActKey(KEYON+PULSE+CargoScoop);
+					DeferCall(1500, &tgBoost, 0);
+				}
+				else {
+					reason = "Cargo scoop";
+				}
+			}
 			if (fSRV) 			reason = "SRV";
 			if (fOnFoot)		reason = "On foot";			
 		}		
@@ -533,10 +553,13 @@
 					}
 				}						
 			}
-			if(fSRV | fMainShip) ActKey(KEYON+PULSE+DeployHardpoints);			// Depoy Hardpoints only if we're not in Supercruise
+			if(fSRV | fMainShip) {
+				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
+				printf("++	DEBUG: DeployHardpoints in tgHardpoints() Line 557\x0a");
+			}
 		}
 		else {
-			tgHUDMode(0);											// If we're in Supercruise, just toggle HUD Mode
+			tgHUDMode(0);														// If we're in Supercruise, just toggle HUD Mode
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
@@ -664,43 +687,40 @@
 
 		if (fFSDCharging | InitWarpDrive == ENABLED) {
 			printf("==	%s	CANCELLED\x0a", EngineText);
-			ActKey(KEYON+PULSE+WarpDrive);
+			ActKey(KEYON+PULSE+WarpDrive);										// Cancel FSD charge sequence
 			fnTextToSpeech("FSD Charge sequence cancelled");
 			StopAutoRepeat(hFSDCharge);											// Stop FSDCharge check if hit cancel inside 3 seconds 
 			InitWarpDrive = DISABLED;
-			MASSLOCKED = NO;
+			DANGER = NO;														// Reset all script based WarpDrive flags 
+			FUELSCOOPING = NO;													//
+			MASSLOCKED = NO;													//
+			FSDCOOLDOWN = NO;													//
 			return 0;
 		}
 		if (fFSDCooldown) {
 			fnVPOutput("Waiting for FSD cooldown to complete");
-			FSDCOOLDOWN = YES;
+			FSDCOOLDOWN = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fFSDCooldown flag reset is detected  
 			CDJumpType = JumpType;
 			return 0;
 		}
 		if (fDocked) {
 			printf("==	%s	DOCKED\x0a", EngineText);
 			reason = "we are currently docked";
-//			fnNotValid(fnName, reason);
-//			return 0;
 			goto NotValid;
 		}
 		if (fLanded) {
 			printf("==	%s	LANDED\x0a", EngineText);
 			reason = "we are currently landed";
-//			fnNotValid(fnName, reason);
-//			return 0;
 			goto NotValid;
 		}
 		if (fSupercruiseOvercharge) {
 			printf("==	%s	SCO\x0a", EngineText);
 			reason = "SCO engaged";
-//			fnNotValid(fnName, reason);
-//			return 0;
 			goto NotValid;
 		}		
 		if (fMassLocked) {
 			fnVPOutput("Waiting for masslock to clear");
-			MASSLOCKED = YES;													// Added tgWarpDrive(MLJumpType) when fMasslocked flag reset is detected ED_StateTracker.tmh 
+			MASSLOCKED = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fMasslocked flag reset is detected  
 			MLJumpType = JumpType;
 			return 0;
 		}
@@ -709,15 +729,17 @@
 			return 0;		
 		}
 		if (fFuelScoop) {
-			fnVPOutput("Waiting for fuel scoop to disengage");
-			FUELSCOOPING = YES;
-			MLJumpType = JumpType;
-			return 0;
+			if (FUELSCOOPING == NO) {											// This 'if' block allows override if FSD button selected again 
+				fnVPOutput("Fuelscoop override available");
+				FUELSCOOPING = YES;												// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fFuelScoop flag reset is detected  
+				MLJumpType = JumpType;
+				return 0;
+			}
 		}
 		if (fDanger) {
-			if (DANGER == NO) {
-				fnVPOutput("Override available otherwise wait for danger to pass");
-				DANGER = YES;
+			if (DANGER == NO) {													// This 'if' block allows override if FSD button selected again 
+				fnVPOutput("Danger override available");
+				DANGER = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fDanger flag reset is detected  
 				MLJumpType = JumpType;
 				return 0;
 			}
@@ -732,7 +754,6 @@
 			}
 			else {
 				reason = "Warp Drive Selection invalid";
-//				fnNotValid(fnName, reason);
 			}
 		}
 		else {
@@ -744,10 +765,10 @@
 			RetryCounter = 0;													// Reset failed Warpdrive counter
 			AutoRepeat(hFSDCharge, 500, &fnCheckFSDCharge, EngineText);			// Check for FSD Charge failure
 			InitWarpDrive = ENABLED;
-			DANGER = NO;
-			FUELSCOOPING = NO;
-			MASSLOCKED = NO;
-			FSDCOOLDOWN = NO;
+			DANGER = NO;														// Reset all script based WarpDrive flags 
+			FUELSCOOPING = NO;													//
+			MASSLOCKED = NO;													//
+			FSDCOOLDOWN = NO;													//
 		}
 		NotValid:
 		if (reason != 0) fnNotValid(fnName, reason);
