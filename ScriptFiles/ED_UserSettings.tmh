@@ -231,7 +231,10 @@
 	// General Status Variables //
 	//--------------------------//
 
+	// ENABLE only ONE of the following two settings. AutoHangar takes prescedence over AutoDisembark if both enabled 
 	int	AutoHangar				= ENABLED;				//	Enable to initiate Hangar+Station Services automatically when docked, DISABLED = don't
+	int AutoDisembark			= DISABLED;				//	Enable to disembark automatically when docked, DISABLED = don't
+	
 	int	AutoHUD					= ENABLED;				//	Enable to toggle HUD to Analysis Mode when FSD engaged
 	int	AutoGearUP				= ENABLED;				//	Enable to retract landing gear when lifting off using fDocked flag
 	int	AutoGearDOWN			= DISABLED;				//	Enable to deploy landing gear when docking request is granted
@@ -242,6 +245,8 @@
 	int	AutoRecall				= ENABLED;				//	Enable to recall fighther if docking request is denied due to active fighter
 	int AutoAbort				= DISABLED;				//	Enables Abort() call to stop script 20 seconds after game stops
 	int AutoBOOST				= ENABLED;				//	Enable to retract Landing Gear or Cargo Scoop if deployed and try to boost
+	
+	int SCOLowFuelFailsafe		= ENABLED;				//	Enable disconnects SCO if Low fuel threshold is met. Disabled risks running out of fuel
 	
 	int	ChatTABs				= 2;					//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
 
