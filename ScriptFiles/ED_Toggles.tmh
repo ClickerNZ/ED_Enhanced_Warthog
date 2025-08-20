@@ -698,7 +698,7 @@
 			return 0;
 		}
 		if (fFSDCooldown) {
-			fnVPOutput("Waiting for FSD cooldown to complete");
+			fnVPOutput("FSD charge sequence queued, waiting for FSD cooldown to complete");
 			FSDCOOLDOWN = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fFSDCooldown flag reset is detected  
 			CDJumpType = JumpType;
 			return 0;
@@ -719,7 +719,7 @@
 			goto NotValid;
 		}		
 		if (fMassLocked) {
-			fnVPOutput("Waiting for masslock to clear");
+			fnVPOutput("FSD charge sequence queued, waiting for masslock to clear");
 			MASSLOCKED = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fMasslocked flag reset is detected  
 			MLJumpType = JumpType;
 			return 0;
@@ -730,7 +730,7 @@
 		}
 		if (fFuelScoop) {
 			if (FUELSCOOPING == NO) {											// This 'if' block allows override if FSD button selected again 
-				fnVPOutput("Fuelscoop override available");
+				fnVPOutput("FSD charge sequence queued, fuelscoop override available");
 				FUELSCOOPING = YES;												// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fFuelScoop flag reset is detected  
 				MLJumpType = JumpType;
 				return 0;
@@ -738,7 +738,7 @@
 		}
 		if (fDanger) {
 			if (DANGER == NO) {													// This 'if' block allows override if FSD button selected again 
-				fnVPOutput("Danger override available");
+				fnVPOutput("FSD charge sequence queued, danger override available");
 				DANGER = YES;													// tgWarpDrive(MLJumpType) called within ED_StateTracker.tmh when fDanger flag reset is detected  
 				MLJumpType = JumpType;
 				return 0;
