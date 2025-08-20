@@ -277,7 +277,7 @@
 	}
 
 
-	// FUNCTION:	Save all changeable USERSETTINGS (refer ED_UserSettings.tmh
+	// FUNCTION:	Save all changeable USERSETTINGS (refer ED_UserSettings.tmh)
 	// Parameter:	dummy - allows calls from REXEC and DeferCall
 
 	// Global VARS
@@ -304,6 +304,8 @@
 	int		defFlashLEDs;			// ENABLED/DISABLED
 	int		defEnableSoundFX;		// ENABLED/DISABLED
 	int		defAutoAbort;			// ENABLED/DISABLED
+	int		defSCOLowFuelFailsafe;	// ENABLED/DISABLED
+	int		defAutoDisembark;		// ENABLED/DISABLED
 
 	// Integer settings
 	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
@@ -340,7 +342,9 @@
 		defFlashLEDs			= FlashLEDs;			// ENABLED/DISABLED
 		defEnableSoundFX		= EnableSoundFX;		// ENABLED/DISABLED
 		defAutoAbort			= AutoAbort;			// ENABLED/DISABLED
-
+		defSCOLowFuelFailsafe	= SCOLowFuelFailsafe;	// ENABLED/DISABLED
+		defAutoDisembark		= AutoDisembark;		// ENABLED/DISABLED
+		
 		// Integer settings
 		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
 		defChatTABs				= ChatTABs;				// 1 - 4
@@ -366,35 +370,37 @@
 		printf("\x0a++	Restore User Settings to default...\x0a");
 		
 		// Binary flag settings
-		CurveInfo			= defCurveInfo;			// PRINT/NOPRINT
-		AutoHangar			= defAutoHangar;		// ENABLED/DISABLED
-		AutoGearUP			= defAutoGearUP;		// ENABLED/DISABLED
-		AutoGearDOWN		= defAutoGearDOWN;		// ENABLED/DISABLED
-		AutoLandingLights	= defAutoLandingLights;	// ENABLED/DISABLED
-		AutoHeatsink		= defAutoHeatsink;		// ENABLED/DISABLED
-		AutoStrobe			= defAutoStrobe;		// ENABLED/DISABLED
-		AutoHONK			= defAutoHONK;			// ENABLED/DISABLED
-		AutoRecall			= defAutoRecall;		// ENABLED/DISABLED
-		AutoBOOST			= defAutoBOOST;			// ENABLED/DISABLED
-		NVGUI				= defNVGUI;				// ON/OFF
-		FSDGUI				= defFSDGUI;			// ON/OFF 
-		TrainingMode		= defTrainingMode;		// ENABLED/DISABLED
-		AnnounceTraining	= defAnnounceTraining;	// ENABLED/DISABLED
-		UseAltVoice			= defUseAltVoice;		// YES/NO 
-		EnableVoice			= defEnableVoice;		// ENABLED/DISABLED 
-		FlashLEDs			= defFlashLEDs;			// ENABLED/DISABLED
-		EnableSoundFX		= defEnableSoundFX;		// ENABLED/DISABLED
-		AutoAbort			= defAutoAbort;			// ENABLED/DISABLED
-
+		CurveInfo			= defCurveInfo;				// PRINT/NOPRINT
+		AutoHangar			= defAutoHangar;			// ENABLED/DISABLED
+		AutoGearUP			= defAutoGearUP;			// ENABLED/DISABLED
+		AutoGearDOWN		= defAutoGearDOWN;			// ENABLED/DISABLED
+		AutoLandingLights	= defAutoLandingLights;		// ENABLED/DISABLED
+		AutoHeatsink		= defAutoHeatsink;			// ENABLED/DISABLED
+		AutoStrobe			= defAutoStrobe;			// ENABLED/DISABLED
+		AutoHONK			= defAutoHONK;				// ENABLED/DISABLED
+		AutoRecall			= defAutoRecall;			// ENABLED/DISABLED
+		AutoBOOST			= defAutoBOOST;				// ENABLED/DISABLED
+		NVGUI				= defNVGUI;					// ON/OFF
+		FSDGUI				= defFSDGUI;				// ON/OFF 
+		TrainingMode		= defTrainingMode;			// ENABLED/DISABLED
+		AnnounceTraining	= defAnnounceTraining;		// ENABLED/DISABLED
+		UseAltVoice			= defUseAltVoice;			// YES/NO 
+		EnableVoice			= defEnableVoice;			// ENABLED/DISABLED 
+		FlashLEDs			= defFlashLEDs;				// ENABLED/DISABLED
+		EnableSoundFX		= defEnableSoundFX;			// ENABLED/DISABLED
+		AutoAbort			= defAutoAbort;				// ENABLED/DISABLED
+		SCOLowFuelFailsafe	= defSCOLowFuelFailsafe;	// ENABLED/DISABLED
+		AutoDisembark		= defAutoDisembark;			// ENABLED/DISABLED
+		
 		// Integer settings
-		FAOFFCurves			= defFAOFFCurves;		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
-		ChatTABs			= defChatTABs;			// 1 - 4
-		AltVoiceRate		= defAltVoiceRate;		// -10 < 0 > +10 
-		VoiceRate			= defVoiceRate;			// -10 < 0 > +10
-		VoiceVolume			= defVoiceVolume;		// 0 - 100
-		LEDLevel			= defLEDLevel;			// 0 - 5
-		ThrustUpTime		= defThrustUpTime;		// 0 - ???? (milliseconds)
-		PIPMode				= defPIPMode;			// 0 - 5
+		FAOFFCurves			= defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
+		ChatTABs			= defChatTABs;				// 1 - 4
+		AltVoiceRate		= defAltVoiceRate;			// -10 < 0 > +10 
+		VoiceRate			= defVoiceRate;				// -10 < 0 > +10
+		VoiceVolume			= defVoiceVolume;			// 0 - 100
+		LEDLevel			= defLEDLevel;				// 0 - 5
+		ThrustUpTime		= defThrustUpTime;			// 0 - ???? (milliseconds)
+		PIPMode				= defPIPMode;				// 0 - 5
 
 		printf("++	User settings restored\x0a");
 	}
@@ -426,6 +432,8 @@
 		if (FlashLEDs)			EncodedSettings = EncodedSettings | (1 << 16);	// Bit 16
 		if (EnableSoundFX)		EncodedSettings = EncodedSettings | (1 << 17);	// Bit 17
 		if (AutoAbort)			EncodedSettings = EncodedSettings | (1 << 18);	// Bit 18
+		if (SCOLowFuelFailsafe) EncodedSettings = EncodedSettings | (1 << 19);  // Bit 19
+		if (AutoDisembark)		EncodedSettings = EncodedSettings | (1 << 20);	// Bit 20
 		
 		printf("++	Encoded User Settings = %d\x0a", EncodedSettings);
 		
@@ -457,6 +465,8 @@
 		if ((DecodeSettings & (1 << 16))	!= 0) FlashLEDs = 1;			else FlashLEDs = 0;
 		if ((DecodeSettings & (1 << 17))	!= 0) EnableSoundFX = 1;		else EnableSoundFX = 0;
 		if ((DecodeSettings & (1 << 18))	!= 0) AutoAbort = 1;			else AutoAbort = 0;
+		if ((DecodeSettings & (1 << 19))	!= 0) SCOLowFuelFailsafe = 1;	else SCOLowFuelFailsafe = 0;
+		if ((DecodeSettings & (1 << 20))	!= 0) AutoDisembark = 1;		else AutoDisembark = 0;
 
 		printf("++	User settings decoded\x0a");
 		
@@ -491,6 +501,8 @@
 		if (FlashLEDs			!= defFlashLEDs)			printf("	FlashLEDs		= %d	(%d)\x0a",	FlashLEDs, defFlashLEDs);
 		if (EnableSoundFX		!= defEnableSoundFX)		printf("	EnableSoundFX		= %d	(%d)\x0a",	EnableSoundFX, defEnableSoundFX);
 		if (AutoAbort			!= defAutoAbort)			printf("	AutoAbort		= %d	(%d)\x0a",	AutoAbort, defAutoAbort);
+		if (SCOLowFuelFailsafe	!= defSCOLowFuelFailsafe)	printf("	SCOLowFuelFailsafe	= %d	(%d)\x0a",	SCOLowFuelFailsafe, defSCOLowFuelFailsafe);
+		if (AutoDisembark		!= defAutoDisembark)		printf("	AutoDisembark		= %d	(%d)\x0a",	AutoDisembark, defAutoDisembark);
 			
 		// Integer user settings
 		if (FAOFFCurves			!= defFAOFFCurves)			printf("	FAOFFCurves		= %d	(%d)\x0a", FAOFFCurves, defFAOFFCurves);		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
