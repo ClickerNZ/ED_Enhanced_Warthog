@@ -529,11 +529,11 @@
 		else {
 			MapKeyIOUMD(&MyThrottle, APENG,
 				0,																							// IU - 
-				EXEC("fnHangarServices(2);"),																// OU - Hangar Services
-				EXEC("fnHangarServices(1);"),																// IM - Hangar Services
+				EXEC("fnHangarServices(2);"),																// OU - Toggle AutoHangar
+				EXEC("fnHangarServices(1);"),																// IM - Refuel, Rearm, Repair, Hangar Services
 				EXEC("fnRequestDock();"),																	// OM - Request Docking
 				0,																							// ID -
-				0																							// OD - 
+				EXEC("fnHangarServices(3);")																// OD -  Refuel, Rearm, Repair, Disembark
 				);
 		}
 
