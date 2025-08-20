@@ -24,28 +24,29 @@
 /*
 	Index:			FUNCTION
 	Line  63:		int initMacroChains()
-	Line  70: 		m_RequestDock
-	Line  83: 		m_DeploySRV
-	Line  95: 		m_BoardShip
-	Line 106: 		m_DeployNPCFighter
-	Line 120: 		m_DeployFighter
-	Line 134: 		m_ShowGameStats
-	Line 140: 		m_FastModeSwitch0
-	Line 151: 		m_FastModeSwitch1
-	Line 171: 		m_FastModeSwitch2
-	Line 184: 		m_ReportCrimesToggle
-	Line 206: 		m_WingBeaconTeam
-	Line 233: 		m_WingBeaconOff
-	Line 258: 		m_EnterHangar
-	Line 274: 		m_Launch
-	Line 285: 		m_ChangeColours
-	Line 291: 		m_NextFG
-	Line 296: 		m_PrevFG
-	Line 301: 		m_PullUp
-	Line 311: 		m_Ascend
-	Line 319: 		m_Descend
-	Line 327: 		m_AutoPilotOn
-	Line 343: 		m_AutoPilotOff
+	Line  71: 		m_RequestDock  
+	Line  84: 		m_DeploySRV  
+	Line  96: 		m_BoardShip  
+	Line 107: 		m_DeployNPCFighter  
+	Line 121: 		m_DeployFighter  
+	Line 135: 		m_ShowGameStats
+	Line 141: 		m_FastModeSwitch0  
+	Line 152: 		m_FastModeSwitch1  
+	Line 172: 		m_FastModeSwitch2  
+	Line 185: 		m_ReportCrimesToggle
+	Line 207: 		m_WingBeaconTeam  
+	Line 234: 		m_WingBeaconOff  
+	Line 259: 		m_EnterHangar  
+	Line 275: 		m_Launch  
+	Line 286: 		m_Disembark  
+	Line 300: 		m_ChangeColours  
+	Line 306: 		m_NextFG  
+	Line 311: 		m_PrevFG  
+	Line 316: 		m_PullUp  
+	Line 326: 		m_Ascend  
+	Line 334: 		m_Descend  
+	Line 342: 		m_AutoPilotOn  
+	Line 358: 		m_AutoPilotOff  
 */
 
 	// START
@@ -55,7 +56,7 @@
 	int	m_RequestDock,		m_DeploySRV,		m_ShowGameStats,	m_ReportCrimesToggle,	m_WingBeaconTeam,	m_WingBeaconOff;
 	int m_FastModeSwitch0,	m_FastModeSwitch1,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHangar,		m_ChangeColours;
 	int m_Launch,			m_NextFG,			m_PrevFG,			m_PullUp,				m_Ascend,			m_Descend;
-	int m_DeployNPCFighter,	m_DeployFighter,	m_AutoPilotOn,		m_AutoPilotOff;
+	int m_DeployNPCFighter,	m_DeployFighter,	m_AutoPilotOn,		m_AutoPilotOff,			m_Disembark;
 
 	//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
 	// CUSTOM MACROS //			// The action identifiers (keystroke labels) used below can be found within the 'ED_Defines.ttm' file.
@@ -279,6 +280,20 @@
 			UP+ThrustUp, D(500),
 			PULSE+LandingGear, D(500),							// Retract gear
 			PULSE+SetSpeed25, D(),								// Forward 25%
+			LOCK);
+			
+		// MACRO: Refuel/repair/restock + Disembark				Duration = 6950
+		m_Disembark = CHAIN(
+			LOCK+PULSE+UIUp, D(),								// Keystroke sequence = up, spc, right, spc, right, spc, down, down, down, spc 
+			PULSE+UISelect, D(1500),							// Refuel >>> Note delay shortened to 1500 from 2000
+			PULSE+UIRight, D(),
+			PULSE+UISelect, D(1500),							// Repair
+			PULSE+UIRight, D(),
+			PULSE+UISelect, D(1500),							// Restock
+			PULSE+UIDown, D(),
+			PULSE+UIDown, D(),
+			PULSE+UIDown, D(),
+			PULSE+UISelect, D(),								// Disembark
 			LOCK);
 			
 		// MACRO: Change Engine and Weapon Colours				Duration = 570
