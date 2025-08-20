@@ -73,6 +73,10 @@ v510	- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Clien
 		-	New USERSETTING 'NVGUI' enables toggle HUD GUI when using Night Vision	(taken from Aussiedroid)
 		-	New USERSETTING 'FSDGUI' enables toggle HUD GUI during FSDJump 			(taken from Aussiedroid)
 		-	New USERSETTING 'AutoAbort' enables automated script shutdown 220 seconds affter game halts
+		-	New USERSETTING 'SCOLowFuelFailsafe' disables Supercruise Over Charge if fuel falls below low fule threshold
+		-	New USERSETTING 'AutoDisembark' use instead of 'AutoHangar'
+		
+		-	New macro m_Disembark fires refuel, rearm, repair then disembark ship when docked
 
 		-	Review/fix/move code for several detected flag transitions
 		-	Tweak code to handle mis-aligned switches - again - TESTING 
