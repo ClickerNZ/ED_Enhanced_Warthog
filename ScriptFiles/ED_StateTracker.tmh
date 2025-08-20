@@ -670,8 +670,14 @@
 				fnGetStationName(0);										// May not need to call this again as we set this when making docking request
 				if (!StartupLock) {
 				
-					if (AutoHangar & DockingSequence) {						// TESTING - What happens when docked at a planetary port?
-							DeferCall(3000, &fnHangarServices, 1);			// DEBUG: Throws an error when AutoHangar is SET
+//					if (AutoHangar & DockingSequence) {						// TESTING - What happens when docked at a planetary port?
+					if (DockingSequence) {
+						if (AutoHangar) {
+							DeferCall(3000, &fnHangarServices, 1);			//
+						}
+						if (AutoDisembark) {
+							DeferCall(3000, &fnHangarServices, 3);			//
+						}
 					}
 				
 					printf("==	Docked: %s @ %s\x0a\x0a", &StationName, fnGetTOD());
@@ -938,6 +944,9 @@
 			if (fLowFuel) {
 				if (fMainShip | fSRV) {												// Don't bother announcing LOW FUEL when in fighter 
 					fnVPOutput("WARNING! Fuel Low");
+					if (fSupercruiseOvercharge & SCOLowFuelFailsafe) {
+						ActKey(KEYON+PULSE+EngineBoost);							// Low Fuel triggers disconnect of SCO 
+					}
 				}
 				else if (fFighter) {
 					// do nothing 
@@ -1138,7 +1147,7 @@
 
 			if (fInTaxi != lInTaxi) {
 				if (fInTaxi) {
-					if (!StartupLock) printf("==	Taxi/Shuttle/Dropship:		BOARDED @ %s\x0a", fmGetTOD());
+					if (!StartupLock) printf("==	Taxi/Shuttle/Dropship:		BOARDED @ %s\x0a", fnGetTOD());
 				}
 				else {
 					printf("==	Taxi/Shuttle/Dropship:		DISEMBARKED @ %s\x0a", fnGetTOD());				
@@ -1353,14 +1362,14 @@
 				if (fRESERVED24) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 24");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 24");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 24 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 24 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1370,14 +1379,14 @@
 				if (fRESERVED25) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 25");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 25");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1387,14 +1396,14 @@
 				if (fRESERVED26) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 26");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 26");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 26 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 26 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1404,14 +1413,14 @@
 				if (fRESERVED27) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1421,14 +1430,14 @@
 				if (fRESERVED28) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 28");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 28");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 28 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 28 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1438,14 +1447,14 @@
 				if (fRESERVED29) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 29");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 29");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 29 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 29 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1455,14 +1464,14 @@
 				if (fRESERVED30) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 30");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 30");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 30 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 30 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1472,14 +1481,14 @@
 				if (fRESERVED31) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 31");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 31");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 31 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 31 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1489,14 +1498,14 @@
 				if (fRESERVED32) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 32");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 32");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTestToSpeech("F2 Bit 32 OFF");
+					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 32 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
