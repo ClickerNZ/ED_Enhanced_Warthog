@@ -1113,8 +1113,8 @@
 	}
 
 
-	// FUNCTION: Enter/Exit Hangar
-	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHangar setting
+	// FUNCTION: Refuel, Repair, Rearm, Enter/Exit Hangar or Disembark ship
+	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHangar setting, 3 = Disembark
 	
 	int fnHangarServices(int x) {
 		int fnName = "Hangar Services";
@@ -1122,7 +1122,7 @@
 		int VoiceTxt;
 		
 		if (GameLoaded) {
-			if (x == 2) {
+			if (x == 2) {														// Toggle Usersetting 'AutoHangar'
 				AutoHangar = !AutoHangar;
 				if (AutoHangar) {
 					fnVPOutput("Auto Hangar set");
@@ -1142,7 +1142,7 @@
 						}
 					}
 				}
-				else {				
+				else if(x == EXIT) {				
 					fnName = "Launch Sequence";
 					if(GUIMode == GUI_StationSvcs) {
 						reason = "Exit Station services";
@@ -1151,6 +1151,15 @@
 						VoiceTxt = "Initiating launch sequence";
 						ActKey(KEYON+PULSE+m_Launch);
 						InHangar = NO;
+					}
+				}
+				else if(x == 3) {
+					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
+						if(!InHangar) {					
+							VoiceTxt = "Disembarking ship";
+							ActKey(KEYON+PULSE+m_Disembark);
+							InHangar = YES;
+						}
 					}
 				}
 				fnVPOutput(VoiceTxt);
@@ -1371,6 +1380,7 @@
 				counter = counter + 1;
 				if (counter > 30) {																	// Something has hung
 						reason = "Game restart was not detected";
+						printf("\x0a");
 						goto error;
 				}
 			}
