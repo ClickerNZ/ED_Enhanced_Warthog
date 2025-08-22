@@ -244,7 +244,7 @@
 	int	AutoHONK				= ENABLED;				//	Enable to fire discovery scanner when entering new system
 	int	AutoRecall				= ENABLED;				//	Enable to recall fighther if docking request is denied due to active fighter
 	int AutoAbort				= DISABLED;				//	Enables Abort() call to stop script 20 seconds after game stops
-	int AutoBOOST				= ENABLED;				//	Enable to retract Landing Gear or Cargo Scoop if deployed and try to boost
+	int AutoRETRACT				= ENABLED;				//	Enable to retract Landing Gear or Cargo Scoop (if deployed) and we hit boost
 	
 	int SCOLowFuelFailsafe		= ENABLED;				//	Enable disconnects SCO if Low fuel threshold is met. Disabled risks running out of fuel
 	
