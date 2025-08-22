@@ -140,19 +140,19 @@
 		// MACRO: Menulog to OPEN								Duration = 9795
 		m_FastModeSwitch0 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0)		
-			PULSE+MenuLog, D(500),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, spc
-			PULSE+UIUp, D(500),
-			PULSE+UISelect, D(600),
+			PULSE+MenuLog, D(650),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, spc
+			PULSE+UIUp, D(650),
+			PULSE+UISelect, D(650),
 			PULSE+UISelect, D(6500),							// ** Depending on the load times of your PC, this value may need to be
-			PULSE+UISelect, D(600),								// 	  changed/increased (6000ms is default)
-			PULSE+UISelect, D(600),								// Select OPEN Mode
+			PULSE+UISelect, D(650),								// 	  changed/increased (6000ms is default)
+			PULSE+UISelect, D(650),								// Select OPEN Mode
 			LOCK);
 
 		// MACRO: Menulog to PRIVATE GROUP						Duration = 14200 (min), add 1370 for each addition UIDown+UISelect optional pair enabled
 		m_FastModeSwitch1 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0) <-- Required???
-			PULSE+MenuLog, D(600),								//  Keystroke sequence = p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
-			PULSE+UIUp, D(600),
+			PULSE+MenuLog, D(650),								//  Keystroke sequence = p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
+			PULSE+UIUp, D(650),
 			PULSE+UISelect, D(650),
 			PULSE+UISelect, D(8500),							// ** Depending on the load times of your PC, this value may need to be
 			PULSE+UISelect, D(650),								//    changed/increased
@@ -168,17 +168,17 @@
 			PULSE+UISelect, D(1000),							// Selects Private Group
 			LOCK);
 
-		// MACRO: Menulog to SOLO								Duration = 11065
+		// MACRO: Menulog to SOLO								Duration = 11615
 		m_FastModeSwitch2 = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0)		
-			PULSE+MenuLog, D(500),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, right, right, spc
-			PULSE+UIUp, D(500),
-			PULSE+UISelect, D(600),
+			PULSE+MenuLog, D(650),								// Keystroke sequence = p, up, spc, spc, <wait>, spc, right, right, spc
+			PULSE+UIUp, D(650),
+			PULSE+UISelect, D(650),
 			PULSE+UISelect, D(6500),							// ** Depending on the load times of your PC, this value may need to be
-			PULSE+UISelect, D(600),								//    changed/increased
-			PULSE+UIRight, D(600),
-			PULSE+UIRight, D(600),
-			PULSE+UISelect, D(600),								// Selects SOLO mode
+			PULSE+UISelect, D(650),								//    changed/increased
+			PULSE+UIRight, D(650),
+			PULSE+UIRight, D(650),
+			PULSE+UISelect, D(650),								// Selects SOLO mode
 			LOCK);
 
 		// MACRO: Toggle 'Report Crimes' on/off					Duration = 2995
@@ -255,7 +255,7 @@
 			PULSE+UIBack,
 			LOCK);
 
-		// MACRO: Refuel/repair/restock + Enter Station Svcs	Duration = 6950
+		// MACRO: Refuel/repair/restock + ENTER STATION SVCS	Duration = 6950
 		m_EnterHangar = CHAIN(
 			LOCK+PULSE+UIUp, D(),								// Keystroke sequence = up, spc, right, spc, right, spc, right, spc, down, spc 
 			PULSE+UISelect, D(1500),							// Refuel >>> Note delay shortened to 1500 from 2000
@@ -282,7 +282,7 @@
 			PULSE+SetSpeed25, D(),								// Forward 25%
 			LOCK);
 			
-		// MACRO: Refuel/repair/restock + Disembark				Duration = 6950
+		// MACRO: Refuel/repair/restock + DISEMBARK				Duration = 6950
 		m_Disembark = CHAIN(
 			LOCK+PULSE+UIUp, D(),								// Keystroke sequence = up, spc, right, spc, right, spc, down, down, down, spc 
 			PULSE+UISelect, D(1500),							// Refuel >>> Note delay shortened to 1500 from 2000
@@ -292,7 +292,7 @@
 			PULSE+UISelect, D(1500),							// Restock
 			PULSE+UIDown, D(),
 			PULSE+UIDown, D(),
-			PULSE+UIDown, D(),
+			PULSE+UIDown, D(1000),								// Delay increased from default to 1000
 			PULSE+UISelect, D(),								// Disembark
 			LOCK);
 			
