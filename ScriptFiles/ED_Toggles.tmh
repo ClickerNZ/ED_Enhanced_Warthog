@@ -496,7 +496,7 @@
 		}
 		else {																		// Boost function not valid 
 			if (fLandingGear) {
-				if (AutoBOOST) {
+				if (AutoRETRACT) {
 					fnTextToSpeech("Landing gear");
 					ActKey(KEYON+PULSE+LandingGear);
 					DeferCall(1500, &tgBoost, 0);
@@ -506,7 +506,7 @@
 				}
 			}
 			if (fCargoScoop) {
-				if (AutoBOOST) {
+				if (AutoRETRACT) {
 					fnTextToSpeech("Cargo scoop");
 					ActKey(KEYON+PULSE+CargoScoop);
 					DeferCall(1500, &tgBoost, 0);
