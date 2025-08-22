@@ -675,7 +675,7 @@
 						if (AutoHangar) {
 							DeferCall(3000, &fnHangarServices, 1);			//
 						}
-						if (AutoDisembark) {
+						else if (AutoDisembark) {
 							DeferCall(3000, &fnHangarServices, 3);			//
 						}
 					}
