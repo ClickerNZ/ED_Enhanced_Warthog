@@ -1,4 +1,4 @@
-# TTSMonitor-v20.ps1 - update to position console window - not working, removed code
+# TTSMonitor-v21.ps1 - announce helper app + version
 # This script monitors the TTS queue folder and processes individual JSON files using an external TTS module.
 # After processing, each JSON file is archived (moved to an Archive folder) rather than being removed.
 # The ED TARGET script writes files named TTSMsg0000.json, TTSMsg0001.json, etc.
@@ -34,9 +34,15 @@ function Test-FileLocked {
     }
 }
 
+# TTS startup
+$voice = "Microsoft Catherine"
+$rate  = 1
+$volume= 100
+[TTS]::SpeakText("Text to speech monitor version 21 loading, processing TTS queue.", $voice, $rate, $volume)
+
 #Set the window title 
 try {
-    $host.UI.RawUI.WindowTitle = "TTS Monitor v20"
+    $host.UI.RawUI.WindowTitle = "TTS Monitor v21"
 } catch {
     Write-Host "Could not set window title: $_"
 }
