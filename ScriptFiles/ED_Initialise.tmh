@@ -294,7 +294,7 @@
 	int		defAutoStrobe;			// ENABLED/DISABLED
 	int		defAutoHONK;			// ENABLED/DISABLED
 	int		defAutoRecall;			// ENABLED/DISABLED
-	int		defAutoBOOST;			// ENABLED/DISABLED
+	int		defAutoRETRACT;			// ENABLED/DISABLED
 	int		defNVGUI;				// ON/OFF
 	int		defFSDGUI;				// ON/OFF 
 	int		defTrainingMode;		// ENABLED/DISABLED
@@ -332,7 +332,7 @@
 		defAutoStrobe			= AutoStrobe;			// ENABLED/DISABLED
 		defAutoHONK				= AutoHONK;				// ENABLED/DISABLED
 		defAutoRecall			= AutoRecall;			// ENABLED/DISABLED
-		defAutoBOOST			= AutoBOOST;			// ENABLED/DISABLED
+		defAutoRETRACT			= AutoRETRACT;			// ENABLED/DISABLED
 		defNVGUI				= NVGUI;				// ON/OFF
 		defFSDGUI				= FSDGUI;				// ON/OFF 
 		defTrainingMode			= TrainingMode;			// ENABLED/DISABLED
@@ -379,7 +379,7 @@
 		AutoStrobe			= defAutoStrobe;			// ENABLED/DISABLED
 		AutoHONK			= defAutoHONK;				// ENABLED/DISABLED
 		AutoRecall			= defAutoRecall;			// ENABLED/DISABLED
-		AutoBOOST			= defAutoBOOST;				// ENABLED/DISABLED
+		AutoRETRACT			= defAutoRETRACT;			// ENABLED/DISABLED
 		NVGUI				= defNVGUI;					// ON/OFF
 		FSDGUI				= defFSDGUI;				// ON/OFF 
 		TrainingMode		= defTrainingMode;			// ENABLED/DISABLED
@@ -422,7 +422,7 @@
 		if (AutoStrobe)			EncodedSettings = EncodedSettings | (1 << 6); 	// Bit 6
 		if (AutoHONK)			EncodedSettings = EncodedSettings | (1 << 7); 	// Bit 7
 		if (AutoRecall)			EncodedSettings = EncodedSettings | (1 << 8); 	// Bit 8
-		if (AutoBOOST)			EncodedSettings = EncodedSettings | (1 << 9); 	// Bit 9
+		if (AutoRETRACT)		EncodedSettings = EncodedSettings | (1 << 9); 	// Bit 9
 		if (NVGUI)				EncodedSettings = EncodedSettings | (1 << 10); 	// Bit 10
 		if (FSDGUI)				EncodedSettings = EncodedSettings | (1 << 11);	// Bit 11
 		if (TrainingMode)		EncodedSettings = EncodedSettings | (1 << 12);	// Bit 12
@@ -455,7 +455,7 @@
 		if ((DecodeSettings & (1 << 6))		!= 0) AutoStrobe = 1;			else AutoStrobe = 0;
 		if ((DecodeSettings & (1 << 7))		!= 0) AutoHONK = 1;				else AutoHONK = 0;
 		if ((DecodeSettings & (1 << 8))		!= 0) AutoRecall = 1;			else AutoRecall = 0;
-		if ((DecodeSettings & (1 << 9))		!= 0) AutoBOOST = 1;			else AutoBOOST = 0;
+		if ((DecodeSettings & (1 << 9))		!= 0) AutoRETRACT = 1;			else AutoRETRACT = 0;
 		if ((DecodeSettings & (1 << 10))	!= 0) NVGUI = 1;				else NVGUI = 0;
 		if ((DecodeSettings & (1 << 11))	!= 0) FSDGUI = 1;				else FSDGUI =0;
 		if ((DecodeSettings & (1 << 12))	!= 0) TrainingMode = 1;			else TrainingMode = 0;
@@ -491,7 +491,7 @@
 		if (AutoStrobe			!= defAutoStrobe)			printf("	AutoStrobe		= %d	(%d)\x0a",	AutoStrobe, defAutoStrobe);
 		if (AutoHONK			!= defAutoHONK)				printf("	AutoHONK		= %d	(%d)\x0a",	AutoHONK, defAutoHONK);
 		if (AutoRecall			!= defAutoRecall)			printf("	AutoRecall		= %d	(%d)\x0a",	AutoRecall, defAutoRecall);
-		if (AutoBOOST			!= defAutoBOOST)			printf("	AutoBOOST		= %d	(%d)\x0a",	AutoBOOST, defAutoBOOST);
+		if (AutoRETRACT			!= defAutoRETRACT)			printf("	AutoRETRACT		= %d	(%d)\x0a",	AutoRETRACT, defAutoRETRACT);
 		if (NVGUI				!= defNVGUI)				printf("	NVGUI			= %d	(%d)\x0a",	NVGUI, defNVGUI);
 		if (FSDGUI				!= defFSDGUI)				printf("	FSDGUI			= %d	(%d)\x0a",	FSDGUI, defFSDGUI);
 		if (TrainingMode		!= defTrainingMode)			printf("	TrainingMode		= %d	(%d)\x0a",	TrainingMode, defTrainingMode);
