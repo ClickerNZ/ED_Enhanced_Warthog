@@ -1338,7 +1338,7 @@
 			printf("==	Menulog from fighter\x0a");
 		}
 		Sleep(1000);
-		printf("== Menulog Triggered\x0a");
+		printf("==	Menulog Triggered\x0a");
 	
 		if (fDanger | fInterdicted) {		
 			reason = "clogging is not allowed";
