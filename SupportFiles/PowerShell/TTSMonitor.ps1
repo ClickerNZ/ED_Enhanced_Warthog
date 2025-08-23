@@ -38,7 +38,9 @@ function Test-FileLocked {
 $voice = "Microsoft Catherine"
 $rate  = 1
 $volume= 100
-[TTS]::SpeakText("Text to speech monitor version 21 loading, processing TTS queue.", $voice, $rate, $volume)
+[TTS]::SpeakText("Text to speech monitor, version 21 loading.", $voice, $rate, $volume)
+Start-Sleep -Milliseconds 500
+[TTS]::SpeakText("Processing T T S queue.", $voice, $rate, $volume)
 
 #Set the window title 
 try {
