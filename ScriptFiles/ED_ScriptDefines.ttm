@@ -153,8 +153,8 @@
 	// DEBUG DEFINES //
 	//---------------//
 
-	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
-//	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+//	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
 	
 	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
