@@ -8,4 +8,7 @@ ED_Launcher.cmd
 ScriptFiles/ED_Development.*
 SupportFiles/Output/MyJournalData.json
 SupportFiles/Output/Tracking.json
+SupportFiles/Output/TTSQueue/*.*
+SupportFiles/Output/TTSQueue/Archive/*.*
+
 
