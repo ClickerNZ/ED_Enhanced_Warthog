@@ -319,6 +319,8 @@
 	int		defUserSettings;		// Binary encoded via fnEncodeUserSettings()
 	
 	int initUserSettings(int dummy = 0) {
+		
+		int DEBUGMODE;
 	
 		printf("\x0a++	Record User Settings ...\x0a");
 
@@ -358,6 +360,14 @@
 		defUserSettings 		= fnEncodeUserSettings(0);
 		
 		printf("++	User Settings recorded\x0a");
+		
+		if (DEBUG == 0) DEBUGMODE = "OFF";
+		if (DEBUG == 1) DEBUGMODE = "ON";
+		if (DEBUG == 2) DEBUGMODE = "LOG";
+		if (DEBUG == 3) DEBUGMODE = "VERBOSE";
+		if (DEBUG > 3 | DEBUG < 0)	DEBUGMODE = "NOT SET";
+		
+		printf("\x0a++	DEBUG MODE = %s\x0a", DEBUGMODE);
 		
 	}
 	
