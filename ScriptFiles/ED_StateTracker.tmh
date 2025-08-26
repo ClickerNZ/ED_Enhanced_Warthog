@@ -1135,12 +1135,15 @@
 		if (OldFlags2 != Flags2) {
 			if (fOnFoot != lOnFoot) {									// Track when on foot
 				if(fOnFoot){
-					if (!StartupLock & DEBUG) printf("==	On Foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot");
+					if (!StartupLock) {
+						if (DEBUG == LOG) printf("Flag: On Foot\x0a");
+						if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot");
+					}
 				}
 				else {
 					// no longer on foot
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot");
+					if (DEBUG == LOG) printf("Flag OFF: On Foot");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot");
 				}
 				UpdateLEDs = YES;
 			}
@@ -1165,23 +1168,23 @@
 
 			if (fOnFootInStation != lOnFootInStation) {
 				if (fOnFootInStation) {
-					if (DEBUG) printf("==	We've entered the station on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Station");
+					if (DEBUG == LOG) printf("==	We've entered the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Station");
 				}
 				else {
-					if (DEBUG) printf("==	We've left the station on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Station");
+					if (DEBUG == LOG) printf("==	We've left the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Station");
 				}
 			}
 
 			if (fOnFootOnPlanet != lOnFootOnPlanet) {
 				if (fOnFootOnPlanet) {
-					if (DEBUG) printf("==	We've set foot on planet surface\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot On Planet");
+					if (DEBUG == LOG) printf("==	We've set foot on planet surface\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot On Planet");
 				}
 				else {
-					if (DEBUG) printf("==	We've left the planet surface on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot On Planet");
+					if (DEBUG == LOG) printf("==	We've left the planet surface on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot On Planet");
 				}
 			}
 
@@ -1259,37 +1262,39 @@
 
 			if (fOnFootInHangar != lOnFootInHangar) {
 				if (fOnFootInHangar) {
-					if (DEBUG) printf("==	We've entered the hangar on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Hangar");					
+					if (DEBUG == LOG) printf("==	We've entered the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Hangar");					
 				}
 				else {
-					if (DEBUG) printf("==	We've left the hangar on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Hangar");
+					if (DEBUG == LOG) printf("==	We've left the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Hangar");
 				}
 			}
 
 			if (fOnFootSocialSpace != lOnFootSocialSpace) {
 				if (fOnFootSocialSpace) {
-					if (DEBUG) printf("==	We've entered the social space on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot In Social Space");
+					if (DEBUG == LOG) printf("==	We've entered the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Social Space");
 				}
 				else {
-					if (DEBUG) printf("==	We've left the social space on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag OFF: On Foot In Social Space");
+					if (DEBUG == LOG) printf("==	We've left the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Social Space");
 				}
 			}
 
 			if (fOnFootExterior != lOnFootExterior) {					// Is this the same as fOnFootOnPlanet ???
 				if (fOnFootExterior) {
-					if (DEBUG) printf("==	We're outside on foot\x0a");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag: On Foot Exterior");
+					if (DEBUG == LOG) printf("==	We're outside on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot Exterior");
 				}
 				else {
-					if (DEBUG) printf("==	We're inside ");
-					if (DEBUG == VERBOSE) fnTextToSpeech("Flag off: On Foot Exterior");
-					if(DEBUG & fSRV) printf("SRV\x0a");
-					else if(DEBUG & fMainShip) printf("Ship\x0a");
-					else if (DEBUG) printf("somehwere...where are we?\x0a");
+					if (DEBUG == LOG) {
+						printf("==	We're inside ");
+						if (fSRV) printf("SRV\x0a");
+						else if(fMainShip) printf("Ship\x0a");			// what about a taxi or dropship?
+						else printf("somehwere...where are we?\x0a");
+					}
+					if (DEBUG == VERBOSE) fnVPOutput("Flag off: On Foot Exterior");
 				}
 			}
 
@@ -1297,7 +1302,8 @@
 				if (fBreathableAtmosphere) {
 					printf("==	Atmosphere is breathable\x0a");					
 				}
-				else if (fOnFoot) {
+//				else if (fOnFoot) {
+				else {
 					printf("==	Atmosphere is no longer breathable\x0a");	
 				}
 			}
@@ -1362,14 +1368,14 @@
 				if (fRESERVED24) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 24");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 24");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 24 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 24 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1379,14 +1385,14 @@
 				if (fRESERVED25) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 25");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 25");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1396,14 +1402,14 @@
 				if (fRESERVED26) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 26");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 26");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 26 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 26 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1413,14 +1419,14 @@
 				if (fRESERVED27) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 27");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 27 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 27 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1430,14 +1436,14 @@
 				if (fRESERVED28) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 28");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 28");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 28 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 28 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1447,14 +1453,14 @@
 				if (fRESERVED29) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 29");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 29");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 29 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 29 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1464,14 +1470,14 @@
 				if (fRESERVED30) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 30");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 30");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 30 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 30 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1481,14 +1487,14 @@
 				if (fRESERVED31) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 31");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 31");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 31 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 31 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1498,14 +1504,14 @@
 				if (fRESERVED32) {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 32");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 32");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 
 				}
 				else {
 
 // DEBUG ++++++++++++++++++++++++++++++++++++++
-					if (DEBUG == VERBOSE) fnTextToSpeech("F2 Bit 32 OFF");
+					if (DEBUG == VERBOSE) fnVPOutput("F2 Bit 32 OFF");
 // DEBUG ++++++++++++++++++++++++++++++++++++++
 				
 				}
@@ -1535,7 +1541,7 @@
 		Modules = stfnGetKeyValue("Modules", INTEGER, 1);
 
 //	DEBUG ++++++++++
-//		printf("!!	DEBUG: Modules key-value = %d\x0a", Modules);
+		if (DEBUG == VERBOSE) printf("!!	DEBUG: Modules key-value = %d\x0a", Modules);
 //	DEBUG ++++++++++
 
 		// "lFlagName" is "Last" or previous flag value					// Allows us to track each time a flag is toggled 
@@ -1588,16 +1594,17 @@
 			LoadGameDetect = stfnGetKeyValue("LoadGameDetect", INTEGER, 1);
 
 //	DEBUG +++++++++++++++++++++++++++++++
-		//	if (fSCOPresent)			printf("!! DEBUG: SCO FSD installed\x0a");
-		//	if (fFighterPresent)		printf("!! DEBUG: Fighter Bay installed\x0a");
-		//	if (fSRVPresent)			printf("!! DEBUG: SRV Bay installed\x0a");	
-		//	if (fHeatsinkPresent)		printf("!! DEBUG: Heatsink Launcher installed\x0a");
-		//	if (fChaffLauncherPresent)	printf("!! DEBUG: Chaff Launcher installed\x0a");
-		//	if (fSCBPresent)			printf("!! DEBUG: Shield Cell Bank installed\x0a");
-		//	if (fECMPresent)			printf("!! DEBUG: Electronic Counter Measure installed\x0a");
-		//	if (fLimpetPresent)			printf("!! DEBUG: Limpet controller installed\x0a");
-		//
-		//	if (ActiveFighter)			printf("!! DEBUG: Fighter is ACTIVE\x0a");
+		if (DEBUG == VERBOSE) {
+			if (fSCOPresent)			printf("!! DEBUG: SCO FSD installed\x0a");
+			if (fFighterPresent)		printf("!! DEBUG: Fighter Bay installed\x0a");
+			if (fSRVPresent)			printf("!! DEBUG: SRV Bay installed\x0a");	
+			if (fHeatsinkPresent)		printf("!! DEBUG: Heatsink Launcher installed\x0a");
+			if (fChaffLauncherPresent)	printf("!! DEBUG: Chaff Launcher installed\x0a");
+			if (fSCBPresent)			printf("!! DEBUG: Shield Cell Bank installed\x0a");
+			if (fECMPresent)			printf("!! DEBUG: Electronic Counter Measure installed\x0a");
+			if (fLimpetPresent)			printf("!! DEBUG: Limpet controller installed\x0a");
+			if (ActiveFighter)			printf("!! DEBUG: Fighter is ACTIVE\x0a");
+		}
 //	DEBUG +++++++++++++++++++++++++++++++
 			
 			// Check if InputCMD or CMDParameter have changed...
@@ -1622,10 +1629,7 @@
 			
 			strcpy(&CMDParameter, stfnGetKeyValue("CMDParameter", STRING, 1));
 			CMDParameter[strlen(&CMDParameter)] = 0;
-
-		//	printf("!! DEBUG: stfnProcessMyJournalData(): InputCMD: %s, lastInputCMD:  %s\x0a", &InputCMD, &lastInputCMD);
-		//	printf("!! DEBUG: stfnProcessMyJournalData(): CMDParameter: %s, lastCMDParameter:  %s\x0a", &CMDParameter, &lastCMDParameter);
-			
+	
 			if (strcmp(&InputCMD, "not set") == 0) {
 		//		printf("!! DEBUG: stfnProcessMyJournalData(): InputCMD = not set, do not call fnInputCMD()\x0a");
 			}
