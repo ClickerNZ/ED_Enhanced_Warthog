@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Vanguards)
 
 	// Refer Change Log.txt in parent folder
 
@@ -121,7 +121,8 @@
 	// alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
 	
 	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
-												// You may see issues if this is set too small. If you do, raise this value.
+												// You may see issues if this is set too small. If you do, raise this value
+	define	PreserveMaxJson			= ENABLED;	// If Enabled, keeps a copy of the longest status.json found in the journal folder
 													
 	//----------------//
 	// Text To Speech //
