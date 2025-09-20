@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_StateTracker.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_StateTracker.tmh ... supports Elite Dangerous (Vanguards)
 
 	// Refer Change Log.txt parent folder
 
@@ -49,8 +49,8 @@
 	
 	int		ReadError2Count	= 0;
 	int		ReadError2Sent;
-	int		initmyJournalData = 0;			// flag set once per script run 
-	int		initlastJournalData = 0;
+//	int		initmyJournalData = 0;			// flag set once per script run 
+//	int		initlastJournalData = 0;
 	int		readloops = 0;
 	
 	// ------------
@@ -58,23 +58,37 @@
 	int stfnReadMyJournalData() {
 
 		int 	fp;
-		int 	buf = 1024;					// Always set this larger than MyJournalData.json otherwise we'll get read errors
+		int		rc;
+//		int 	buf = 1024;					// Always set this larger than MyJournalData.json otherwise we'll get read errors
+		int 	buf;
 		int		myResult;
 		
-		if(!initmyJournalData) {			// Only need to initialise the char array once per script run
-			Dim(&myJournalData, buf);
-			myJournalData[0] = 0;
-			initmyJournalData = 1;
-		}
-		if (!initlastJournalData) {			// Only need to initialise the char array once per script run
-			Dim(&lastJournalData, buf); 
-	 		lastJournalData[0] = NUL;
-			initlastJournalData = 1;
-		}
+//		if(!initmyJournalData) {			// Only need to initialise the char array once per script run
+//			Dim(&myJournalData, buf);
+//			myJournalData[0] = 0;
+//			initmyJournalData = 1;
+//		}
+//		if (!initlastJournalData) {			// Only need to initialise the char array once per script run
+//			Dim(&lastJournalData, buf); 
+//	 		lastJournalData[0] = NUL;
+//			initlastJournalData = 1;
+//		}
 		
 		fp = fopen(&MyJournalData, "r");	// Open the MyJournalData file in 'read' mode 
 		
 		if (fp) {
+			
+//	DEBUG +++++			
+			rc	= fseek(fp, 0, 2);                          // seek to end
+			buf	= ftell(fp);								// sets buf to length of status.json 
+			rc	= fseek(fp, 0, 0);                          // rewind to start
+
+			Dim(&myJournalData, buf+1);
+			myJournalData[0] = NUL;
+			Dim(&lastJournalData, buf+1); 
+			lastJournalData[0] = NUL;
+//	DEBUG +++++
+			
 			myResult = fread(&myJournalData, 1, buf, fp);	// Read the json string into global myJournalData global char array 
 			fclose(fp);
 			if (myResult == 0) {
@@ -124,10 +138,10 @@
 	// GlobalVars
 
 	char myJson;	
-	int initmyJson = 0;	
+//	int initmyJson = 0;	
 	
 	char lastJson;
-	int initlastJson = 0;
+//	int initlastJson = 0;
 	
 	int		ReadErrorCount	= 0;
 	int		ReadErrorSent;
@@ -141,31 +155,46 @@
 	int stfnReadStatusJson() {
 
 		int 	fp;
-		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
+		int 	rc;
+//		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
+		int 	buf;
 		int		myResult;
 		int		newJson			= 0;	// set when myJson != lastJson...we then call stfnProcessFlags();
 		int 	json100;
 		int		json10;
 		int		json1;
-//		int 	myTTS;					// Local TTS variable
-		char	json; Dim(&json, 16); json[0] = 0;
+		char	json; Dim(&json, 64); json[0] = 0;
 
-		if (!initmyJson) {
-			Dim(&myJson, buf);
-			myJson[0] = NUL;
-			initmyJson = 1;
-		}
-		if (!initlastJson) {	
-			Dim(&lastJson, buf); 
-			lastJson[0] = NUL;
-			initlastJson = 1;
-		}
+//		if (!initmyJson) {
+//			Dim(&myJson, buf+1);
+//			myJson[0] = NUL;
+//			initmyJson = 1;
+//		}
+//		if (!initlastJson) {	
+//			Dim(&lastJson, buf+1); 
+//			lastJson[0] = NUL;
+//			initlastJson = 1;
+//		}
 		
 		fp = fopen(&StatusFile, "r");
 		
 		if (fp) {
+			
+//	DEBUG +++++			
+			rc	= fseek(fp, 0, 2);                          // seek to end
+			buf	= ftell(fp);								// sets buf to length of status.json 
+			rc	= fseek(fp, 0, 0);                          // rewind to start
+
+			Dim(&myJson, buf+1);
+			myJson[0] = NUL;
+			Dim(&lastJson, buf+1); 
+			lastJson[0] = NUL;
+
+//	DEBUG +++++
+			
 			myResult = fread(&myJson, 1, buf, fp);
 			fclose(fp);
+			
 			if (myResult == 0) {
 				ReadErrorCount = ReadErrorCount + 1;
 				if (ReadErrorCount > 3) {
@@ -177,25 +206,31 @@
 				}
 			}
 			else if (myResult < 0) {
-				printf("\x0a!!	ERROR: Error reading status.json. Check buffer length\x0a");
+				printf("\x0a!!	ERROR: Error reading status.json. Check buffer length\x0a");	// This should never be triggered unless status.json does not exist 
 			}
 			else {
 				// Debug: check myJson string length to ensure buffer size is set high enough
 				if (loop == 9) {
 					if(maxjson > NewMaxJson) {
-				//		printf("\x0a\!!	DEBUG: Max json length seen = %d ...\x0a", maxjson);
-				//		fnSoundFX("snd_warn", 60);
+
 						NewMaxJson = maxjson;
 
-						json100 = (NewMaxJson - (NewMaxJson % 100))/100;
-						json10	= (NewMaxJson % 100) / 10;
-						json1 	= (NewMaxJson % 100) % 10;
+						if (DEBUG == 2) {
+							printf("\x0a\!!	DEBUG: Max json length seen = %d ...\x0a", maxjson);
+							fnSoundFX("snd_warn", 60);
+						}
+						
+						if (DEBUG == 3) {
+							json100 = (NewMaxJson - (NewMaxJson % 100))/100;
+							json10	= (NewMaxJson % 100) / 10;
+							json1 	= (NewMaxJson % 100) % 10;
 
-				//		sprintf(&json, "jason %d %d%d", json100, json10, json1);	// Speaks each digit ... eg 5,9,8
-				//		fnTextToSpeech(&json);
+							sprintf(&json, "max jason length %d %d%d", json100, json10, json1);	// Speaks each digit ... eg 5,9,8
+							fnTextToSpeech(&json);
+						}
 						
 						loop = 0;
-						stfnWriteMaxJson();
+						if (PreserveMaxJson) stfnWriteMaxJson();
 					}
 				}
 				else {
@@ -204,7 +239,6 @@
 				if (myResult > maxjson) {
 					maxjson = myResult;
 				}
-
 	
 				ReadErrorCount 		= 0;
 				ReadErrorSent 		= 0;
@@ -214,7 +248,6 @@
 				if (newJson != 0) {													// Has myJson changed since last read?
 					Flags	= stfnGetKeyValue("Flags", INTEGER);
 					Flags2	= stfnGetKeyValue("Flags2", INTEGER);
-
 	
 					if (strlen(&myJson) <= 68) {									// When Game is halted, string length of status.json = 68 chars 
 						if(GameLoaded) {											// Detects when Game halts
@@ -228,7 +261,6 @@
 								}
 							}
 							
-//							printf("\x0a++	");
 							fnVPOutput(myTTS, 0, 1);
 							printf("\x0a");
 										
@@ -279,7 +311,7 @@
 	// Requires:	'MaxStatusFile' string variable to be correctly set in ED_UserSettings file
 	// Called by:	stfnReadStatusJson() each time NewMaxJson is found
 
-	int stfnWriteMaxJson() {
+	int stfnWriteMaxJson() {			// This may now be redundant if the dynamic buf sizing code works.
 	
 		int 	fp;
 		int 	buf = NewMaxJson-1;
@@ -294,7 +326,7 @@
 				printf("!!	Error writing new MaxJson file.\x0a");
 			}
 			else {
-				printf("++	New MaxJson file written ++\x0a\x0a");
+				printf("++	New MaxJson file written (%d)	++\x0a\x0a", NewMaxJson);
 			}
 		}
 	}
@@ -661,7 +693,7 @@
 	// Output: Flags variables set/reset
 
 	int stfnProcessFlags(int UpdateLEDs = NO) {
-		
+
 		stfnDecodeFlags();
 		stfnDecodeFlags2();
 			
@@ -1357,7 +1389,7 @@
 
 				if (fNPCCrewActive) {
 					fnVPOutput("NPC crew active");
-					FighterPresent = 1;
+//					FighterPresent = 1;
 				}
 				else {
 					fnVPOutput("NPC crew not active");				
@@ -1520,7 +1552,7 @@
 
 		if ((lFAOff != fFAOff) | (lLights != fLights) | (lSilentRunning != fSilentRunning) | (lCargoScoop != fCargoScoop) | (lLandingGear != fLandingGear) | (lMainShip != fMainShip) | (lSRV !=  fSRV)) UpdateLEDs = YES;
 			
-		if(!GameLoaded) {													// Game started...as opposed to re-started.
+		if(!GameLoaded) {														// Game started...as opposed to re-started.
 			fnGameStarted();
 		}
 		else if(UpdateLEDs == YES) {
@@ -1595,15 +1627,16 @@
 
 //	DEBUG +++++++++++++++++++++++++++++++
 		if (DEBUG == VERBOSE) {
-			if (fSCOPresent)			printf("!! DEBUG: SCO FSD installed\x0a");
-			if (fFighterPresent)		printf("!! DEBUG: Fighter Bay installed\x0a");
-			if (fSRVPresent)			printf("!! DEBUG: SRV Bay installed\x0a");	
-			if (fHeatsinkPresent)		printf("!! DEBUG: Heatsink Launcher installed\x0a");
-			if (fChaffLauncherPresent)	printf("!! DEBUG: Chaff Launcher installed\x0a");
-			if (fSCBPresent)			printf("!! DEBUG: Shield Cell Bank installed\x0a");
-			if (fECMPresent)			printf("!! DEBUG: Electronic Counter Measure installed\x0a");
-			if (fLimpetPresent)			printf("!! DEBUG: Limpet controller installed\x0a");
-			if (ActiveFighter)			printf("!! DEBUG: Fighter is ACTIVE\x0a");
+			if (fSCOPresent)			printf("!!	DEBUG: SCO FSD installed\x0a");
+			if (fFighterPresent)		printf("!!	DEBUG: Fighter Bay installed\x0a");
+			if (fSRVPresent)			printf("!!	DEBUG: SRV Bay installed\x0a");	
+			if (fHeatsinkPresent)		printf("!!	DEBUG: Heatsink Launcher installed\x0a");
+			if (fChaffLauncherPresent)	printf("!!	DEBUG: Chaff Launcher installed\x0a");
+			if (fSCBPresent)			printf("!!	DEBUG: Shield Cell Bank installed\x0a");
+			if (fECMPresent)			printf("!!	DEBUG: Electronic Counter Measure installed\x0a");
+			if (fLimpetPresent)			printf("!!	DEBUG: Limpet controller installed\x0a");
+			if (ActiveFighter)			printf("!!	DEBUG: Fighter is ACTIVE\x0a");
+			printf("\x0a");
 		}
 //	DEBUG +++++++++++++++++++++++++++++++
 			
@@ -1749,8 +1782,9 @@
 		int reason = 0;
 		int UserSettings;												// Binary encoded user settings
 		int fh;															// General File Pointer Variable 
+		int rc;
 		int fpresult;
-		int buf = 256;													// Increase buf when required
+		int buf = 1024;													// Increase buf when required
 		int mySIZE;
 		
 		Dim(&MyStatesJson, buf);
@@ -1807,6 +1841,9 @@
 			fh = fopen(&MyStatusFile, "r");								// open file to read
 			
 			if (fh) {
+
+				Dim(&MyStatesJson, buf);
+				MyStatesJson[0] = NUL;
 
 				fpresult = fread(&MyStatesJson, 1, buf, fh);			// Load MyStates from file				
 				fclose(fh);
