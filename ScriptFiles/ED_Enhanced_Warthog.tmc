@@ -86,6 +86,9 @@
 	include "ED_Functions.tmh"
 	include "ED_StateTracker.tmh"
 	include "ED_Toggles.tmh"
+
+	// Exclude following from github
+	include "ED_Development.tmh"
 		
 	//--------------//
 	// Main Program //
@@ -158,6 +161,7 @@
 
 		printf("\x0a\++	Initialise Macro Chains...\x0a");
 		initMacroChains();														// Initialise Custom Macros (See ED_Macros.tmh)
+		initDevMacros();
 		
 	// -------------------------- //
 	// Initialise Flight controls //
