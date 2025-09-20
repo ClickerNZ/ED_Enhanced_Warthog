@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_MapKeyAssignment.tmh ... supports Elite Dangerous (Vanguards)
 
 	// Contains MapKey Statements for all button and switch actions
 	// Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
