@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Vanguards)
 
 	// Below are the global, static, state and boolean definitions used within the script package
 	// Also contains global status.json integer variable flags for ease of maintenance and readability
@@ -153,8 +153,9 @@
 	// DEBUG DEFINES //
 	//---------------//
 
-//	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
-	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+//	int		DEBUG					= LOG;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+//	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
 	
 	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
