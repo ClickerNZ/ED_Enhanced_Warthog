@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_Macros.ttm ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_Macros.ttm ... supports Elite Dangerous (Vanguards)
 
 	// Refer Change Log.txt in parent folder
 
@@ -42,11 +42,6 @@
 	Line 300: 		m_ChangeColours  
 	Line 306: 		m_NextFG  
 	Line 311: 		m_PrevFG  
-	Line 316: 		m_PullUp  
-	Line 326: 		m_Ascend  
-	Line 334: 		m_Descend  
-	Line 342: 		m_AutoPilotOn  
-	Line 358: 		m_AutoPilotOff  
 */
 
 	// START
@@ -55,8 +50,7 @@
 	
 	int	m_RequestDock,		m_DeploySRV,		m_ShowGameStats,	m_ReportCrimesToggle,	m_WingBeaconTeam,	m_WingBeaconOff;
 	int m_FastModeSwitch0,	m_FastModeSwitch1,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHangar,		m_ChangeColours;
-	int m_Launch,			m_NextFG,			m_PrevFG,			m_PullUp,				m_Ascend,			m_Descend;
-	int m_DeployNPCFighter,	m_DeployFighter,	m_AutoPilotOn,		m_AutoPilotOff,			m_Disembark;
+	int m_Launch,			m_NextFG,			m_PrevFG,			int m_DeployNPCFighter,	m_DeployFighter,	m_Disembark;
 
 	//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
 	// CUSTOM MACROS //			// The action identifiers (keystroke labels) used below can be found within the 'ED_Defines.ttm' file.
@@ -311,65 +305,6 @@
 		m_PrevFG = CHAIN(
 			PULSE+PrevFireGroup, D(400)
 			);
-
-		// MACRO: Emergency Pull Up								Duration = 1050
-		m_PullUp = CHAIN(
-			LOCK+DOWN+PitchUp, D(150),
-			UP+PitchUp, D(),
-			DOWN+ThrustUp, D(500),
-			UP+ThrustUp, D(),
-			DOWN+PitchDown, D(),
-			UP+PitchDown, D(),
-			LOCK);
-			
-		// MACRO: Raise our altitude							Duration = 620
-		m_Ascend = CHAIN(
-			LOCK+PULSE+PitchUp, D(),
-			DOWN+ThrustUp, D(250),
-			UP+ThrustUp, D(),
-			PULSE+PitchDown, D(),
-			LOCK);
-			
-		// MACRO: Decrease our altitude							Duration = 620
-		m_Descend = CHAIN(
-			LOCK+PULSE+PitchDown, D(),
-			DOWN+ThrustDown, D(250),
-			UP+ThrustDown, D(),
-			PULSE+PitchUp, D(),
-			LOCK);
-			
-		// MACRO: Send APON to the Journal Processor
-		m_AutoPilotOn = CHAIN(
-			LOCK+PULSE+QuickCommsPanel, D(),
-			PULSE+'!', D(),
-			PULSE+'s', D(),
-			PULSE+'e', D(),
-			PULSE+'t', D(),
-			PULSE+' ', D(),
-			PULSE+'A', D(),
-			PULSE+'P', D(),
-			PULSE+' ', D(),
-			PULSE+'O', D(),
-			PULSE+'N', D(),			
-			PULSE+QuickCommsPanel, D(500),
-			LOCK);
-
-		// MACRO: Send APOFF to the Journal Processor		
-		m_AutoPilotOff = CHAIN(
-			LOCK+PULSE+QuickCommsPanel, D(),
-			PULSE+'!', D(),
-			PULSE+'s', D(),
-			PULSE+'e', D(),
-			PULSE+'t', D(),
-			PULSE+' ', D(),
-			PULSE+'A', D(),
-			PULSE+'P', D(),
-			PULSE+' ', D(),
-			PULSE+'O', D(),
-			PULSE+'F', D(),
-			PULSE+'F', D(),
-			PULSE+QuickCommsPanel, D(500),
-			LOCK);
 			
 	}	// End of initMacroChains()
 
