@@ -6,7 +6,7 @@
 	//----------------------------------------------------------------------//
 
 	// This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
-	// Supports:	Elite Dangerous 				v4.2.0.1 (Vanguards)	// Does not support Legacy Horizons
+	// Supports:	Elite Dangerous 				v4.2.0.2 (Vanguards)	// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.127_rev1		// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
 	//				Throttle firmware 				v23
@@ -26,13 +26,6 @@
 	// ==============================================================================================
 
 /*
-	Index:		FUNCTION
-	Line  62:	include statements
-	Line  94: 	int main()
-	Line 135:	initialise hardware
-	Line 194: 	int EventHandle(int type, alias o, int x)
-
-
 	PREFACE
 
 	This script is provided as is and without any warranties, explicit or implied.
@@ -50,8 +43,7 @@
 
 	Enjoy.
 
-	CMDR Clicker
-	
+	CMDR Clicker	
 */
 	// START
 
@@ -87,8 +79,10 @@
 	include "ED_StateTracker.tmh"
 	include "ED_Toggles.tmh"
 
-	// Exclude following from github
+	// Excluded from github - remove prior to publishing
+//	DEBUG	+++++
 	include "ED_Development.tmh"
+//	DEBUG	+++++
 		
 	//--------------//
 	// Main Program //
@@ -161,7 +155,11 @@
 
 		printf("\x0a\++	Initialise Macro Chains...\x0a");
 		initMacroChains();														// Initialise Custom Macros (See ED_Macros.tmh)
-		initDevMacros();
+
+		// Excluded from github - remove prior to publishing
+//	DEBUG	+++++
+		initDevMacros();														// Initialise any development macros (refer ED_Development.tmh)
+//	DEBUG	+++++
 		
 	// -------------------------- //
 	// Initialise Flight controls //
