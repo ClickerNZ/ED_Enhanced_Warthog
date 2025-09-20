@@ -3,7 +3,7 @@
 	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
 	//----------------------------------------------------------------------//
 
-	// This file: ED_Toggles.tmh ... supports Elite Dangerous (Trailblazers)
+	// This file: ED_Toggles.tmh ... supports Elite Dangerous (Vanguards)
 
 	// Refer Change Log.txt in parent folder
 
@@ -442,8 +442,6 @@
 				else if (fDocked) reason = "we are docked";
 			}
 		}
-		
-// TEST ++++			We may be able to bundle this in with fMainShip above IF fighter has landing gear and a Reverse ability
 		else if (fFighter) {
 			ActKey(KEYON+PULSE+ReverseThrottle);											// or press NUMPAD *
 			if (ReverseThrust) {
@@ -453,8 +451,6 @@
 				printf("==	Throttle:			FORWARD\x0a");
 			}		
 		}
-// TEST ++++
-		
 		else if (fSRV) {
 			ActKey(KEYON+PULSE+ReverseThrottle);											// or press NUMPAD *
 			if (ReverseThrust) {
@@ -847,28 +843,6 @@
 		else {
 			StopAutoRepeat(hTerrain);
 			fnVPOutput("T F Disengaged");
-		}
-	}
-
-
-	//	TOGGLE:		Toggle Auto Pilot ON/OFF 
-	//	Parameter:	dummy - enables delayed or repeat calls from REXEC() and DeferCall()
-	
-	//	GLOBAL Vars
-	
-	int APStatus = 0;
-		
-	int tgAutoPilot(int dummy = 0) {
-
-		if (APStatus) {
-			APStatus = 0;
-//			DeferCall(4500, &fnVPOutput, "Auto pilot OFF");		// delay should be slightly longer than the macro run time 
-//			ActKey(KEYON+PULSE+m_AutoPilotOff);
-		}
-		else {
-			APStatus = 1;
-//			DeferCall(4500, &fnVPOutput, "Auto pilot");		// delay should be slightly longer than the macro run time 
-//			ActKey(KEYON+PULSE+m_AutoPilotOn);			
 		}
 	}
 
