@@ -1,4 +1,4 @@
-# v31 - Autopilot feature added
+# v31 - Autopilot feature added - in development 
 #
 
 param (
