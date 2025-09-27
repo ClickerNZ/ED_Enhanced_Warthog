@@ -185,6 +185,8 @@
 		printf("\x0a\++	Check Game state ...\x0a");
 		
 		stfnStartCheck();														// Check for vital files and game start. Bootstrap script execution.
+		
+		printf("\x0a++	DEBUG MODE = %s\x0a\x0a", DEBUGMODE);
 	}	
 	
 	// end of int main()	
