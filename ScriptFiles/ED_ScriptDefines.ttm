@@ -25,7 +25,7 @@
 
 						//  -- WARNING --  //
 
-	// Do not define a variable as ALT+F4 (L_ALT+USB[0x3D] or R_ALT+USB[0x3D])
+	// Do not define a variable as 'ALT+F4' (L_ALT+USB[0x3D] or R_ALT+USB[0x3D])
 	// Why??? - PULSE an ALT+F4 to the current active window will close it!
 
 						//   -- NOTES --   //
@@ -51,7 +51,7 @@
 
 	// These delay settings affect how fast the script executes key press sequences etc.
 	// If you find the macros are dropping characters, then the delay is too short.
-	// "LongPress" is a personal setting. I find a half second is about right for me when usisng with TEMPO.
+	// "LongPress" is a personal setting. I find a half second is about right for me when using with TEMPO.
 	
 	define 	PulseTime 				35						// PULSE+ Delay time (ms) - Used as key-hold-down time.
 	define 	DelayTime 				100						// D() Delay time 	 (ms) - Used in macros as the time between releasing one key and pressing the next
@@ -84,8 +84,8 @@
 	define hFSDCharge				3						// Used in ED_Toggles.tmh & ED_Functions.tmh	- FSD Charge detection
 	define hSoundFX					4						// Used in ED_MapKeyAssignment.tmh 				- PSF & PSB reminder sound
 	define hBeepFX					5						// Used in ED_Toggles.tmh						- Reverse thrust
-	define hTerrain					6						// Used in ED_Toggles.tmh						- Terrain Following
-	define hReadMyJournalData		7						// Used in ED_StateTracker.tmh					- main read MyJournalData.json background loop
+	define hReadMyJournalData		6						// Used in ED_StateTracker.tmh					- main read MyJournalData.json background loop
+	define hTerrain					7						// Used in ED_Toggles.tmh						- Terrain Following
 	
 	//----------------------------------------------------------------------//
 	// SCRIPT BOOLEAN and STATE DEFINES										//
@@ -93,6 +93,7 @@
 		
 	define OFF						0
 	define ON						1
+	
 	define LOG						2						// DEBUG Levels
 	define VERBOSE					3						// DEBUG Levels
 	
@@ -110,8 +111,8 @@
 	define SET						1
 	define RESET					0
 	
-	define PREVIOUS					2
 	define NEXT						1
+	define PREVIOUS					2
 
 	define HOLD						0
 	define PUSH						1
@@ -146,22 +147,23 @@
 	define NOPRINT					0						// suppress console message, or...
 	define PRINT					1						// ...don't
 
-	define SAVE						1						// used in stfnMyStates()
 	define LOAD						0						// used in stfnMyStates()	
+	define SAVE						1						// used in stfnMyStates()
 
 	//---------------//
-	// DEBUG DEFINES //
+	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
 	//---------------//
 
-	int		DEBUG					= ON;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
-//	int		DEBUG					= LOG;					// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
-//	int		DEBUG					= VERBOSE;				// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). Must be > 0 to enable InputCMD
+//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
+	int		DEBUG					= ON;					// InputCMD enabled
+//	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
+//	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
 	
 	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
 	//-----------------------------------------------------------------------------------------------------------------------------//
 	//                                                                                                                             //
-	//    The following defines align to the FLAGS and FLAGS2 masks within status.json as defined in the Journal Documentation     //
+	//   The following defines align to the FLAGS and FLAGS2 bitmasks within status.json as defined in the Journal Documentation   //
 	//                                                                                                                             //
 	//        STATUS.JSON : Refer Section 14 in http://hosting.zaonce.net/community/journal/v37/Journal_Manual_v37.pdf             //
 	//                                                                                                                             //
@@ -434,7 +436,7 @@
 
 	//---------------//
 	// MODULES MASKS //					// BCD encoded value within 'Modules' key in MyJournalData.json 
-	//---------------//					// These are updated by the PS_Journal script ecah time the 'Loadout' event appears in the ED Journal 
+	//---------------//					// These are updated by the PS_Journal helper script each time the 'Loadout' event appears in the ED Journal 
 
 	define ED_SCOPresent				0x0000000000000001	// 1	- Supercruise Overdrive Capable Frame Shift  Drive is installed 
 	define ED_FighterPresent			0x0000000000000002	// 2	- Fighter Bay (not actual fighter is installed on ship 
