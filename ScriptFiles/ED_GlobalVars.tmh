@@ -84,8 +84,6 @@
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg target obscured, not enough fuel, target too far etc)
 	
-	int TerrainFollow		= 0;		// Global Flag to track Terrain Following ON/OFF
-	
 	int ThrustUpTime		= 1500;		// Used in m_Launch macro. Future feature = table of ships and thruster stats and modify on the fly
 
 	int	UseAltVoice			= NO;		// Set UseAltVoice = 'YES'; prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used
