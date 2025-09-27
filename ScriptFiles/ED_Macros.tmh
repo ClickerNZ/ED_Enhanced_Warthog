@@ -50,7 +50,7 @@
 	
 	int	m_RequestDock,		m_DeploySRV,		m_ShowGameStats,	m_ReportCrimesToggle,	m_WingBeaconTeam,	m_WingBeaconOff;
 	int m_FastModeSwitch0,	m_FastModeSwitch1,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHangar,		m_ChangeColours;
-	int m_Launch,			m_NextFG,			m_PrevFG,			int m_DeployNPCFighter,	m_DeployFighter,	m_Disembark;
+	int m_Launch,			m_NextFG,			m_PrevFG,			m_DeployNPCFighter,		m_DeployFighter,	m_Disembark;
 
 	//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
 	// CUSTOM MACROS //			// The action identifiers (keystroke labels) used below can be found within the 'ED_Defines.ttm' file.
