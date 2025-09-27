@@ -48,7 +48,7 @@
 	// Identity //
 	//----------//
 
-	// 'CMDRName' alias is declared here and extracted from MyJournalData.json supporting multiple Elite Dangerous accounts
+	// 'CMDRName' alias is declared in ED_GlobalVars.tmh and extracted from MyJournalData.json supporting multiple Elite Dangerous accounts
 	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
 	
 	define	CMDRNameOverride	DISABLED  
@@ -85,7 +85,7 @@
 														// LEDLevel 5: 215 	- 255 (brightest)
 
 	//----------------//
-	// Status.json    //		THIS SECTION IS CRITICAL FOR THE SCRIPT TO WORK
+	// Status.json    //
 	//----------------//
 
 	// WARNING:		This script relies on and makes extensive use of 'status.json' key values
@@ -122,7 +122,7 @@
 	
 	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
 												// You may see issues if this is set too small. If you do, raise this value
-	define	PreserveMaxJson			= ENABLED;	// If Enabled, keeps a copy of the longest status.json found in the journal folder
+	int	PreserveMaxJson				= ENABLED;	// If Enabled, keeps a copy of the longest status.json found in the journal folder
 													
 	//----------------//
 	// Text To Speech //
@@ -174,7 +174,7 @@
 	
 	// NOTE:	I have used two or more voices in this script
 	//			I recommend that you search the script looking for 'fnTextToSpeech' to check which voices I have used and change if required
-	//			Sending a non-installed voice is not a critical error and simply results in TTS not saying anything
+	//			Sending a non-installed voice is not a critical error but results in TTS not saying anything
 	//------------------------//
 	// Voice Enabled Training //
 	//------------------------//
@@ -232,7 +232,7 @@
 	// General Status Variables //
 	//--------------------------//
 
-	// ENABLE only ONE of the following two settings. AutoHangar takes prescedence over AutoDisembark if both enabled 
+	// ENABLE only ONE of the following two settings. If both are ENABLED, AutoHangar takes prescedence over AutoDisembark 
 	int	AutoHangar				= ENABLED;				//	Enable to initiate Hangar+Station Services automatically when docked, DISABLED = don't
 	int AutoDisembark			= DISABLED;				//	Enable to disembark automatically when docked, DISABLED = don't
 	
