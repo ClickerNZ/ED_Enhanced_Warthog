@@ -65,6 +65,9 @@ v510	- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Clien
 				-	Both setting name (InputCMD) and setting (CMDParameter) are case sensitive
 				-	Example: !set DEBUG ON 
 				-	Handy for both troubleshooting and turning features on or off without having to adjust a setting in the file then restarting the script
+			20250927	Use Healthpack if fHealth triggers "Low Health" condition
+		-	BUG FIX
+				20250927	Fix issue in fnHangarServices where VoiceTxt was not being set prior to calling fnVPOutput() causing an Abort due to nul alias
 
 		-	Add new status flags introduced in v4.1.0.2 - NOTE: Both Horizons and Odyssey under client 4+ now use both Flags and Flags2 within status.json 
 		-	Uncomment RESERVED flags lines
