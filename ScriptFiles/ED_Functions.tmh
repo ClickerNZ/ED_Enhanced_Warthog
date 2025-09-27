@@ -23,54 +23,50 @@
 
 /*
 	Index:		FUNCTION
-	Line   85: 	int fnNotValid(int fnName, int reason=0) {
-	Line  103: 	int fnStartupMapKeyMode() {
-	Line  134: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
-	Line  211: 	int fnSetSliderCurve(int x) {
-	Line  244: 	int fnGetFlightMode() {
-	Line  262: 	int fnLEDBrightness(int x = NOCHANGE) {
-	Line  282: 	int fnFlashLED(int x) {	
-	Line  299: 	int fnSetLEDs(int dummy=NUL) {
-	Line  332: 	int fnFlashStart() {
-	Line  371: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
-	Line  398: 	int fnVoiceVolume(int x) {
-	Line  449: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
-	Line  520: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1) {
-	Line  537: 	int fnGameStarted(int dummy = 0) {
-	Line  623: 	int fnPIPMode(int x) {
-	Line  674: 	int fnPIPManager(int PwrPriority) {
-	Line  711: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
-	Line  751: 	int fnAdvFireControl(int x) {
-	Line  832: 	int fnAdvancedSCB(int x = 0) {
-	Line  890: 	int fnHeatsink(int param = 0) {
-	Line  929: 	int fnChaff(int dummy = 0) {
-	Line  957: 	int fnDeploySRV(int x) {
-	Line 1009: 	int fnDeployFighter(int x) {
-	Line 1062: 	int fnDRShip() {
-	Line 1080: 	int fnRequestDock() {
-	Line 1104: 	int fnHangarServices(int x) {
-	Line 1164: 	int fnIdleLock(int x) {
-	Line 1184: 	int fnCheckFSDCharge(int EngineText) {
-	Line 1215: 	int fnCheckFiregroup() {
-	Line 1231: 	int fnClearChatBox(int mode = 0) {
-	Line 1295: 	int fnModeSwitch(int mode) {
-	Line 1378: 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
-	Line 1400: 	int fnPrintState() {
-	Line 1411: 	int fnStateDump() {
-	Line 1573: 	int fnGetTOD() {
-	Line 1624: 	int fnMyName() {
-	Line 1689: 	int fnTerrainFollow(int MinHeight = 100) {
-	Line 1713: 	int fnLowAltitude() {
-	Line 1720: 	int fnAscend() {
-	Line 1726: 	int fnDescend() {
-	Line 1736: 	int fnSelectFiregroup(int fg) {
-	Line 1774: 	int fnGetStationName(int dummy=0) {
-	Line 1789: 	int fnDockingStatus(int dummy) {
-	Line 1888: 	int fnFighterStatus(int dummy = 0) {
-	Line 1911: 	int fnInputCMD(int dummy = 0) {
-	Line 1997: 	int fnPANIC(int panic = 0) {
-	Line 2020:	int findstr(alias string, alias substring) {
-	Line 2045:	int strcpy(alias dst, alias src) {
+	Line   85: 	int fnNotValid(int fnName, int reason=0)
+	Line  103: 	int fnStartupMapKeyMode()
+	Line  134: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE)
+	Line  211: 	int fnSetSliderCurve(int x)
+	Line  244: 	int fnGetFlightMode()
+	Line  262: 	int fnLEDBrightness(int x = NOCHANGE)
+	Line  282: 	int fnFlashLED(int x)	
+	Line  299: 	int fnSetLEDs(int dummy=NUL)
+	Line  332: 	int fnFlashStart()
+	Line  371: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
+	Line  398: 	int fnVoiceVolume(int x)
+	Line  449: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 )
+	Line  520: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1)
+	Line  537: 	int fnGameStarted(int dummy = 0)
+	Line  623: 	int fnPIPMode(int x)
+	Line  674: 	int fnPIPManager(int PwrPriority)
+	Line  711: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0)
+	Line  751: 	int fnAdvFireControl(int x)
+	Line  832: 	int fnAdvancedSCB(int x = 0)
+	Line  890: 	int fnHeatsink(int param = 0)
+	Line  929: 	int fnChaff(int dummy = 0)
+	Line  957: 	int fnDeploySRV(int x)
+	Line 1009: 	int fnDeployFighter(int x)
+	Line 1062: 	int fnDRShip()
+	Line 1080: 	int fnRequestDock()
+	Line 1104: 	int fnHangarServices(int x)
+	Line 1164: 	int fnIdleLock(int x)
+	Line 1184: 	int fnCheckFSDCharge(int EngineText)
+	Line 1215: 	int fnCheckFiregroup()
+	Line 1231: 	int fnClearChatBox(int mode = 0)
+	Line 1295: 	int fnModeSwitch(int mode)
+	Line 1378: 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0)
+	Line 1400: 	int fnPrintState()
+	Line 1411: 	int fnStateDump()
+	Line 1573: 	int fnGetTOD()
+	Line 1624: 	int fnMyName()
+	Line 1736: 	int fnSelectFiregroup(int fg)
+	Line 1774: 	int fnGetStationName(int dummy=0)
+	Line 1789: 	int fnDockingStatus(int dummy)
+	Line 1888: 	int fnFighterStatus(int dummy = 0)
+	Line 1911: 	int fnInputCMD(int dummy = 0)
+	Line 1997: 	int fnPANIC(int panic = 0)
+	Line 2020:	int findstr(alias string, alias substring)
+	Line 2045:	int strcpy(alias dst, alias src)
 	Line 2054:	int fnDEBUG()
 */
 
@@ -241,13 +237,13 @@
 	// FUNCTION: Determine current flight mode and set Slider Curves appropriately
 	
 	int fnGetFlightMode() {
-		int GUIMode;
+		int GUIMode = stfnProcessGuiFocus();					// Get current GUIMode;
 		int FlightMode = 1;										// Default = Normal flight
 		
 		if (fSupercruise) 					FlightMode = 2;		// Supercruise 
 
 		// Special cases...
-		GUIMode = stfnProcessGuiFocus();						// Get current GUIMode
+//		GUIMode = stfnProcessGuiFocus();						// Get current GUIMode
 		if (GUIMode == GUI_FSSMode)		 	FlightMode = 0;		// FSSMode = ON
 		if (GUIMode == GUI_SAAMode)			FlightMode = 2;		// DSSMode = ON
 		
@@ -384,8 +380,16 @@
 		}
 		
 		if (EnableVoice) {		// Move fnTTSExport code into here rather than having seperate function???
-		
-			fnTTSExport(text, Voice, volume);								// sends text string to external file for processing by TTSProcessor.ps1
+
+		if (DEBUG >= LOG) {
+			printf("!!	DEBUG:	fnTextToSpeech() - Calling fnTTSExport line 391\x0a");
+			printf("!!	DEBUG:	fnTextToSpeech() - text = %s\x0a", text);
+			printf("!!	DEBUG:	fnTextToSpeech() - VolumeOverride = %d\x0a", VolumeOverride);
+			printf("!!	DEBUG:	fnTextToSpeech() - Volume = %d\x0a", volume);
+			printf("!!	DEBUG:	fnTextToSpeech() - Voice = %s\x0a", Voice);
+		}
+
+		fnTTSExport(text, Voice, volume);									// sends text string to external file for processing by TTSProcessor.ps1
 			
 		}
 	}
@@ -450,8 +454,9 @@
 		int 	fp;
 		int 	buf;
 		int		myResult;
-		alias	clr = NUL;
 		int 	rate = VoiceRate;
+
+//		alias	clr = NUL;
 
 		if (TTSVoice == AltVoice) {
 			rate = AltVoiceRate;					// Slow down AltVoice
@@ -460,7 +465,12 @@
 		char	TTSExport;
 		Dim(&TTSExport, 256);
 		TTSExport[0] = 0;						// initialise char array 
-		
+
+		if (DEBUG >= LOG) {
+			printf("!!	DEBUG:	fnTTSExport() - TTSText length = %d\x0a", strlen(&TTSText));
+			printf("!!	DEBUG:	fnTTSExport() - TTSText = %s\x0a", &TTSText);
+		}
+
 		Dim(&TTSText, strlen(&TTSText)+1);
 		TTSText[strlen(&TTSText)] = 0;			// terminate string 
 					
@@ -490,11 +500,11 @@
 			fclose(fp);
 		}
 		else {
-			printf("!! ERROR: File open error TTSQueue file in fnTTSExport() line 540 !!!\x0a");		
+			printf("!! ERROR: File open error TTSQueue file in fnTTSExport() line 497 !!!\x0a");		
 		}
 		
 		if (myResult <= 0) {
-			printf("!! ERROR: File write error TTSQueue file in fnTTSExport() line 540 !!!\x0a");
+			printf("!! ERROR: File write error TTSQueue file in fnTTSExport() line 499 !!!\x0a");
 		}
 		else {
 			TTSSeq = TTSSeq + 1;
@@ -543,7 +553,7 @@
 		
 		int GameVersion;
 		
-		printf("\x0a!!!	GAME STARTED @ %s	!!!\x0a\x0a", fnGetTOD());
+		printf("\x0a!!!	GAME STARTED @	%s	!!!\x0a\x0a", fnGetTOD());
 		
 		GameLoaded = YES;
 		StartupLock = OFF;
@@ -554,13 +564,22 @@
 
 		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
 				
-		if (fDocked) 			InHangar = YES;										// TEST - Are we really InHangar though? Maybe check GUIMode? 
-		
+		if (fDocked) {
+			if (DEBUG >= LOG) printf("!!	DEBUG:	fnGameStarted() - InHangar set to YES\x0a");
+			InHangar = YES;															// TEST - Are we really InHangar though? Maybe check GUIMode? 
+		}
+		else {
+			if (DEBUG >= LOG) printf("!!	DEBUG:	fnGameStarted() - InHangar set to NO\x0a");
+			InHangar = NO;															// TEST - Are we really InHangar though? Maybe check GUIMode? 			
+		}
 		if (!ConnectionStatus) {
-			ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
+	//		ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
+			ActKey(KEYON+PULSE+ShowFramerate);										// ...turn on frame rate. Alternate="m_ShowGameStats()"			
 			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
-		
+
+		ActKey(KEYON+PULSE+LookOnOff);												// Turns off headtrack to start game
+
 		fnMyName();																	// Sets global CMDRName char array 
 		Dim(&VoiceTxt, strlen(&mymsg)+strlen(&CMDRName)+1); 						// Correctly dimeensions VoiceTxt char array +1 for termination
 		VoiceTxt[0] = 0;															// Initialise VoiceTxt
@@ -575,7 +594,7 @@
 			Sleep(2000);
 			fnVPOutput("This TARGET script does not support Legacy Horizons", 0, 1);
 			printf("\x0a!!	Contact the author if you need a TARGET Script to support this version\x0a");
-			printf("!!	ABORT called from fnGameStarted() line 581\x0a");
+			printf("!!	ABORT called from fnGameStarted() line 592\x0a");
 			fnSoundFX("wstop");
 			Abort();
 		}
@@ -965,7 +984,7 @@
 				if (x == DEPLOY) {
 					if (!fSRV) {
 						if (fLanded) {												// DEPLOY
-							printf("!!	DEBUG: Call m_DeploySRV from fnDeploySRV() line 992\x0a");
+							if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_DeploySRV line 981\x0a");
 							ActKey(KEYON+PULSE+m_DeploySRV);
 						}
 						else {
@@ -979,7 +998,7 @@
 				}
 				else {																// RECOVER and set PIPs to shields in case we're under fire 
 					if (fSRV & fSRVTurretRetracted) {
-						printf("!!	DEBUG: Call m_BoardShip from fnDeploySRV() line 1011\x0a");
+						if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_BoardShip line 995\x0a");
 						ActKey(KEYON+PULSE+m_BoardShip);							// Duration = 1395 + in Game animation
 						printf("==	SRV:			RECOVERED\x0a");
 						DeferCall(8000, &fnPIPMapper, SYS);							// PIPs to Shields ... is 8 seconds long enough (was 14)?
@@ -1018,11 +1037,11 @@
 				if (x == DEPLOY) {
 					if (fMainShip & !fSupercruise & !fLanded & !fDocked & !ActiveFighter) {						// DEPLOY
 						if (fNPCCrewActive) {
-							printf("!! DEBUG: Call m_DeployNPCFighter from fnDeployFighter() line 1035\x0a");
+							printf("!! DEBUG: Call m_DeployNPCFighter from fnDeployFighter() line 1034\x0a");
 							ActKey(KEYON+PULSE+m_DeployNPCFighter);												// Duration 2185
 						}
 						else {
-							printf("!! DEBUG: Call m_DeployFighter from fnDeployFighter() line 1039\x0a");
+							printf("!! DEBUG: Call m_DeployFighter from fnDeployFighter() line 1038\x0a");
 							ActKey(KEYON+PULSE+m_DeployFighter);												// Duration 2185
 						}
 					}
@@ -1098,12 +1117,15 @@
 
 
 	// FUNCTION: Refuel, Repair, Rearm, Enter/Exit Hangar or Disembark ship
-	// Parameter: x = 0 (EXIT), 1 (ENTER), 2 = Toggle AutoHangar setting, 3 = Disembark
+	// Parameter: x = 0 (EXIT Hangar), 1 (ENTER Hangar), 2 = Toggle AutoHangar, 3 = Disembark, 4 = Toggle AutoDisembark
 	
 	int fnHangarServices(int x) {
 		int fnName = "Hangar Services";
 		int reason = 0;
-		int VoiceTxt;
+		int VoiceTxt = "Voice text not set in hangar services function";
+		int GUIMode = stfnProcessGuiFocus();
+
+		if (DEBUG >= LOG) printf("!!	DEBUG: fnHangarServices() - input parameter = %d\x0a", x);
 		
 		if (GameLoaded) {
 			if (x == 2) {														// Toggle Usersetting 'AutoHangar'
@@ -1116,17 +1138,33 @@
 				}
 				return 0;
 			}
+			if (x == 4) {														// Toggle Usersetting 'AutoDisembark'
+				AutoDisembark = !AutoDisembark;
+				if (AutoDisembark) {
+					fnVPOutput("Auto disembark set");
+				}
+				else {
+					fnVPOutput("Auto disembark reset");
+				}
+				return 0;
+			}
 			if(fDocked) {
-				if(x == ENTER) {
+				if(x == 1) {													// Refuel, Rearm, Repair and Enter Hangar and Station Services 
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
-						if(!InHangar) {
+//						if(!InHangar) {											// Sitting on pad.  NOTE: 	testing if we even need "InHangar"
 							VoiceTxt = "Enter Hangar and Station Services";							
 							ActKey(KEYON+PULSE+m_EnterHangar);
+							if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to YES\x0a");
 							InHangar = YES;
-						}
+//						}
+//						else {
+//	DEBUG	+++++
+//							VoiceTxt = "Docked but in hangar flag is already set within hangar services function, line 1151";
+//	DEBUG	+++++
+//						}
 					}
 				}
-				else if(x == EXIT) {				
+				else if(x == 0) {												// Exit hangar and station services 			
 					fnName = "Launch Sequence";
 					if(GUIMode == GUI_StationSvcs) {
 						reason = "Exit Station services";
@@ -1134,24 +1172,39 @@
 					else {	
 						VoiceTxt = "Initiating launch sequence";
 						ActKey(KEYON+PULSE+m_Launch);
+						if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to NO\x0a");
 						InHangar = NO;
 					}
 				}
-				else if(x == 3) {
+				else if(x == 3) {												// Refuel, rearm, repair and disembark 
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
-						if(!InHangar) {					
+//						if(!InHangar) {					
 							VoiceTxt = "Disembarking ship";
 							ActKey(KEYON+PULSE+m_Disembark);
+							if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to YES\x0a");
 							InHangar = YES;
-						}
+//						}
+//						else {
+//	DEBUG	+++++
+//							VoiceTxt = "Docked but in hangar flag is already set within hangar services function, line 1176";
+//	DEBUG	+++++
+//						}
 					}
 				}
-				fnVPOutput(VoiceTxt);
+//				if (DEBUG >= LOG) {
+//					printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1178\x0a");
+//					printf("!!	DEBUG: fnHangarServices() - VoiceTxt = %s\x0a", VoiceTxt);
+//				}
 			}
 			else {
 				reason = "You are not docked at a station services facility";
 			}
 		}
+		if (DEBUG >= LOG) {
+			printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1193\x0a");
+			printf("!!	DEBUG: fnHangarServices() - VoiceTxt = %s\x0a", VoiceTxt);
+		}
+		fnVPOutput(VoiceTxt);
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
@@ -1162,16 +1215,31 @@
 
 	int fnIdleLock(int x) {
 		int fnName = "Idle Lock";
+		int reason = 0;
+		int GUIMode = stfnProcessGuiFocus();
 		
-		if (fMainShip) {
+		if (fMainShip & fDocked & (GUIMode != GUI_StationSvcs)) {
 			fnHangarServices(x);
 		}
 		else if (fSRV) {
 			ActKey(KEYON+PULSE+SRVHandbrake);		// Toggle SRV Handbrake
 		}
 		else {
-			fnNotValid(fnName);		
+			if (!fMainShip)	{
+				reason = "Not in mainship";
+			}
+			else if (!fDocked) {
+				reason = "Not docked";
+			}
+			else if (GUIMode == GUI_StationSvcs) {
+				reason = "Already in station services";
+			}
+			else {
+				reason = "undefined";
+			}
 		}
+		
+		if (reason != 0) fnNotValid(fnName, reason);		
 	}
 
 
@@ -1296,7 +1364,7 @@
 		int fnName = "Mode Switch";
 		int reason = 0;
 		
-		int GUIMode;
+//		int GUIMode;
 		int counter = 0;
 		
 		int oldLoadGameDetect = LoadGameDetect;
@@ -1325,14 +1393,14 @@
 			CargoScoopState = fCargoScoop;
 			SilentRunningState = fSilentRunning;
 			
-// DEBUG ++++++++++++++++++++++++++++++
-	//		if (DEBUG > 1) {																		// DEBUG = "LOG" or "VERBOSE"
-	//			printf("!! DEBUG: Menulog States\x0a");
-	//			printf("!! DEBUG: CargoScoop	= %d\x0a", CargoScoopState);
-	//			printf("!! DEBUG: SilentRunning	= %d\x0a", SilentRunningState);
-	//			printf("!! DEBUG: Reverse	= %\x0a", ReverseState);
-	//		}
-// DEBUG ++++++++++++++++++++++++++++++
+// DEBUG +++++ START
+			if (DEBUG >= LOG) {																		// DEBUG = "LOG" or "VERBOSE"
+				printf("!!	DEBUG: fnModeSwitch() - Menulog States\x0a");
+				printf("!!	DEBUG: fnModeSwitch() - CargoScoop	= %d\x0a", CargoScoopState);
+				printf("!!	DEBUG: fnModeSwitch() - SilentRunning	= %d\x0a", SilentRunningState);
+				printf("!!	DEBUG: fnModeSwitch() - Reverse	= %\x0a", ReverseState);
+			}
+// DEBUG +++++ END 
 					
 			if (mode == 0) {
 				fnVPOutput("Menu log to open selected.. please wait for game reload", 0, 1);			
@@ -1648,7 +1716,8 @@
 	}
 
 
-	//	FUNCTION:	Issue greeting each time we dock 
+	//	FUNCTION:	Issue greeting each time the ship docks
+	//	Parameter:	dummy - allows REXEC and DeferCall 
 	
 	int	fnGreetCMDR(int dummy = 0) {
 	
@@ -1656,79 +1725,51 @@
 		
 		alias part1 = "All hands announcement, Commander ";
 		alias part2 = " on board!";
-		
+
+		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Calling fnGetStationName line 1691\x0a");
 		fnGetStationName(0);
+		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Return from fnGetStationName line 1691\x0a");
+
+//	DEBUG	+++++
+		if (DEBUG >= LOG) {
+			if (strlen(&CMDRName) == 0) 	printf("!!	DEBUG:	fnGreetCMDR() - CMDRName is null (fnGreetCMDR)\x0a");
+			if (strlen(&StationName) == 0)	printf("!!	DEBUG:	fnGreetCMDR() - StationName is null (fnGreetCMDR)\x0a");
+		}
+//	DEBUG	+++++
 
 		Dim(&TTSMsg, (strlen(&part1)+strlen(&CMDRName)+strlen(&part2)+strlen(&StationName)+1));
 		TTSMsg[0] = 0;
 		
 		if (strcmp(&MyFC, &StationName) == 0) {
-			if (strcmp(&FCOwner, &CMDRName)==0) {										// Issue personalised greeting to owner when docked at their FC
+			if (strcmp(&FCOwner, &CMDRName) == 0) {										// Issue personalised greeting to owner when docked at their FC
 				sprintf(&TTSMsg, "%s%s%s", &part1, &CMDRName, &part2);					// no spaces between each %s 
 			}
 			else {																		// Otherwise issue a polite greeting to visitors
 				sprintf(&TTSMsg, "Welcome aboard %s, commander %s", &MyFCName, &CMDRName);
 			}
 		}
-		else {																			// Greet CMDR at station 
-			sprintf(&TTSMsg, "Welcome to %s commander %s", &StationName, &CMDRName);	// 
+		else {																			// Build CMDR greeting 
+			if (!fOnFoot) {																
+				sprintf(&TTSMsg, "Welcome to %s commander %s", &StationName, &CMDRName);
+			}
+			else {
+				sprintf(&TTSMsg, "Ship has arrived at %s", &StationName);
+			}
 		}
 		UseAltVoice = YES;
 		TTSMsg[strlen(&TTSMsg)] = NUL;
+
+//	DEBUG	+++++
+		if (DEBUG >= LOG) {
+			printf("!!	DEBUG:	fnGreetCMDR() - Calling fnTextToSpeech() line 1730\x0a");
+			printf("!!	DEBUG:	fnGreetCMDR() - TTSMsg = %s\x0a", &TTSMsg);
+		}
+//	DEBUG	+++++
+
 		fnTextToSpeech(&TTSMsg, 100);	
 	}
 
 	
-	// FUNCTION: 	Auto Pilot Terrain Following feature - UNDER DEVELOPMENT
-	// Parameters:	MinHeight	- Minimum altitude in meters we want to follow (sets MinHeight to 100 if not parsed
-	//				MaxHeight	- Max altitude in meters
-
-	// WARNING:		Using CHAIN inside a REXEC or AutoRepeat is forbidden!
-	
-	int fnTerrainFollow(int MinHeight = 100) {
-		int MaxHeight = MinHeight + 20;
-		int Altitude = stfnGetKeyValue("Altitude", INTEGER);
-
-// DEBUG		
-//		printf("DEBUG: Min %d, Max %d, ALT %d\x0a", MinHeight, MaxHeight, Altitude);
-// DEBUG
-		if (Altitude < (MinHeight + 15)) {
-			// ABORT
-			tgTerrainFollow(OFF);
-		}
-		// Stay between MinHeight and MaxHeight
-		if (Altitude <= (MinHeight-5)) {
-			fnLowAltitude();
-		}
-		if (Altitude < (MinHeight+6)) {
-			fnAscend();
-		}
-		if (Altitude >= MaxHeight) {
-			fnDescend();
-		}
-		// maybe track rise/fall to smooth pitch and up/down?
-	}
-
-	int fnLowAltitude() {
-		fnSoundFX("AltWarning");					// Warning horn (duration 1 second) - may need tweaking
-		printf("^^	Pull up	^^\x0a");
-		// Increase altitude using PitchUp and ThrustUp
-		ActKey(KEYON+m_PullUp);						// Duration = DelayTime(100)*3 + 1000 = 1300
-	}
-	
-	int fnAscend() {
-		printf("^^	Increase altitude	^^\x0a");
-		// Increase altitude using PitchUp and ThrustUp
-		ActKey(KEYON+m_Ascend);						// Duration = DelayTime(100)*3 + 1000 = 1300	
-	}
-	
-	int fnDescend() {
-		printf("--	Decrease Altitude	--\x0a");
-		// Decrease altitude using PitchDown and ThrustDown
-		ActKey(KEYON+m_Descend);					// Duration = DelayTime(100)*3 + 500 = 800
-	}
-
-
 	//	FUNCTION:	Select specific firegroup
 	//	PARAMETER:	fg = Firegroup to select
 	
@@ -1776,7 +1817,20 @@
 		Dim(&StationName, strlen(&keyvalue)+1);
 		StationName[0] = 0;
 		strcpy(&StationName, &keyvalue);
-		StationName[strlen(&StationName)] = 0;
+		
+//	DEBUG +++++ START
+		if (strlen(&StationName) == 0) {
+			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - StationName has returned as zero length string\x0a");
+		}
+		else {
+//	DEBUG +++++ END 
+		
+			StationName[strlen(&StationName)] = 0;
+			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - Station Name = %s\x0a", &StationName);
+		
+//	DEBUG +++++ START
+		}
+//	DEBUG +++++ END 
 		
 	}
 	
@@ -1808,11 +1862,11 @@
 			DockingSequence = TRUE;										// Required for AutoHangar and AutoDisembark
 			
 			// Gear, PIPs and Lights blocked if using a Docking Computer
-			if (AutoGearDOWN & !fLandingGear) {
+			if (AutoGearDOWN & !fLandingGear & fMainShip) {
 				ActKey(KEYON+PULSE+LandingGear);
 				printf("==	Landing Gear DEPLOYED\x0a");
 			}
-			if(AutoLandingLights & !fLights) {
+			if(AutoLandingLights & !fLights & fMainShip) {
 				ActKey(KEYON+PULSE+ShipLights);	
 				printf("==	Landing lights ON\x0a");
 			}
@@ -1904,22 +1958,33 @@
 	//	Function:	Process InputCMD and CMDParameter
 	//	Parameter:	dummy allows function to be called via REXEC() or DeferCall()
 	//	Called by:	stfnProcessMyJournalData() if either InputCMD or CMDParameter have changed 
-	//	Usage:		In game, enter "!set <InputCMD> <InputCMDParameter>" into a chat input field
+	//	Usage:		In game, open chat panel and enter "!set <InputCMD> <InputCMDParameter>"
+	//	NOTE:		PS-Journal powershell script intercepts these via Journal and writes entry into MyJournalData.json file
 	//				Set Debug ON first
+	//
 		
 	int fnInputCMD(int dummy = 0) {
 	
+		int vartype;
 		char c;
-		Dim(&c, 64);
+		Dim(&c, 128);
 		c[0] = 0;
 
 		char AnnounceCMD;
-		Dim(&AnnounceCMD, 64);
+		Dim(&AnnounceCMD, 128);
 		AnnounceCMD[0] = 0;
 		
-		if (DEBUG > 0) {																			// Only process InputCMD if DEBUG is set
-			if(strcmp(&InputCMD, "query") == 0) {													// Annouce current variable setting
-				sprintf(&c, "Setting %s is currently %d", &CMDParameter, ieval(&CMDParameter));
+		if (DEBUG > 0) {																				// Only process InputCMD if DEBUG is set
+			if(strcmp(&InputCMD, "query") == 0) {														// Annouce current variable setting (if boolean)
+				if (strcmp(&CMDParameter, "CMDRName") == 0) {
+					sprintf(&c, "Query Setting: %s is currently %s", &CMDParameter, &CMDRName);
+				}
+				else if (strcmp(&CMDParameter, "StationName") == 0) {
+					sprintf(&c, "Query Setting: %s is currently %s", &CMDParameter, &StationName);
+				}
+				else {
+					sprintf(&c, "Query Setting: %s is currently %d", &CMDParameter, ieval(&CMDParameter));
+				}
 				c[strlen(&c)] = 0;																	// terminate string 
 				fnVPOutput(&c, 0, 1);
 			}
@@ -1970,7 +2035,7 @@
 			}
 			else {
 				printf("\x0a");
-				printf("!! DEBUG:	Game Shutdown - Called from ED_StateTracker.tmh Line 245\x0a");				
+				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 292\x0a");				
 			}
 		}
 		fnSoundFX("wstop");
