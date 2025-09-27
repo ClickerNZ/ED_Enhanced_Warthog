@@ -296,7 +296,7 @@
 			MapKeyUMD(&MyThrottle, SC,
 				PULSE+ShowConnectionStatus,																	// U - Display Bandwidth. Alt = "m_ShowGameStats", or "ShowFrameRate"
 				PULSE+ResetHeadOrientation,																	// M - default - reset Headlook centre
-				EXEC("fnTextToSpeech(\"Not mapped\");")														// D - 
+				PULSE+ShowFramerate																			// D - Display GPU frame rate. Alt = "m_ShowGameStats", or "ShowConnectionStatus"
 				);
 		}	
 	//	(Left Throttle Button)	// Headlook On/Off / External Camera
@@ -375,7 +375,10 @@
 			MapKey(&MyThrottle, MSL, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSR, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 		//	MapKey(&MyThrottle, MSP, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
-			MapKey(&MyThrottle, MSP, EXEC("fnPANIC();"));						// panic switch. Aborts script.
+			MapKeyIO(&MyThrottle, MSP, 
+				EXEC("fnPANIC();"),												// I - panic switch. Aborts script.
+				EXEC("fnTextToSpeech(\"Use S3 + MSP to panic\");")				// O - 
+				);
 			}
 		
 		
@@ -411,7 +414,6 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
-//				SEQ(PULSE+m_WingBeaconTeam, PULSE+m_WingBeaconOff),											// U - NAV Beacon WING/OFF
 				EXEC("tgWingBeacon(0);"),																	// U - NAV Beacon WING/OFF
 //				EXEC("tgTerrainFollow(ON);"),																// M - Terrain following ON
 				EXEC("tgAutoPilot(ON);"),																	// M - Auto Pilot ON
@@ -424,7 +426,6 @@
 			MapKey(&MyThrottle, BSM, 0);																	// <not currently used>
 			
 			MapKeyUMD(&MyThrottle, BSB, 
-//				PULSE+m_ReportCrimesToggle,																	// U - Report crimes against me ON/OFF
 				EXEC("tgReportCrimes(0);"),																	// U - Report crimes against me ON/OFF
 				EXEC("fnTextToSpeech(\"Not mapped\");"),													// M -
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
@@ -528,12 +529,12 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, APENG,
-				0,																							// IU - 
+				EXEC("fnHangarServices(4);"),																// IU - Toggle AutoDisembark
 				EXEC("fnHangarServices(2);"),																// OU - Toggle AutoHangar
 				EXEC("fnHangarServices(1);"),																// IM - Refuel, Rearm, Repair, Hangar Services
 				EXEC("fnRequestDock();"),																	// OM - Request Docking
 				0,																							// ID -
-				EXEC("fnHangarServices(3);")																// OD -  Refuel, Rearm, Repair, Disembark
+				EXEC("fnHangarServices(3);")																// OD - Refuel, Rearm, Repair, Disembark
 				);
 		}
 
@@ -942,9 +943,9 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, SC,
-				EXEC("fnVPOutput(\"Show connection status and FPS\", 0, 1);"),
+				EXEC("fnVPOutput(\"Show connection status\", 0, 1);"),
 				EXEC("fnVPOutput(\"Re-centre Headlook\", 0, 1);"),
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")
+				EXEC("fnVPOutput(\"Show Frame rate in FPS\", 0, 1);")
 				);
 		}
 	
@@ -1025,7 +1026,10 @@
 			MapKey(&MyThrottle, MSL, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
 			MapKey(&MyThrottle, MSR, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));		
 		//	MapKey(&MyThrottle, MSP, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
-			MapKey(&MyThrottle, MSP, EXEC("fnPANIC();"));							// panic switch 
+			MapKeyIO(&MyThrottle, MSP, 
+				EXEC("fnPANIC();"),									// I - panic switch 
+				EXEC("fnVPOutput(\"Use S3 + MSP to panic\");")		// O - 
+				);
 
 		}
 		
@@ -1170,12 +1174,12 @@
 		}
 		else {
 			MapKeyIOUMD(&MyThrottle, APENG,
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// IU - 
+				EXEC("fnVPOutput(\"Toggle auto disembark setting\", 0, 1);"),										// IU - 
 				EXEC("fnVPOutput(\"Toggle auto hangar user setting\", 0, 1);"),										// OU -
 				EXEC("fnVPOutput(\"Enter Hangar services\", 0, 1);"),												// IM - 
 				EXEC("fnVPOutput(\"Request docking permission\", 0, 1);"),											// OM -
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),															// ID - 
-				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")															// OD - 
+				EXEC("fnVPOutput(\"Disembark from ship\", 0, 1);")													// OD - 
 				);
 		}
 	
