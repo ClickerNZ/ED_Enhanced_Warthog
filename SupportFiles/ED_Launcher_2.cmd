@@ -46,7 +46,7 @@ echo Start TTSMonitor powershell script...
 start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\TTSMonitor.ps1"
 echo.
 
-timeout /t 17 /nobreak >nul
+timeout /t 20 /nobreak >nul
 
 rem DO THIS LAST
 
