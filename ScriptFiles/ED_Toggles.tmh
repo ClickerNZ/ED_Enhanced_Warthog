@@ -23,28 +23,26 @@
 
 /*
 	Index:		FUNCTION
-	Line  58: 	int tgTxt2Speech() {
-	Line  74: 	int tgEnhancedFAOFF(int dummy = 0) {
-	Line 120: 	int tgTriggerMode(int x) {
-	Line 168: 	int tgLights(int x) {
-	Line 229: 	int tgSilentRunning(int x) {
-	Line 286: 	int tgCargoScoop(int x) {
-	Line 348: 	int tgLandingGear(int Speedbrake) {
-	Line 408: 	int tgReverseThrust(int EnableSpeedBrake) {				////////////// NEEDS FURTHER TESTING
-	Line 481: 	int tgBoost() {
-	Line 508: 	int tgHardpoints(int dummy = 0) {
-	Line 548: 	int tgHUDMode(int delayannounce=0) {
-	Line 587: 	int tgFSSMode() {
-	Line 614: 	int tgPlanetView() {
-	Line 647: 	int tgWarpDrive(int JumpType) {
-	Line 759: 	int tgExtCamera() {
-	Line 779: 	int tgXAxis(int param = RESET) {
-	Line 805: 	int tgTerrainFollow(int Engage = ON) {
-	Line 840: 	int tgAutoPilot(int dummy = 0) {
-	Line 858: 	int tgGALMap (int action) {
-	Line 878: 	int tgSYSMap (int action) {
-	Line 902: 	int tgWingBeacon(int dummy = 0) {
-	Line 924: 	int tgReportCrimes(int dummy = 0) {
+	Line  58: 	int tgTxt2Speech()
+	Line  74: 	int tgEnhancedFAOFF(int dummy = 0)
+	Line 120: 	int tgTriggerMode(int x)
+	Line 168: 	int tgLights(int x)
+	Line 229: 	int tgSilentRunning(int x)
+	Line 286: 	int tgCargoScoop(int x)
+	Line 348: 	int tgLandingGear(int Speedbrake)
+	Line 408: 	int tgReverseThrust(int EnableSpeedBrake)				////////////// NEEDS FURTHER TESTING
+	Line 481: 	int tgBoost()
+	Line 508: 	int tgHardpoints(int dummy = 0)
+	Line 548: 	int tgHUDMode(int delayannounce=0)
+	Line 587: 	int tgFSSMode()
+	Line 614: 	int tgPlanetView()
+	Line 647: 	int tgWarpDrive(int JumpType)
+	Line 759: 	int tgExtCamera()
+	Line 779: 	int tgXAxis(int param = RESET)
+	Line 858: 	int tgGALMap (int action)
+	Line 878: 	int tgSYSMap (int action)
+	Line 902: 	int tgWingBeacon(int dummy = 0)
+	Line 924: 	int tgReportCrimes(int dummy = 0)
 */
 	
 	// START
@@ -551,7 +549,7 @@
 			}
 			if(fSRV | fMainShip) {
 				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
-				printf("++	DEBUG: DeployHardpoints in tgHardpoints() Line 557\x0a");
+				printf("++	DEBUG: tgHardpoints() - DeployHardpoints on Line 551\x0a");
 			}
 		}
 		else {
@@ -815,38 +813,6 @@
 	}
 
 	
-	// TOGGLE:		Toggle Terrain Following feature
-	// Parameter:	Engage - No parameter parsed = toggle TF
-	//				Allow other conditions to DISENGAGE 
-	
-	int tgTerrainFollow(int Engage = ON) {
-		int SetAltitude;
-		char myAltitude;
-		Dim(&myAltitude, 40);
-		myAltitude[0] = 0;
-		
-		if (Engage == ON) {		
-			TerrainFollow = ON;												// Flip the flag each time I+U+APENG is pressed
-			SetAltitude = stfnGetKeyValue("Altitude", INTEGER);				// Use current altitude to set MinHeight
-			printf("!! DEBUG: TF SetAltitude %d meters\x0a", SetAltitude);
-		}
-		else {
-			TerrainFollow = OFF;
-		}
-		if (TerrainFollow & fMainShip) {
-			if (fAltFromAvgRad == 0) {										// Must be below orbital cruise
-				AutoRepeat(hTerrain, 1500, &fnTerrainFollow, SetAltitude);	// 
-				sprintf(&myAltitude, "T F %d meters", SetAltitude);
-				fnVPOutput(&myAltitude);
-			}
-		}
-		else {
-			StopAutoRepeat(hTerrain);
-			fnVPOutput("T F Disengaged");
-		}
-	}
-
-
 	// TOGGLE:		Toggle Galaxy Map ON/OFF
 	// Parameter:	Action - ON or OFF
 
