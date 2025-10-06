@@ -5,7 +5,7 @@
 	//    Contact:  https://forums.frontier.co.uk/members/clicker.19039/    //
 	//----------------------------------------------------------------------//
 
-	// This file:	ED_Enhanced_Warthog.tmc 		v510					// New Minor Version
+	// This file:	ED_Enhanced_Warthog.tmc 		v510.1					// New Minor Version
 	// Supports:	Elite Dangerous 				v4.2.1.1				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.127_rev1		// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
@@ -81,7 +81,7 @@
 
 // Excluded from github - remove prior to publishing
 //	DEBUG	+++++
-//	include "ED_Development.tmh"
+	include "ED_Development.tmh"
 //	DEBUG	+++++
 		
 	//--------------//
@@ -158,7 +158,7 @@
 
 // Excluded from github - remove prior to publishing
 //	DEBUG	+++++
-//		initDevMacros();														// Initialise any development macros (refer ED_Development.tmh)
+		initDevMacros();														// Initialise any development macros (refer ED_Development.tmh)
 //	DEBUG	+++++
 		
 	// -------------------------- //
