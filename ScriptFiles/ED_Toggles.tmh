@@ -5,46 +5,6 @@
 
 	// This file: ED_Toggles.tmh ... supports Elite Dangerous (Vanguards)
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
-
-/*
-	Index:		FUNCTION
-	Line  58: 	int tgTxt2Speech()
-	Line  74: 	int tgEnhancedFAOFF(int dummy = 0)
-	Line 120: 	int tgTriggerMode(int x)
-	Line 168: 	int tgLights(int x)
-	Line 229: 	int tgSilentRunning(int x)
-	Line 286: 	int tgCargoScoop(int x)
-	Line 348: 	int tgLandingGear(int Speedbrake)
-	Line 408: 	int tgReverseThrust(int EnableSpeedBrake)				////////////// NEEDS FURTHER TESTING
-	Line 481: 	int tgBoost()
-	Line 508: 	int tgHardpoints(int dummy = 0)
-	Line 548: 	int tgHUDMode(int delayannounce=0)
-	Line 587: 	int tgFSSMode()
-	Line 614: 	int tgPlanetView()
-	Line 647: 	int tgWarpDrive(int JumpType)
-	Line 759: 	int tgExtCamera()
-	Line 779: 	int tgXAxis(int param = RESET)
-	Line 858: 	int tgGALMap (int action)
-	Line 878: 	int tgSYSMap (int action)
-	Line 902: 	int tgWingBeacon(int dummy = 0)
-	Line 924: 	int tgReportCrimes(int dummy = 0)
-*/
-	
 	// START
 
 	//---------//
@@ -549,7 +509,6 @@
 			}
 			if(fSRV | fMainShip) {
 				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
-				printf("++	DEBUG: tgHardpoints() - DeployHardpoints on Line 551\x0a");
 			}
 		}
 		else {

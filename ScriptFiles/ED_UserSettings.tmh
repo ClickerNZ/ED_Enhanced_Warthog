@@ -5,22 +5,6 @@
 
 	// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Vanguards)
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
-
 	// START
 
 	//-----------------------------//									
@@ -28,8 +12,8 @@
 	//-----------------------------//
 
 	// Refer 'status.json' section
-	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
-	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
+	alias	StatusFile			= "d:\\Users\\<windows username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
+	alias	MaxStatusFile		= "d:\\Users\\<windows username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
 
 	// Refer 'MyStatusFile' section																								// If you unzipped the package to 'c:\Thrustmaster\ED_TargetScript_Warthog\' as suggested...
 	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";	// ... this won't need changing
@@ -52,13 +36,13 @@
 	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
 	
 	define	CMDRNameOverride	DISABLED  
-	alias	MyName 				= "Clicker";
+	alias	MyName 				= "<your commander name>";
 
-	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one
-	alias	MyFCName			= "Clicker's Folly";	// Replace with the name you've given to your Fleetcarrier
-	alias	FCOwner				= "Clicker";			// Commander's name who owns the 'MyFC'. Script will assume this CMDR owns this FC.
+	alias	MyFC				= "ABC-123";			// Replace "ABC-123" with your Carrier ID if you have one
+	alias	MyFCName			= "MyCarrierName";		// Replace with the name you've given to your Fleetcarrier
+	alias	FCOwner				= "CMDR <Name>";		// Commander's name who owns 'MyFC'. Script will assume this CMDR owns this FC.
 														// This caters for players with multiple accounts (but only one fleetcarrier)
-	//----------------//									
+	//----------------//
 	// MapKey Profile //
 	//----------------//
 
@@ -143,8 +127,8 @@
 															
 	int		VoiceVolume			= 100;					// Default Volume set at 100% Settable via fnVoiceVolume()
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
-	int		VoiceRate			= 1;					// Slightly faster than default. You can set this using DEBUG + InputCMD
-	int		AltVoiceRate		= 1;					// Default. You can set this using DEBUG + InputCMD
+	int		VoiceRate			= 1;					// Slightly faster than default.
+	int		AltVoiceRate		= 1;					// Default.
 
 	// Run 'voice.exe -l" (lower case L) in a command line to see which voices are installed
 	// 'voice.exe' is located under the SupportFiles folder

@@ -78,11 +78,6 @@
 	include "ED_Functions.tmh"
 	include "ED_StateTracker.tmh"
 	include "ED_Toggles.tmh"
-
-	// Excluded from github - remove prior to publishing
-//	DEBUG	+++++
-	include "ED_Development.tmh"
-//	DEBUG	+++++
 		
 	//--------------//
 	// Main Program //
@@ -155,11 +150,6 @@
 
 		printf("\x0a\++	Initialise Macro Chains...\x0a");
 		initMacroChains();														// Initialise Custom Macros (See ED_Macros.tmh)
-
-		// Excluded from github - remove prior to publishing
-//	DEBUG	+++++
-		initDevMacros();														// Initialise any development macros (refer ED_Development.tmh)
-//	DEBUG	+++++
 		
 	// -------------------------- //
 	// Initialise Flight controls //
@@ -186,7 +176,6 @@
 		
 		stfnStartCheck();														// Check for vital files and game start. Bootstrap script execution.
 		
-		printf("\x0a++	DEBUG MODE = %s\x0a\x0a", DEBUGMODE);
 	}	
 	
 	// end of int main()	

@@ -8,34 +8,6 @@
 	// Contains MapKey Statements for all button and switch actions
 	// Contains MapKey Statements to announce via TextToSpeech and printf to console for each button or switch action (training mode)
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
-
-	/*
-	Index:		FUNCTION
-	Line   47: 	int LiveKeyMap()
-	Line   52:		Joystick Triggers
-	Line  285:		Throttle Lever Switches
-	Line  443:		Throttle Base Buttons
-	Line  712: 	int TrainingKeyMap()
-	Line  717:		Joystick Triggers
-	Line  932:		Throttle Lever Switches
-	Line 1087:		Throttle Base Buttons 
-	*/
-
 	// START
 
 	// -------------------------- //
@@ -89,7 +61,6 @@
 			MapKeyUMD(&MyJoystick, S1,
 				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints();"),																	// M - Deploy/Retract Hard-points
-//				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
 				EXEC("tgHUDMode(0);")																		// D - Toggle - AutoHUD
 				);
 		}
@@ -374,7 +345,6 @@
 			MapKey(&MyThrottle, MSD, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSL, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKey(&MyThrottle, MSR, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
-		//	MapKey(&MyThrottle, MSP, EXEC("fnTextToSpeech(\"Not mapped\");"));	// <not mapped>
 			MapKeyIO(&MyThrottle, MSP, 
 				EXEC("fnPANIC();"),												// I - panic switch. Aborts script.
 				EXEC("fnTextToSpeech(\"Use S3 + MSP to panic\");")				// O - 
@@ -415,14 +385,10 @@
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
 				EXEC("tgWingBeacon(0);"),																	// U - NAV Beacon WING/OFF
-//				EXEC("tgTerrainFollow(ON);"),																// M - Terrain following ON
-				EXEC("tgAutoPilot(ON);"),																	// M - Auto Pilot ON
+				0,																							// M - 
 				EXEC("tgTxt2Speech();")																		// D - Toggle EnableVoice (TextToSpeech)
 				);
-			
-//			MapKeyR(&MyThrottle, BSF, EXEC("tgTerrainFollow(OFF);"));										// RELEASE				// Terrain following OFF
-			MapKeyR(&MyThrottle, BSF, EXEC("tgAutoPilot(OFF);"));											// RELEASE				// Auto Pilot OFF
-			
+
 			MapKey(&MyThrottle, BSM, 0);																	// <not currently used>
 			
 			MapKeyUMD(&MyThrottle, BSB, 
@@ -667,7 +633,7 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,	
-				EXEC("fnDEBUG(0);"),																		// U - Test function switch. Runs fnDEBUG() to test code and calls etc.
+				0,																							// U - 
 				PULSE+Screenshot,																			// M - Screen Capture
 				EXEC("fnTextToSpeech(\"Not mapped\");")														// D -
 				);	
@@ -974,9 +940,7 @@
 		else {
 			MapKey(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Forward and sound reminder every 3 seconds\", 0, 1);"));
 			MapKeyR(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\", 0, 1);"));
-			
-	//		MapKey(&MyThrottle, PSM, EXEC("fnVPOutput(\"U M D Layer Middle\", 0, 1);"));
-			
+						
 			MapKey(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Back and sound reminder every 3 seconds\", 0, 1);"));
 			MapKeyR(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\", 0, 1);"));
 		}
@@ -1025,7 +989,6 @@
 			MapKey(&MyThrottle, MSD, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
 			MapKey(&MyThrottle, MSL, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
 			MapKey(&MyThrottle, MSR, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));		
-		//	MapKey(&MyThrottle, MSP, EXEC("fnVPOutput(\"Not mapped\", 0, 1);"));
 			MapKeyIO(&MyThrottle, MSP, 
 				EXEC("fnPANIC();"),									// I - panic switch 
 				EXEC("fnVPOutput(\"Use S3 + MSP to panic\");")		// O - 
@@ -1064,12 +1027,9 @@
 		else {
 			MapKeyUMD(&MyThrottle, BSF, 
 				EXEC("fnVPOutput(\"Toggle Wing Beacon between wing and off\", 0, 1);"),							// U -
-//				EXEC("fnVPOutput(\"Terrain following ON\", 0, 1);"),											// M -
-				EXEC("fnVPOutput(\"Auto pilot ON\", 0, 1);"),													// M -
+				EXEC("fnVPOutput(\"Not mapped\", 0, 1);"),														// M -
 				EXEC("fnVPOutput(\"Toggle Text to speech function off and on\", 0, 1);")						// D -
 				);
-//			MapKeyR(&MyThrottle, BSF, EXEC("fnVPOutput(\"Terrain following OFF\", 0, 1);"));					// RETURN 
-			MapKeyR(&MyThrottle, BSF, EXEC("fnVPOutput(\"Auto Pilot OFF\", 0, 1);"));							// RETURN 
 						
 			MapKeyUMD(&MyThrottle, BSB, 
 				EXEC("fnVPOutput(\"Toggle report crimes against me on and off\", 0, 1);"),						// U -
@@ -1288,7 +1248,6 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnVPOutput(\"Print status page to Con-sole\", 0, 1);"),
 				EXEC("fnVPOutput(\"Reset status LEDs\", 0, 1);"),
-		//		EXEC("fnVPOutput(\"Save my status file\", 0, 1);")
 				EXEC("stfnMyStates(SAVE);")									// use this when manually updating states to file and don't want to run/exit the game
 				);
 		}
@@ -1304,7 +1263,7 @@
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
 				EXEC("fnVPOutput(\"Function test switch\", 0, 1);"),
-	//			EXEC("fnDEBUG(0);"),
+				0,
 				EXEC("fnVPOutput(\"Take screen shot\", 0, 1);"),
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")
 				);	

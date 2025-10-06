@@ -5,70 +5,7 @@
 
 	// This file: ED_Functions.tmh ... supports Elite Dangerous (Vanguards)
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
-
-/*
-	Index:		FUNCTION
-	Line   85: 	int fnNotValid(int fnName, int reason=0)
-	Line  103: 	int fnStartupMapKeyMode()
-	Line  134: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE)
-	Line  211: 	int fnSetSliderCurve(int x)
-	Line  244: 	int fnGetFlightMode()
-	Line  262: 	int fnLEDBrightness(int x = NOCHANGE)
-	Line  282: 	int fnFlashLED(int x)	
-	Line  299: 	int fnSetLEDs(int dummy=NUL)
-	Line  332: 	int fnFlashStart()
-	Line  371: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice)
-	Line  398: 	int fnVoiceVolume(int x)
-	Line  449: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 )
-	Line  520: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1)
-	Line  537: 	int fnGameStarted(int dummy = 0)
-	Line  623: 	int fnPIPMode(int x)
-	Line  674: 	int fnPIPManager(int PwrPriority)
-	Line  711: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0)
-	Line  751: 	int fnAdvFireControl(int x)
-	Line  832: 	int fnAdvancedSCB(int x = 0)
-	Line  890: 	int fnHeatsink(int param = 0)
-	Line  929: 	int fnChaff(int dummy = 0)
-	Line  957: 	int fnDeploySRV(int x)
-	Line 1009: 	int fnDeployFighter(int x)
-	Line 1062: 	int fnDRShip()
-	Line 1080: 	int fnRequestDock()
-	Line 1104: 	int fnHangarServices(int x)
-	Line 1164: 	int fnIdleLock(int x)
-	Line 1184: 	int fnCheckFSDCharge(int EngineText)
-	Line 1215: 	int fnCheckFiregroup()
-	Line 1231: 	int fnClearChatBox(int mode = 0)
-	Line 1295: 	int fnModeSwitch(int mode)
-	Line 1378: 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0)
-	Line 1400: 	int fnPrintState()
-	Line 1411: 	int fnStateDump()
-	Line 1573: 	int fnGetTOD()
-	Line 1624: 	int fnMyName()
-	Line 1736: 	int fnSelectFiregroup(int fg)
-	Line 1774: 	int fnGetStationName(int dummy=0)
-	Line 1789: 	int fnDockingStatus(int dummy)
-	Line 1888: 	int fnFighterStatus(int dummy = 0)
-	Line 1911: 	int fnInputCMD(int dummy = 0)
-	Line 1997: 	int fnPANIC(int panic = 0)
-	Line 2020:	int findstr(alias string, alias substring)
-	Line 2045:	int strcpy(alias dst, alias src)
-	Line 2054:	int fnDEBUG()
-*/
+	// START
 
 	//------------------//
 	// CUSTOM FUNCTIONS //
@@ -213,14 +150,12 @@
 			SliderProfile = "FSS Mode";
 		}
 		if (x == 1)	{													// Normal flight
-	//		SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);
 			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Normal Flight";
 			
 		}
 		if (x == 2)	{													// Supercruise
-	//		SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);
 			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Supercruise";
@@ -243,7 +178,6 @@
 		if (fSupercruise) 					FlightMode = 2;		// Supercruise 
 
 		// Special cases...
-//		GUIMode = stfnProcessGuiFocus();						// Get current GUIMode
 		if (GUIMode == GUI_FSSMode)		 	FlightMode = 0;		// FSSMode = ON
 		if (GUIMode == GUI_SAAMode)			FlightMode = 2;		// DSSMode = ON
 		
@@ -381,16 +315,7 @@
 		
 		if (EnableVoice) {		// Move fnTTSExport code into here rather than having seperate function???
 
-		if (DEBUG >= LOG) {
-			printf("!!	DEBUG:	fnTextToSpeech() - Calling fnTTSExport line 391\x0a");
-			printf("!!	DEBUG:	fnTextToSpeech() - text = %s\x0a", text);
-			printf("!!	DEBUG:	fnTextToSpeech() - VolumeOverride = %d\x0a", VolumeOverride);
-			printf("!!	DEBUG:	fnTextToSpeech() - Volume = %d\x0a", volume);
-			printf("!!	DEBUG:	fnTextToSpeech() - Voice = %s\x0a", Voice);
-		}
-
-		fnTTSExport(text, Voice, volume);									// sends text string to external file for processing by TTSProcessor.ps1
-			
+		fnTTSExport(text, Voice, volume);									// sends text string to external file for processing by TTSProcessor.ps1			
 		}
 	}
 
@@ -456,8 +381,6 @@
 		int		myResult;
 		int 	rate = VoiceRate;
 
-//		alias	clr = NUL;
-
 		if (TTSVoice == AltVoice) {
 			rate = AltVoiceRate;					// Slow down AltVoice
 		}
@@ -465,11 +388,6 @@
 		char	TTSExport;
 		Dim(&TTSExport, 256);
 		TTSExport[0] = 0;						// initialise char array 
-
-		if (DEBUG >= LOG) {
-			printf("!!	DEBUG:	fnTTSExport() - TTSText length = %d\x0a", strlen(&TTSText));
-			printf("!!	DEBUG:	fnTTSExport() - TTSText = %s\x0a", &TTSText);
-		}
 
 		Dim(&TTSText, strlen(&TTSText)+1);
 		TTSText[strlen(&TTSText)] = 0;			// terminate string 
@@ -565,15 +483,12 @@
 		fnFlashStart();																// Flash LEDs on Throttle Base to alert user game has started
 				
 		if (fDocked) {
-			if (DEBUG >= LOG) printf("!!	DEBUG:	fnGameStarted() - InHangar set to YES\x0a");
-			InHangar = YES;															// TEST - Are we really InHangar though? Maybe check GUIMode? 
+			//
 		}
 		else {
-			if (DEBUG >= LOG) printf("!!	DEBUG:	fnGameStarted() - InHangar set to NO\x0a");
-			InHangar = NO;															// TEST - Are we really InHangar though? Maybe check GUIMode? 			
+			//
 		}
 		if (!ConnectionStatus) {
-	//		ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
 			ActKey(KEYON+PULSE+ShowFramerate);										// ...turn on frame rate. Alternate="m_ShowGameStats()"			
 			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
@@ -984,7 +899,6 @@
 				if (x == DEPLOY) {
 					if (!fSRV) {
 						if (fLanded) {												// DEPLOY
-							if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_DeploySRV line 981\x0a");
 							ActKey(KEYON+PULSE+m_DeploySRV);
 						}
 						else {
@@ -998,7 +912,6 @@
 				}
 				else {																// RECOVER and set PIPs to shields in case we're under fire 
 					if (fSRV & fSRVTurretRetracted) {
-						if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_BoardShip line 995\x0a");
 						ActKey(KEYON+PULSE+m_BoardShip);							// Duration = 1395 + in Game animation
 						printf("==	SRV:			RECOVERED\x0a");
 						DeferCall(8000, &fnPIPMapper, SYS);							// PIPs to Shields ... is 8 seconds long enough (was 14)?
@@ -1037,11 +950,9 @@
 				if (x == DEPLOY) {
 					if (fMainShip & !fSupercruise & !fLanded & !fDocked & !ActiveFighter) {						// DEPLOY
 						if (fNPCCrewActive) {
-							printf("!! DEBUG: Call m_DeployNPCFighter from fnDeployFighter() line 1034\x0a");
 							ActKey(KEYON+PULSE+m_DeployNPCFighter);												// Duration 2185
 						}
 						else {
-							printf("!! DEBUG: Call m_DeployFighter from fnDeployFighter() line 1038\x0a");
 							ActKey(KEYON+PULSE+m_DeployFighter);												// Duration 2185
 						}
 					}
@@ -1125,8 +1036,6 @@
 		int VoiceTxt = "Voice text not set in hangar services function";
 		int GUIMode = stfnProcessGuiFocus();
 
-		if (DEBUG >= LOG) printf("!!	DEBUG: fnHangarServices() - input parameter = %d\x0a", x);
-		
 		if (GameLoaded) {
 			if (x == 2) {														// Toggle Usersetting 'AutoHangar'
 				AutoHangar = !AutoHangar;
@@ -1151,17 +1060,8 @@
 			if(fDocked) {
 				if(x == 1) {													// Refuel, Rearm, Repair and Enter Hangar and Station Services 
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
-//						if(!InHangar) {											// Sitting on pad.  NOTE: 	testing if we even need "InHangar"
-							VoiceTxt = "Enter Hangar and Station Services";							
-							ActKey(KEYON+PULSE+m_EnterHangar);
-							if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to YES\x0a");
-							InHangar = YES;
-//						}
-//						else {
-//	DEBUG	+++++
-//							VoiceTxt = "Docked but in hangar flag is already set within hangar services function, line 1151";
-//	DEBUG	+++++
-//						}
+						VoiceTxt = "Enter Hangar and Station Services";							
+						ActKey(KEYON+PULSE+m_EnterHangar);
 					}
 				}
 				else if(x == 0) {												// Exit hangar and station services 			
@@ -1172,37 +1072,18 @@
 					else {	
 						VoiceTxt = "Initiating launch sequence";
 						ActKey(KEYON+PULSE+m_Launch);
-						if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to NO\x0a");
-						InHangar = NO;
 					}
 				}
 				else if(x == 3) {												// Refuel, rearm, repair and disembark 
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
-//						if(!InHangar) {					
-							VoiceTxt = "Disembarking ship";
-							ActKey(KEYON+PULSE+m_Disembark);
-							if (DEBUG >= LOG) printf("!!!	DEBUG: fnHangarServices() - InHangar set to YES\x0a");
-							InHangar = YES;
-//						}
-//						else {
-//	DEBUG	+++++
-//							VoiceTxt = "Docked but in hangar flag is already set within hangar services function, line 1176";
-//	DEBUG	+++++
-//						}
+						VoiceTxt = "Disembarking ship";
+						ActKey(KEYON+PULSE+m_Disembark);
 					}
 				}
-//				if (DEBUG >= LOG) {
-//					printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1178\x0a");
-//					printf("!!	DEBUG: fnHangarServices() - VoiceTxt = %s\x0a", VoiceTxt);
-//				}
 			}
 			else {
 				reason = "You are not docked at a station services facility";
 			}
-		}
-		if (DEBUG >= LOG) {
-			printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1193\x0a");
-			printf("!!	DEBUG: fnHangarServices() - VoiceTxt = %s\x0a", VoiceTxt);
 		}
 		fnVPOutput(VoiceTxt);
 		if (reason != 0) fnNotValid(fnName, reason);
@@ -1364,7 +1245,6 @@
 		int fnName = "Mode Switch";
 		int reason = 0;
 		
-//		int GUIMode;
 		int counter = 0;
 		
 		int oldLoadGameDetect = LoadGameDetect;
@@ -1392,16 +1272,7 @@
 			ModeSwitch = 1;
 			CargoScoopState = fCargoScoop;
 			SilentRunningState = fSilentRunning;
-			
-// DEBUG +++++ START
-			if (DEBUG >= LOG) {																		// DEBUG = "LOG" or "VERBOSE"
-				printf("!!	DEBUG: fnModeSwitch() - Menulog States\x0a");
-				printf("!!	DEBUG: fnModeSwitch() - CargoScoop	= %d\x0a", CargoScoopState);
-				printf("!!	DEBUG: fnModeSwitch() - SilentRunning	= %d\x0a", SilentRunningState);
-				printf("!!	DEBUG: fnModeSwitch() - Reverse	= %\x0a", ReverseState);
-			}
-// DEBUG +++++ END 
-					
+								
 			if (mode == 0) {
 				fnVPOutput("Menu log to open selected.. please wait for game reload", 0, 1);			
 				ActKey(KEYON+PULSE+m_FastModeSwitch0);												// Selects OPEN mode
@@ -1726,16 +1597,7 @@
 		alias part1 = "All hands announcement, Commander ";
 		alias part2 = " on board!";
 
-		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Calling fnGetStationName line 1691\x0a");
 		fnGetStationName(0);
-		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Return from fnGetStationName line 1691\x0a");
-
-//	DEBUG	+++++
-		if (DEBUG >= LOG) {
-			if (strlen(&CMDRName) == 0) 	printf("!!	DEBUG:	fnGreetCMDR() - CMDRName is null (fnGreetCMDR)\x0a");
-			if (strlen(&StationName) == 0)	printf("!!	DEBUG:	fnGreetCMDR() - StationName is null (fnGreetCMDR)\x0a");
-		}
-//	DEBUG	+++++
 
 		Dim(&TTSMsg, (strlen(&part1)+strlen(&CMDRName)+strlen(&part2)+strlen(&StationName)+1));
 		TTSMsg[0] = 0;
@@ -1758,13 +1620,6 @@
 		}
 		UseAltVoice = YES;
 		TTSMsg[strlen(&TTSMsg)] = NUL;
-
-//	DEBUG	+++++
-		if (DEBUG >= LOG) {
-			printf("!!	DEBUG:	fnGreetCMDR() - Calling fnTextToSpeech() line 1730\x0a");
-			printf("!!	DEBUG:	fnGreetCMDR() - TTSMsg = %s\x0a", &TTSMsg);
-		}
-//	DEBUG	+++++
 
 		fnTextToSpeech(&TTSMsg, 100);	
 	}
@@ -1817,21 +1672,8 @@
 		Dim(&StationName, strlen(&keyvalue)+1);
 		StationName[0] = 0;
 		strcpy(&StationName, &keyvalue);
-		
-//	DEBUG +++++ START
-		if (strlen(&StationName) == 0) {
-			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - StationName has returned as zero length string\x0a");
-		}
-		else {
-//	DEBUG +++++ END 
-		
-			StationName[strlen(&StationName)] = 0;
-			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - Station Name = %s\x0a", &StationName);
-		
-//	DEBUG +++++ START
-		}
-//	DEBUG +++++ END 
-		
+				
+		StationName[strlen(&StationName)] = 0;		
 	}
 	
 	
@@ -1879,7 +1721,6 @@
 			pad10	= (LandingPad % 100) / 10;
 			pad1 	= (LandingPad % 100) % 10;
 
-		//	sprintf(&LPMsg, "Landing Pad %d", LandingPad);				// Speak Lanading pad as whole number
 			sprintf(&LPMsg, "Landing Pad: %d %d", pad10, pad1);			// Speaks each digit ... eg 5,9,8
 			LPMsg[strlen(&LPMsg)] = 0;
 			fnTextToSpeech(&LPMsg);
@@ -1894,11 +1735,9 @@
 					fnFighterStatus(0);													// Determines if Fighter is active 
 					if (ActiveFighter) {
 						fnDeployFighter(RECOVER);
-						printf("!! DEBUG: Fighter Recall - ActiveFighter = TRUE\x0a");
 					}
 					else {
 						ActKey(KEYON+PULSE+FighterDock);
-						printf("!! DEBUG: Fighter Recall - ActiveFighter = FALSE\x0a");
 					}
 				}
 			}
@@ -1947,77 +1786,6 @@
 		else if (strcmp(&keyvalue, "false") == 0) {
 			ActiveFighter = FALSE;
 		}
-//		if (DEBUG > 1) {
-//			printf("!! DEBUG: FighterPresent = %d\x0a", FighterPresent);
-//			printf("!! DEBUG: ActiveFighter = %d\x0a", ActiveFighter);
-//		}
-
-	}
-
-
-	//	Function:	Process InputCMD and CMDParameter
-	//	Parameter:	dummy allows function to be called via REXEC() or DeferCall()
-	//	Called by:	stfnProcessMyJournalData() if either InputCMD or CMDParameter have changed 
-	//	Usage:		In game, open chat panel and enter "!set <InputCMD> <InputCMDParameter>"
-	//	NOTE:		PS-Journal powershell script intercepts these via Journal and writes entry into MyJournalData.json file
-	//				Set Debug ON first
-	//
-		
-	int fnInputCMD(int dummy = 0) {
-	
-		int vartype;
-		char c;
-		Dim(&c, 128);
-		c[0] = 0;
-
-		char AnnounceCMD;
-		Dim(&AnnounceCMD, 128);
-		AnnounceCMD[0] = 0;
-		
-		if (DEBUG > 0) {																				// Only process InputCMD if DEBUG is set
-			if(strcmp(&InputCMD, "query") == 0) {														// Annouce current variable setting (if boolean)
-				if (strcmp(&CMDParameter, "CMDRName") == 0) {
-					sprintf(&c, "Query Setting: %s is currently %s", &CMDParameter, &CMDRName);
-				}
-				else if (strcmp(&CMDParameter, "StationName") == 0) {
-					sprintf(&c, "Query Setting: %s is currently %s", &CMDParameter, &StationName);
-				}
-				else {
-					sprintf(&c, "Query Setting: %s is currently %d", &CMDParameter, ieval(&CMDParameter));
-				}
-				c[strlen(&c)] = 0;																	// terminate string 
-				fnVPOutput(&c, 0, 1);
-			}
-			else if (strcmp(&InputCMD, "reset") == 0) {
-				fnResetUserSettings(0);
-				fnVPOutput("Input command resetting user default settings", 0, 1);
-			}
-			else {
-				sprintf(&c, "%s = %s;", &InputCMD, &CMDParameter);
-				c[strlen(&c)] = 0;
-				iexecute(&c);
-				sprintf(&AnnounceCMD, "Input command setting %s to %s", &InputCMD, &CMDParameter);
-				fnVPOutput(&AnnounceCMD, 0, 1);
-			}
-		}
-		else if(strcmp(&InputCMD, "DEBUG") == 0) {													// Always process DEBUG set requests			
-			sprintf(&c, "%s = %s;", &InputCMD, &CMDParameter);										// create TARGET statement string 
-			c[strlen(&c)] = 0;																		// terminate string 
-			iexecute(&c);																			// execute TARGET statement 
-			sprintf(&AnnounceCMD, "Input command setting %s to %s", &InputCMD, &CMDParameter);		// Create announcement string for InputCMD
-			fnVPOutput(&AnnounceCMD, 0, 1);															// Announce via console and TTS 
-		}
-		else {
-			fnVPOutput("Input command, set debug first", 0, 1);										// give user the hint 
-		}
-
-		// Copy InputCMD and CMDParameter so we can track when changed elsewhere
-		strcpy(&lastInputCMD, &InputCMD);
-		lastInputCMD[strlen(&lastInputCMD)] = 0;
-		
-		strcpy(&lastCMDParameter, &CMDParameter);
-		lastCMDParameter[strlen(&lastCMDParameter)] = 0;
-
 	}
 
 
@@ -2026,18 +1794,6 @@
 	//	NOTE:		DEBUG Feature if the script goes nuclear and we seemingly lose control
 	
 	int fnPANIC(int panic = 0) {
-		if (DEBUG > 0) {
-			if (panic == 0) {
-				printf("\x0a");
-				printf("!! DEBUG:	PANIC	!!\x0a");
-				printf("!! DEBUG:	You pressed the Script EJECT button (MSP)\x0a");
-				printf("!! DEBUG:	PANIC	!!\x0a");
-			}
-			else {
-				printf("\x0a");
-				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 292\x0a");				
-			}
-		}
 		fnSoundFX("wstop");
 		Sleep(500);
 		Abort();
@@ -2076,30 +1832,5 @@
 	int strcpy(alias dst, alias src) {
 		sprintf(&dst, "%s", &src);
 	}
-
-
-	//	FUNCTION:	Use this DEBUG function to test code whilst game running
-	//	Parameter:	dummy - enables REXEC or DeferCall
-	//	Usage:		PSF+EFLNORM calls this function
-	
-	int fnDEBUG(int dummy = 0) {
-
-		char c;
-		Dim(&c, 64);
-		c[0] = 0;
-
-		int altflag;
-		int Altitude = stfnGetKeyValue("Altitude", INTEGER);
-		
-		if (fAltFromAvgRad) altflag = "set";
-		else altflag = "reset";
-		
-		sprintf(&c, "Altitude flag %s", altflag);
-		c[strlen(&c)] = 0;
-		
-		fnVPOutput(&c, 0, 2);
-
-	}
-
 	
 // END
