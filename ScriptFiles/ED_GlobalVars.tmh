@@ -9,6 +9,20 @@
 	//			Changing any of the below global variables will have significant effect on the script
 	//			and may cause errors. Change these at your own risk
 
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
+
 	// START
 
 	char 	CMDRName;					// Set via fnMyName() and read from MyJournalData.json 
@@ -55,6 +69,7 @@
 	int SAAMode				= 0;		// Used in tgPlanetView()
 	int CameraMode			= 0;		// Set/Reset in tgExtCamera() and used in fnAdvancedSCB() and fnHeatsink() (for console Zoom messages)
 	int SelectDrop			= 0;		// Use to detect if Supercruise drop was selected or forced
+	int OrbitalCruise		= 0;		// Track when entering Orbital Cruise
 	int FireModeP			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int FireModeS			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int ShipDismissed		= 0;		// Track when Ship is dismissed/recalled via EORIGN-U
@@ -62,8 +77,6 @@
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	int GUIState			= 1;		// Used to track when ship's HUD GUI is turned off or on (default = ON)
 	
-	int DockingSequence		= 0;		// Set when docking request granted. Used for AutoHangar and reset when Docked
-
 	int ActiveFighter		= 0;		// Read from MyJournalData
 	
 	int RetryCounter		= 0;		// Failed Warpdrive retry count (eg target obscured, not enough fuel, target too far etc)

@@ -5,6 +5,37 @@
 
 	// This file: ED_StateTracker.tmh ... supports Elite Dangerous (Vanguards)
 
+	// Refer Change Log.txt parent folder
+
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
+
+/*
+	Index:		FUNCTION
+	Line   58: 	int stfnReadMyJournalData()
+	Line  140: 	int stfnReadStatusJson()
+	Line  279: 	int stfnWriteMaxJson()
+	Line  336: 	int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0)
+	Line  451: 	int stfnDecodeFlags()
+	Line  555: 	int stfnDecodeFlags2()
+	Line  660: 	int stfnProcessFlags(int UpdateLEDs = NO)
+	Line 1526: 	int stfnDecodeModules(int dummy = 0)
+	Line 1569: 	int stfnProcessMyJournalData(int dummy = 0)
+	Line 1639: 	int stfnProcessGuiFocus()
+	Line 1668: 	int stfnStartCheck()
+	Line 1735: 	int stfnMyStates(int action)
+*/
 	// START
 
 	// FUNCTION:	Read MyJournalData.json into 'myJournalData' char variable
@@ -18,6 +49,8 @@
 	
 	int		ReadError2Count	= 0;
 	int		ReadError2Sent;
+//	int		initmyJournalData = 0;			// flag set once per script run 
+//	int		initlastJournalData = 0;
 	int		readloops = 0;
 	
 	// ------------
@@ -26,14 +59,26 @@
 
 		int 	fp;
 		int		rc;
+//		int 	buf = 1024;					// Always set this larger than MyJournalData.json otherwise we'll get read errors
 		int 	buf;
 		int		myResult;
 		
+//		if(!initmyJournalData) {			// Only need to initialise the char array once per script run
+//			Dim(&myJournalData, buf);
+//			myJournalData[0] = 0;
+//			initmyJournalData = 1;
+//		}
+//		if (!initlastJournalData) {			// Only need to initialise the char array once per script run
+//			Dim(&lastJournalData, buf); 
+//	 		lastJournalData[0] = NUL;
+//			initlastJournalData = 1;
+//		}
 		
 		fp = fopen(&MyJournalData, "r");	// Open the MyJournalData file in 'read' mode 
 		
 		if (fp) {
 			
+//	DEBUG +++++			
 			rc	= fseek(fp, 0, 2);                          // seek to end
 			buf	= ftell(fp);								// sets buf to length of status.json 
 			rc	= fseek(fp, 0, 0);                          // rewind to start
@@ -42,6 +87,7 @@
 			myJournalData[0] = NUL;
 			Dim(&lastJournalData, buf+1); 
 			lastJournalData[0] = NUL;
+//	DEBUG +++++
 			
 			myResult = fread(&myJournalData, 1, buf, fp);	// Read the json string into global myJournalData global char array 
 			fclose(fp);
@@ -91,8 +137,11 @@
 
 	// GlobalVars
 
-	char myJson;		
+	char myJson;	
+//	int initmyJson = 0;	
+	
 	char lastJson;
+//	int initlastJson = 0;
 	
 	int		ReadErrorCount	= 0;
 	int		ReadErrorSent;
@@ -107,6 +156,7 @@
 
 		int 	fp;
 		int 	rc;
+//		int 	buf = 1024;				// Always set this larger than NewMaxJson otherwise we'll get read errors
 		int 	buf;
 		int		myResult;
 		int		newJson			= 0;	// set when myJson != lastJson...we then call stfnProcessFlags();
@@ -114,11 +164,23 @@
 		int		json10;
 		int		json1;
 		char	json; Dim(&json, 64); json[0] = 0;
+
+//		if (!initmyJson) {
+//			Dim(&myJson, buf+1);
+//			myJson[0] = NUL;
+//			initmyJson = 1;
+//		}
+//		if (!initlastJson) {	
+//			Dim(&lastJson, buf+1); 
+//			lastJson[0] = NUL;
+//			initlastJson = 1;
+//		}
 		
 		fp = fopen(&StatusFile, "r");
 		
 		if (fp) {
 			
+//	DEBUG +++++			
 			rc	= fseek(fp, 0, 2);                          // seek to end
 			buf	= ftell(fp);								// sets buf to length of status.json 
 			rc	= fseek(fp, 0, 0);                          // rewind to start
@@ -127,6 +189,8 @@
 			myJson[0] = NUL;
 			Dim(&lastJson, buf+1); 
 			lastJson[0] = NUL;
+
+//	DEBUG +++++
 			
 			myResult = fread(&myJson, 1, buf, fp);
 			fclose(fp);
@@ -145,9 +209,26 @@
 				printf("\x0a!!	ERROR: Error reading status.json. Check buffer length\x0a");	// This should never be triggered unless status.json does not exist 
 			}
 			else {
+				// Debug: check myJson string length to ensure buffer size is set high enough
 				if (loop == 9) {
 					if(maxjson > NewMaxJson) {
+
 						NewMaxJson = maxjson;
+
+						if (DEBUG == LOG) {
+							printf("\x0a\!!DEBUG: stfnReadStatusJson() - Max json length seen = %d ...\x0a", maxjson);
+							fnSoundFX("snd_warn", 60);
+						}
+						
+						if (DEBUG == VERBOSE) {
+							json100 = (NewMaxJson - (NewMaxJson % 100))/100;
+							json10	= (NewMaxJson % 100) / 10;
+							json1 	= (NewMaxJson % 100) % 10;
+
+							sprintf(&json, "max jason length %d %d%d", json100, json10, json1);	// Speaks each digit ... eg 5,9,8
+							fnTextToSpeech(&json);
+						}
+						
 						loop = 0;
 						
 						if (PreserveMaxJson) {
@@ -375,6 +456,7 @@
 				myResult = strcmp(&thischr, "}");
 				if (myResult == 0) {
 					EndValue = 1;
+			//		chrpnt = chrpnt - 1;								// assumes there's a space after last key-value and "}"
 				}
 				
 				myResult = strcmp(&thischr, " ");
@@ -629,7 +711,6 @@
 						else if (AutoDisembark) {
 							DeferCall(3000, &fnHangarServices, 3);			// ... disembark
 						}
-						DockingSequence = FALSE;
 					
 						printf("==	Docked: %s @ %s\x0a\x0a", &StationName, fnGetTOD());
 						if (fLights) tgLights(0);
@@ -656,7 +737,7 @@
 			}
 		}
 
-		if (fLanded != lLanded) {											// Framework for future functionality
+		if (fLanded != lLanded) {												// Framework for future functionality
 			if (fLanded) {
 				printf("==	Landed @ %s\x0a", fnGetTOD());
 			}
@@ -672,9 +753,11 @@
 		//	Placeholder for future development
 		//	LOGIC: fLandingGear gets set when Landing gear is deployed and reset when retracted
 		if (fLandingGear != lLandingGear) {									// This may be announced via in game setting
+	//		if (fLandingGear & fMainShip) {									// Do we need to trap if in ship? (eg Taxi/DropShip)
 			if (fLandingGear) {												// Dealt with in tgLandingGear
 				// Landing Gear Deployed 
 			}
+	//		else if (fMainShip) {
 			else {
 				// Landing Gear retracted  
 			}
@@ -713,6 +796,7 @@
 				// do nothing 
 			}
 			else {
+				// Maybe create dedicated external function???
 				if (SelectDrop == NO) {													// Uninitiated drop				
 					if (fGlideMode) {
 						myTTS = "Entering Glide Mode";
@@ -739,7 +823,7 @@
 					}
 				}
 				else {																	// Initiated drop
-					//
+//					SelectDrop = NO;													// Reset SelectDrop flag 
 				}
 				UpdateLEDs = YES;
 			}	
@@ -932,6 +1016,7 @@
 			}
 		}
 
+	//	if ((fLatLong != lLatLong) & fMainShip) {									// Do we need to trap if in ship? (eg not Taxi/Dropship?)
 		if (fLatLong != lLatLong) {													// Detect when we cross the Orbital Cruise boundary
 			if (fLatLong) {
 				//
@@ -1032,6 +1117,9 @@
 			
 		if (fFSDJump != lFSDJump) {											// Detect when Supercruise or Hyperjump has been toggled
 		
+		// There's a LOT of calls in this section which may interfere with State Tracker detection candence
+		// Look into creating and calling dedicated functions instead if we start seeing issues
+		
 			if (!fFSDJump & fSupercruise) {									// Detect when FSD Jump flag gets reset
 											
 				if (FSDGUI & GUIState == 0) {
@@ -1085,11 +1173,14 @@
 			if (fOnFoot != lOnFoot) {									// Track when on foot
 				if(fOnFoot){
 					if (!StartupLock) {
-						//
+						if (DEBUG == LOG) printf("!!	DEBUG: Flag: On Foot\x0a");
+						if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot");
 					}
 				}
 				else {
 					// no longer on foot
+					if (DEBUG == LOG) printf("!!	DEBUG: Flag OFF: On Foot");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot");
 				}
 				UpdateLEDs = YES;
 			}
@@ -1114,19 +1205,23 @@
 
 			if (fOnFootInStation != lOnFootInStation) {
 				if (fOnFootInStation) {
-					//
+					if (DEBUG == LOG) printf("==	We've entered the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Station");
 				}
 				else {
-					//
+					if (DEBUG == LOG) printf("==	We've left the station on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Station");
 				}
 			}
 
 			if (fOnFootOnPlanet != lOnFootOnPlanet) {
 				if (fOnFootOnPlanet) {
-					//
+					if (DEBUG == LOG) printf("==	We've set foot on planet surface\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot On Planet");
 				}
 				else {
-					//
+					if (DEBUG == LOG) printf("==	We've left the planet surface on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot On Planet");
 				}
 			}
 
@@ -1205,28 +1300,39 @@
 
 			if (fOnFootInHangar != lOnFootInHangar) {
 				if (fOnFootInHangar) {
-					//
+					if (DEBUG == LOG) printf("==	We've entered the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Hangar");					
 				}
 				else {
-					//
+					if (DEBUG == LOG) printf("==	We've left the hangar on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Hangar");
 				}
 			}
 
 			if (fOnFootSocialSpace != lOnFootSocialSpace) {
 				if (fOnFootSocialSpace) {
-					//
+					if (DEBUG == LOG) printf("==	We've entered the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot In Social Space");
 				}
 				else {
-					//
+					if (DEBUG == LOG) printf("==	We've left the social space on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag OFF: On Foot In Social Space");
 				}
 			}
 
 			if (fOnFootExterior != lOnFootExterior) {					// Is this the same as fOnFootOnPlanet ???
 				if (fOnFootExterior) {
-					//
+					if (DEBUG == LOG) printf("==	We're outside on foot\x0a");
+					if (DEBUG == VERBOSE) fnVPOutput("Flag: On Foot Exterior");
 				}
 				else {
-					//
+					if (DEBUG == LOG) {
+						printf("==	We're inside ");
+						if (fSRV) printf("SRV\x0a");
+						else if(fMainShip) printf("Ship\x0a");			// what about a taxi or dropship?
+						else printf("somehwere...where are we?\x0a");
+					}
+					if (DEBUG == VERBOSE) fnVPOutput("Flag off: On Foot Exterior");
 				}
 			}
 
@@ -1234,6 +1340,7 @@
 				if (fBreathableAtmosphere) {
 					printf("==	Atmosphere is breathable\x0a");					
 				}
+//				else if (fOnFoot) {
 				else {
 					printf("==	Atmosphere is no longer breathable\x0a");	
 				}
@@ -1294,6 +1401,145 @@
 					fnVPOutput("NPC crew not active");				
 				}
 			}
+
+			if (fRESERVED24 != lRESERVED24) {
+				if (fRESERVED24) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 24\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24");
+// DEBUG +++++ END
+				}
+				else {
+// DEBUG +++++ START
+					if (DEBUG == LOG)		printf("F2 Bit 24 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED25 != lRESERVED25) {
+				if (fRESERVED25) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 25\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25");
+// DEBUG +++++ END
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 25 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25 OFF");
+// DEBUG +++++ END 
+				}
+			}
+			
+			if (fRESERVED26 != lRESERVED26) {
+				if (fRESERVED26) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 26\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 26 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED27 != lRESERVED27) {
+				if (fRESERVED27) {
+
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 27\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+
+					if (DEBUG == LOG)		printf("F2 Bit 27 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED28 != lRESERVED28) {
+				if (fRESERVED28) {
+
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 28\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 28 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED29 != lRESERVED29) {
+				if (fRESERVED29) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 29\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 29 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29 OFF");
+// DEBUG +++++ END 
+				}
+			}
+			
+			if (fRESERVED30 != lRESERVED30) {
+				if (fRESERVED30) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 30\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 30 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED31 != lRESERVED31) {
+				if (fRESERVED31) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 31\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 31 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31 OFF");
+// DEBUG +++++ END 
+				}
+			}
+
+			if (fRESERVED32 != lRESERVED32) {
+				if (fRESERVED32) {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 32\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32");
+// DEBUG +++++ END 
+				}
+				else {
+// DEBUG +++++ START 
+					if (DEBUG == LOG)		printf("F2 Bit 32 OFF\x0a");
+					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32 OFF");
+// DEBUG +++++ END 
+				
+				}
+			}			
 		}
 
 		if ((lFAOff != fFAOff) | (lLights != fLights) | (lSilentRunning != fSilentRunning) | (lCargoScoop != fCargoScoop) | (lLandingGear != fLandingGear) | (lMainShip != fMainShip) | (lSRV !=  fSRV)) UpdateLEDs = YES;
@@ -1317,6 +1563,10 @@
 	int stfnDecodeModules(int dummy = 0) {
 
 		Modules = stfnGetKeyValue("Modules", INTEGER, 1);
+
+//	DEBUG ++++++++++
+//		if (DEBUG >= LOG) printf("!!	DEBUG: stfnDecodeModules() - Modules key-value = %d\x0a", Modules);
+//	DEBUG ++++++++++
 
 		// "lFlagName" is "Last" or previous flag value							// Allows us to track each time a flag is toggled 
 		lSCOPresent				=	fSCOPresent;								// Granular level - which module bits have changed
@@ -1344,12 +1594,79 @@
 	//	Parameters: dummy - enables calls from REXEC() and DeferCall() 
 	//	Usage:
 
+	// Global VARS
+	
+	char 	InputCMD;
+	char	lastInputCMD;
+	char	CMDParameter;
+	char	lastCMDParameter;
+	
+	int		InputCMDcharsSET = 0;
+	
 	int stfnProcessMyJournalData(int dummy = 0) {
+
+	// MyJournalData.json contains the following key-value pairs...
+	// timestamp (STRING), LoadGameDetect (INTEGER), **CMDRName (STRING), ShipName (STRING), ShipType (STRING), **StationName (STRING), StationType (STRING), SystemName (STRING),
+	// BodyName (STRING), OrganicFound (STRING), **DockingStatus (STRING), **DeniedReason (STRING), **LandingPad (INTEGER), **Modules (INTEGER), **ActiveFighter (BOOLEAN),
+	// **InputCMD (STRING), **CMDParameter (STRING)
+
+	// Time critical keys should be trapped here, otherwise create a standalone function to process
+	// Keys marked with ** are decoded within existing functions 
 		
 			stfnDecodeModules(0);																	// Individual flags used to enable trigger and switch functions etc
 			fnFighterStatus(0);																		// Determines if Fighter is active 
 			LoadGameDetect = stfnGetKeyValue("LoadGameDetect", INTEGER, 1);
+/*
+//	DEBUG +++++++++++++++++++++++++++++++
+		if (DEBUG >= LOG) {
+			if (fSCOPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - SCO FSD installed\x0a");
+			if (fFighterPresent)		printf("!!	DEBUG: stfnProcessMyJournalData() - Fighter Bay installed\x0a");
+			if (fSRVPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - SRV Bay installed\x0a");	
+			if (fHeatsinkPresent)		printf("!!	DEBUG: stfnProcessMyJournalData() - Heatsink Launcher installed\x0a");
+			if (fChaffLauncherPresent)	printf("!!	DEBUG: stfnProcessMyJournalData() - Chaff Launcher installed\x0a");
+			if (fSCBPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - Shield Cell Bank installed\x0a");
+			if (fECMPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - Electronic Counter Measure installed\x0a");
+			if (fLimpetPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - Limpet controller installed\x0a");
+			if (ActiveFighter)			printf("!!	DEBUG: stfnProcessMyJournalData() - Fighter is ACTIVE\x0a");
+			printf("\x0a");
+		}
+//	DEBUG +++++++++++++++++++++++++++++++
+*/			
+			// Check if InputCMD or CMDParameter have changed...
+			if (InputCMDcharsSET == 0) {			// Dimension and clear char arrays...
+				Dim(&InputCMD, 64);					// Arbitrary buffer size
+				InputCMD[0] = 0;
+				
+				Dim(&lastInputCMD, 64);				// To track when InputCMD changes 
+				lastInputCMD[0] = 0;				// Copied from &InputCMD within fnInputCMD()
+				
+				Dim(&CMDParameter, 64);				// Arbitrary buffer size
+				CMDParameter[0] = 0;
+				
+				Dim(&lastCMDParameter, 64);			// To track if CMDParameter changes
+				lastCMDParameter[0] = 0;			// Copied from CMDParameter within fnInputCMD()
+				
+				InputCMDcharsSET = 1;
+			}
 
+			strcpy(&InputCMD, stfnGetKeyValue("InputCMD", STRING, 1));
+			InputCMD[strlen(&InputCMD)] = 0;
+			
+			strcpy(&CMDParameter, stfnGetKeyValue("CMDParameter", STRING, 1));
+			CMDParameter[strlen(&CMDParameter)] = 0;
+	
+			if (strcmp(&InputCMD, "not set") == 0) {
+		//		if (DEBUG >= LOG) printf("!!	DEBUG: stfnProcessMyJournalData() - InputCMD = not set, do not call fnInputCMD()\x0a");
+			}
+			else {
+				if (strcmp(&InputCMD, &lastInputCMD) == 0 & strcmp(&CMDParameter, &lastCMDParameter) == 0)	{	// New inputCMD to process?
+		//			if (DEBUG >= LOG) printf("!!	DEBUG: stfnProcessMyJournalData() - InputCMD and CMDParameter have no changes, do not call fnInputCMD()\x0a");
+				}
+				else{
+		//			if (DEBUG >= LOG) printf("!!	DEBUG: stfnProcessMyJournalData() - InputCmd or CMDParameter have changed\x0a");
+					fnInputCMD(0);
+				}
+			}
 	}
 
 	
@@ -1357,7 +1674,9 @@
 
 	int stfnProcessGuiFocus() {
 		int GUIFocus;
+		int GUITxt = "not defined";
 
+//		if (Flags != 0) {										// Hmmmm'k ... maybe GameLoaded or !StartupLock 
 		if (GameLoaded) {
 			GUIFocus = stfnGetKeyValue("GuiFocus", INTEGER);
 			// Not too sure of the value of this - to be reviewed	-	REVIEW 
@@ -1373,6 +1692,23 @@
 				SAAMode = OFF;
 			}
 			
+			if (DEBUG >= LOG) {
+				if (GUIFocus == 0) GUITxt = "No Focus";
+				else if (GUIFocus == 1) GUITxt	= "RH Panel";
+				else if (GUIFocus == 2) GUITxt	= "LH Panel";
+				else if (GUIFocus == 3) GUITxt	= "Comms Panel (top)";
+				else if (GUIFocus == 4) GUITxt	= "Role Panel (bottom)";
+				else if (GUIFocus == 5) GUITxt	= "Station Services";
+				else if (GUIFocus == 6) GUITxt	= "Galaxy Map";
+				else if (GUIFocus == 7) GUITxt	= "System Map";
+				else if (GUIFocus == 8) GUITxt	= "Orrery";
+				else if (GUIFocus == 9) GUITxt	= "FSS Mode";
+				else if (GUIFocus == 10) GUITxt	= "SAA Mode";
+				else if (GUIFocus == 11) GUITxt	= "Codex";
+				else if (GUIFocus > 11) GUITxt	= "New GUI Mode";
+				printf ("!!	DEBUG: stfnProcessGuiFocus() - GUI Mode = (%d) %s\x0a", GUIFocus, GUITxt);
+			}
+			
 			return GUIFocus;
 		}
 		else {
@@ -1382,6 +1718,9 @@
 
 
 	// FUNCTION: Initial check to see if game is already running after we've restarted the script.
+
+	// Global:
+	int DEBUGMODE;
 
 	int stfnStartCheck() {
 	
@@ -1415,14 +1754,30 @@
 				printf("++	Waiting for Game to load...\x0a");	
 				printf("\x0a\++	Script initialised and running @ %s \x0a", fnGetTOD());
 				
+				// Tracking max string length of status.json to ensure read buffer is big enough.
+				if (DEBUG >= LOG ) printf("\x0a\++	DEBUG: fnStartCheck() - Max json length seen = %d ...\x0a\x0a", NewMaxJson);
+				// If you see errors, ensure 'buf' is set to a value exceeding this number at start of stfnReadStatusJson(), above.
+				
 				json100 = (NewMaxJson - (NewMaxJson % 100))/100;
 				json10	= (NewMaxJson % 100) / 10;
 				json1 	= (NewMaxJson % 100) % 10;
+
+		//		sprintf(&jason, "jason %d %d%d", json100, json10, json1);						// Speaks each digit
+		//		fnTextToSpeech(&jason);
 				
 				fnTextToSpeech("Waiting for game to load");
 			}
 			fnSoundFX("tada", 75);																// Script has started successfully 
 		}
+		
+////	TEST AREA --- Copy code below here to test at end of script start
+//		printf("\x0a+++++ TEST AREA +++++\x0a\x0a");
+
+//		
+		
+//		printf("\x0a+++++ TEST AREA +++++\x0a");
+////	TEST AREA --- Copy code above here to test at end of script start
+
 	}
 
 

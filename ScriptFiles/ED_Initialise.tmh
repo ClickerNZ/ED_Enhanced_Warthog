@@ -5,6 +5,40 @@
 
 	// This file: ED_Initialise.tmh ... supports Elite Dangerous (Vanguards)
 
+	// Refer Change Log.txt in parent folder
+
+	// LEGEND: 
+	// ========================================================================
+	// fnName()								refer to ED_Functions file
+	// initName()							refer to ED_Initialise file
+	// stfnName()							refer to ED_StateTracker file
+	// tgName()								refer to ED_Toggles file
+	// mName								refer to ED_Macros file
+	// MapKey statements					refer to ED_MapKeyAssignment file
+	// Global State and Boolean Defines		refer to ED_ScriptDefines file
+	// Global Game Key Bind Defines			refer to ED_GameBindings file 
+	// Global Script Variables				refer to ED_GlobalVars file
+	// User Config Settings					refer to ED_UserSettings file
+	// ========================================================================
+
+/*
+	Index:		FUNCTION
+	Line  54:	int CheckControllers()
+	Line 170: 	int initJoystickAxis() 
+	Line 190: 	int initThrottleAxis()
+	Line 207: 	int initSliderAxis()
+	Line 223: 	int initSlewAxis()
+	Line 240: 	int initRudderAxis()	
+	Line 254: 	int initTextToSpeech()
+	Line 266: 	int initSoundFX()
+	Line 319: 	int initUserSettings(int dummy = 0)
+	Line 362: 	int fnResetUserSettings(int dummy = 0)
+	Line 403: 	int fnEncodeUserSettings(int dummy = 0)
+	Line 435: 	int fnDecodeUserSettings(int UserSettings)
+	Line 463: 	int fnUserSettingsDelta(int dummy = 0)
+	Line 506: 	int fnCompareIntSettings(int dummy = 0)
+*/
+
 	// START
 
 	//--------------------------//
@@ -127,6 +161,8 @@
 	// ------------------- //
 	// INITIALISE all AXES //
 	// ------------------- //
+
+// REVIEW:	If only called once, perhaps we include  a call to fnSetCurves in each block???
 
 	// FUNCTION: Initialise Joystick Axes 
 	
@@ -323,7 +359,13 @@
 		defUserSettings 		= fnEncodeUserSettings(0);
 		
 		printf("++	User Settings recorded\x0a");
-						
+		
+		if (DEBUG == 0) DEBUGMODE = "OFF";
+		if (DEBUG == 1) DEBUGMODE = "ON";
+		if (DEBUG == 2) DEBUGMODE = "LOG";
+		if (DEBUG == 3) DEBUGMODE = "VERBOSE";
+		if (DEBUG > 3 | DEBUG < 0)	DEBUGMODE = "NOT SET";
+				
 	}
 	
 	
