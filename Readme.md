@@ -1,6 +1,6 @@
 CMDR Clicker's Thrustmaster TARGET Script for Elite Dangerous 
 
-Version 503 (Odyssey)
+Version 510.1 (Vanguards)
 
 STATUS: BETA (Development phase)
 
