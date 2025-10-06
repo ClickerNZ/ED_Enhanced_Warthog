@@ -11,4 +11,9 @@ SupportFiles/Output/Tracking.json
 SupportFiles/Output/TTSQueue/*.*
 SupportFiles/Output/TTSQueue/Archive/*.*
 
+Output/
+Archive/
+*.log
+*.tmp
+
 
