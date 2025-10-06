@@ -16,4 +16,4 @@ Archive/
 *.log
 *.tmp
 
-TARGET Session*.*
+TARGET*
