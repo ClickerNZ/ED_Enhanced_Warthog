@@ -1,25 +1,9 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_Macros.ttm ... supports Elite Dangerous (Vanguards)
-
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
+	//							This file: ED_Macros.tmh									//
 
 /*
 	Index:			FUNCTION
@@ -49,7 +33,7 @@
 	// Declare macros (must be declared as global)
 	
 	int	m_RequestDock,		m_DeploySRV,		m_ShowGameStats,	m_ReportCrimesToggle,	m_WingBeaconTeam,	m_WingBeaconOff;
-	int m_FastModeSwitch0,	m_FastModeSwitch1,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHangar,		m_ChangeColours;
+	int m_FastModeSwitch0,	m_FastModeSwitch1a,	m_FastModeSwitch1b,	m_FastModeSwitch2,	m_BoardShip,			m_EnterHangar,		m_ChangeColours;
 	int m_Launch,			m_NextFG,			m_PrevFG,			m_DeployNPCFighter,		m_DeployFighter,	m_Disembark;
 
 	//---------------//			// MACROS fire a sequence of key presses within a 'CHAIN()' to perform a specific task within the game.
@@ -142,8 +126,8 @@
 			PULSE+UISelect, D(650),								// Select OPEN Mode
 			LOCK);
 
-		// MACRO: Menulog to PRIVATE GROUP						Duration = 14200 (min), add 1370 for each addition UIDown+UISelect optional pair enabled
-		m_FastModeSwitch1 = CHAIN(
+		// MACRO: Menulog to PRIVATE GROUP (top)				Duration = 14200 (min), add 1370 for each addition UIDown+UISelect optional pair enabled
+		m_FastModeSwitch1a = CHAIN(
 			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0) <-- Required???
 			PULSE+MenuLog, D(650),								//  Keystroke sequence = p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
 			PULSE+UIUp, D(650),
@@ -151,14 +135,36 @@
 			PULSE+UISelect, D(8500),							// ** Depending on the load times of your PC, this value may need to be
 			PULSE+UISelect, D(650),								//    changed/increased
 			PULSE+UIRight, D(650),
+			PULSE+UISelect, D(650),								// Top option selected by default 
+//-			PULSE+UIRight, D(650),								// Moved down to second last instruction
+	//		PULSE+UIDown, D(650),								// Optional #1 Remove comment marks to highlight 2nd option in list...
+	//		PULSE+UISelect, D(650),								// ...and select it 
+	//		PULSE+UIDown, D(650),								// Optional #2 Remove comment marks to highlight 3rd option in list
+	//		PULSE+UISelect, D(650),								// ...and select it 
+	//		PULSE+UIDown, D(650),								// Optional #3 etc. ... and so on 
+	//		PULSE+UISelect, D(650),								// ...and select it 
+			PULSE+UIRight, D(650),
+			PULSE+UISelect, D(1000),							// Selects Private Group
+			LOCK);
+
+		// MACRO: Menulog to PRIVATE GROUP (2nd)				Duration = 14200 (min), add 1370 for each addition UIDown+UISelect optional pair enabled
+		m_FastModeSwitch1b = CHAIN(
+			LOCK+PULSE+RolePanel, D(250),						// Select any panel to ensure GUIFocus is set (!=0) <-- Required???
+			PULSE+MenuLog, D(650),								//  Keystroke sequence = p, up, spc, spc, <wait>, spc, right, spc, spc, right, spc
+			PULSE+UIUp, D(650),
 			PULSE+UISelect, D(650),
-			PULSE+UIRight, D(650),								// Top option selected by default 
-		//	PULSE+UIDown, D(650),								// Optional #1 Remove comment marks to highlight 2nd option in list...
-		//	PULSE+UISelect, D(650),								// ...and select it 
-		//	PULSE+UIDown, D(650),								// Optional #2 Remove comment marks to highlight 3rd option in list
-		//	PULSE+UISelect, D(650),								// ...and select it 
-		//	PULSE+UIDown, D(650),								// Optional #3 etc. ... and so on 
-		//	PULSE+UISelect, D(650),								// ...and select it 
+			PULSE+UISelect, D(8500),							// ** Depending on the load times of your PC, this value may need to be
+			PULSE+UISelect, D(650),								//    changed/increased
+			PULSE+UIRight, D(650),
+			PULSE+UISelect, D(650),								// Top option selected by default 
+//-			PULSE+UIRight, D(650),								// Moved down to second last instruction
+			PULSE+UIDown, D(650),								// Optional #1 Remove comment marks to highlight 2nd option in list...
+			PULSE+UISelect, D(650),								// ...and select it 
+	//		PULSE+UIDown, D(650),								// Optional #2 Remove comment marks to highlight 3rd option in list
+	//		PULSE+UISelect, D(650),								// ...and select it 
+	//		PULSE+UIDown, D(650),								// Optional #3 etc. ... and so on 
+	//		PULSE+UISelect, D(650),								// ...and select it 
+			PULSE+UIRight, D(650),
 			PULSE+UISelect, D(1000),							// Selects Private Group
 			LOCK);
 
@@ -224,7 +230,7 @@
 			LOCK);
 
 		// MACRO: Toggle 'Wingman Beacon' to OFF				Duration = 4435
-		// Under additional testing 
+		// --- additional testing required
 		m_WingBeaconOff = CHAIN(
 			LOCK+PULSE+SystemPanel, D(500),						// Keystroke sequence = 4, e, e, e, right, down, down, down, down, spc, spc, up, up, up, up, left, q, q, q, 4
 			PULSE+UINextPanel, D(),								// Limitation: This will only work correctly if Target Panel cursor in

@@ -1,25 +1,9 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_Toggles.tmh ... supports Elite Dangerous (Vanguards)
-
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
+	//							This file: ED_Toggles.tmh									//
 
 /*
 	Index:		FUNCTION
@@ -81,7 +65,7 @@
 			else {
 				fnTextToSpeech("Drive assist, OFF");
 			}
-			ActKey(KEYON+PULSE+DriveAssist);										// 'z' - Toggles Drive Assist in SRV 
+			ActKey(KEYON+PULSE+DriveAssist);											// 'z' - Toggles Drive Assist in SRV 
 		}
 		else if (fMainShip) {
 			if (!fSupercruise) {
@@ -89,10 +73,10 @@
 					if (CurveInfo == PRINT) {
 						printf("==	FA-ON Curves:\x0a");
 					}
-					fnSetCurves(OldCurves, CurveInfo, TRUE, FALSE);						// Announce curve profile, don't save curve info
+					initCurves(OldCurves, CurveInfo, TRUE, FALSE);						// Announce curve profile, don't save curve info
 				}
 				else {
-					fnSetCurves(FAOFFCurves, CurveInfo, TRUE, TRUE);					// Announce curve profile, save curve info	 
+					initCurves(FAOFFCurves, CurveInfo, TRUE, TRUE);						// Announce curve profile, save curve info	 
 				}
 				ActKey(KEYON+PULSE+FlightAssist);										// 'z' - FA-OFF On/Off 
 			}
@@ -220,7 +204,7 @@
 	}
 
 
-	// TOGGLE: Silent Running - LED3
+	// TOGGLE: Silent Running - LED3 On WARTHOG
 	// Parameter: 'x' = 0 (OFF), 1 (ON), 2 (STROBE), 3 Toggle AutoStrobe
 	// NOTE: Aligns across menulog/restart
 
@@ -277,7 +261,7 @@
 	}
 
 
-	// TOGGLE: Cargo Scoop - LED4
+	// TOGGLE: Cargo Scoop - LED4 on WARTHOG 
 	// Parameter: 'x' = DEPLOY (1), RETRACT (0) 
 	// NOTE: Aligns across menulog/restart <-- ED causes CargoScoop reset when menu log
 	
@@ -403,7 +387,7 @@
 	//				2	Align Switch - need to re-instate this (NUMPAD *)??
 	//				3	Forward Thrust
 
-	int tgReverseThrust(int EnableSpeedBrake) {				////////////// NEEDS FURTHER TESTING
+	int tgReverseThrust(int EnableSpeedBrake) {
 		int fnName = "Reverse";
 		int reason = 0;
 
@@ -458,8 +442,7 @@
 				printf("==	Throttle:			FORWARD\x0a");
 			}		
 		}
-		else if (fOnFoot) {
-													  
+		else if (fOnFoot) {													  
 			reason = "we are on foot, just walk backwards, silly!";
 		}
 		else {
@@ -611,12 +594,12 @@
 			if (!FSSMode) {	
 				ActKey(KEYON+PULSE+FSSModeON);
 				printf("==	FSS Mode:		ON\x0a");
-				DeferCall(500, &fnSetSliderCurve, 0);
+				DeferCall(500, &initSliderCurve, 0);
 			}
 			else {
 				ActKey(KEYON+PULSE+FSSModeOFF);
 				printf("==	FSS Mode:		OFF\x0a");
-				DeferCall(500, &fnSetSliderCurve, 2);
+				DeferCall(500, &initSliderCurve, 2);
 			}
 		}
 		else {

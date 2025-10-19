@@ -1,27 +1,12 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_ScriptDefines.ttm ... supports Elite Dangerous (Vanguards)
+	//							This file: ED_ScriptDefines.ttm								//
 
 	// Below are the global, static, state and boolean definitions used within the script package
 	// Also contains global status.json integer variable flags for ease of maintenance and readability
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
-
 
 						//  -- WARNING --  //
 
@@ -36,14 +21,28 @@
 
 	define KBLayout 				KB_ENG					// Default Keyboard Layout. Options = KB_FR or KB_GER
 
-	//----------------------------------------------------------------------//
-	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
-	//----------------------------------------------------------------------//
+//-	//----------------------------------------------------------------------//
+//-	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //		MOVED INTO ED_Initialise.tmh
+//-	//----------------------------------------------------------------------//
 
-	define VMajor		 			5						// Script Version Major Value			ie. 2xx
-	define VMinor		 			1						// Script Version Minor Value			ie. x3x
-	define VPoint					0						// Script Version Point Update			ie. xx4
-	define VBranch					"dev"					// Script Version Branch				ie. xxx.01
+//-	define VMajor		 			5						// Script Version Major Value			ie. 2xx
+//-	define VMinor		 			1						// Script Version Minor Value			ie. x3x
+//-	define VPoint					0						// Script Version Point Update			ie. xx4
+//-	define VBranch					"1"						// Script Version Branch				ie. xxx.01
+
+	//---------------//
+	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
+	//---------------//
+
+	define OFF						0
+	define ON						1
+
+//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
+	int		DEBUG					= ON;					// Development/DEBUG Mode. example InputCMD enabled 
+//	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
+//	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
+	
+	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
 	//---------//
 	// Timings //
@@ -85,18 +84,15 @@
 	define hSoundFX					4						// Used in ED_MapKeyAssignment.tmh 				- PSF & PSB reminder sound
 	define hBeepFX					5						// Used in ED_Toggles.tmh						- Reverse thrust
 	define hReadMyJournalData		6						// Used in ED_StateTracker.tmh					- main read MyJournalData.json background loop
-	define hTerrain					7						// Used in ED_Toggles.tmh						- Terrain Following
+	define hTerrain					7						// 
 	
 	//----------------------------------------------------------------------//
 	// SCRIPT BOOLEAN and STATE DEFINES										//
 	//----------------------------------------------------------------------//
-		
-	define OFF						0
-	define ON						1
-	
+			
 	define LOG						2						// DEBUG Levels
 	define VERBOSE					3						// DEBUG Levels
-	
+
 	define STROBE					2						// Used in tgSilentRunning()
 	
 	define TRUE						1
@@ -113,7 +109,7 @@
 	
 	define NEXT						1
 	define PREVIOUS					2
-
+	
 	define HOLD						0
 	define PUSH						1
 	
@@ -138,28 +134,17 @@
 	define BOOLEAN					4
 	
 	define NUL						0						// Should be '\x0' ??? so we can use to terminate strings?
-	define NONE						0						// used for fnSetCurves()
-	define MILD						1						// used for fnSetCurves()
-	define MEDIUM					2						// used for fnSetCurves()
-	define SLOW						3						// used for fnSetCurves()
-	define SLOWEST					4						// used for fnSetCurves()
+	define NONE						0						// used for initCurves()
+	define MILD						1						// used for initCurves()
+	define MEDIUM					2						// used for initCurves()
+	define SLOW						3						// used for initCurves()
+	define SLOWEST					4						// used for initCurves()
 
 	define NOPRINT					0						// suppress console message, or...
 	define PRINT					1						// ...don't
 
 	define LOAD						0						// used in stfnMyStates()	
 	define SAVE						1						// used in stfnMyStates()
-
-	//---------------//
-	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
-	//---------------//
-
-//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
-	int		DEBUG					= ON;					// InputCMD enabled
-//	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
-//	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
-	
-	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
 	//-----------------------------------------------------------------------------------------------------------------------------//
 	//                                                                                                                             //
