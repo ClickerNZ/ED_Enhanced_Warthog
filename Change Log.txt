@@ -1,5 +1,11 @@
 // CMDR Clicker's Enhanced WARTHOG TARGET Script Change Log //
 
+v510.1	
+		- Rename fnSetCurves() as initCurves() and move into ED_Initialise 
+		- Rename fnSetSliderCurve() as initSliderCurve() and move into ED_Initialise
+		- Increase delay between "docked" and "enter hangar..."
+		- New function fnSetOriginStation() - times a circuit run
+
 v510	- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Client Version 4)
 		- 	Uses 2x new external powershell helper apps 'TTSMonitor.ps1' and 'ProcessJournal.ps1'
 		- 	Renamed repo to ED_Enhanced_Warthog
@@ -123,7 +129,7 @@ v510	- 	New minor release - NOTE: Legacy Horizons no longer supported (pre-Clien
 		-	TESTING - Different slider curves
 
 		-	TO BE DONE BEFORE PUBLISHING:
-			-	Remove debug code
+			-	Disable debug code
 			-	Cleanup and Re index 
 			-	Review and correct Keymaps and mapfiles
 
