@@ -1,32 +1,14 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_Functions.tmh ... supports Elite Dangerous (Vanguards)
-
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
+	//							This file: ED_UserSettings.tmh								//
 
 /*
 	Index:		FUNCTION
 	Line   80: 	int fnNotValid(int fnName, int reason=0) {
 	Line   98: 	int fnStartupMapKeyMode() {
-	Line  129: 	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
-	Line  206: 	int fnSetSliderCurve(int x) {
 	Line  239: 	int fnGetFlightMode() {
 	Line  269: 	int fnLEDBrightness(int x = NOCHANGE) {
 	Line  289: 	int fnFlashLED(int x) {																					// Flashes LED# (parsed as parameter when calling) odd number of times.
@@ -63,11 +45,11 @@
 	Line 1797: 	int fnGetStationName(int dummy=0) {
 	Line 1825: 	int fnDockingStatus(int dummy) {
 	Line 1923: 	int fnFighterStatus(int dummy = 0) {
-	Line 1948: 	int fnInputCMD(int dummy = 0) {
 	Line 2010: 	int fnPANIC(int panic = 0) {
+Placeholder
+Placeholder
 	Line 2033:	int findstr(alias string, alias substring)
 	Line 2058:	int strcpy(alias dst, alias src)
-	Line 2067:	int fnDEBUG()
 */
 
 	//------------------//
@@ -118,6 +100,7 @@
 		}	
 	}
 	
+/*		MOVED TO ED_initialise.tmh 
 	
 	// FUNCTION:	Set joystick and rudder curves according to Autopilot switch position.
 	// Parameters:	profile			=	0 - 5 (see JSProfile in EDGlobalVars)
@@ -213,26 +196,32 @@
 			SliderProfile = "FSS Mode";
 		}
 		if (x == 1)	{													// Normal flight
-	//		SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);		// TESTING 
+//-			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);		// TESTING 
 			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Normal Flight";
 			
 		}
 		if (x == 2)	{													// Supercruise or SAA Mode
-	//		SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);		// TESTING 
+//-			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);		// TESTING 
 			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
 			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
 			SliderProfile = "Supercruise";
 		}
 		
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);		// Forces re-read of slider axis
+		if (ControllerType = "T16000") {
+			DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, TANT);			// Forces re-read of TWCS Throttle slider axis
+		}
+		if (ControllerType = "WARTHOG") {
+			DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);		// Forces re-read of WARTHOG Throttle slider axis
+		}
 
 		if (!StartupLock) {
 			printf("++	Slider Curve Profile:	[%d] %s\x0a", x, SliderProfile);
 		}
 	}
 
+*/
 
 	// FUNCTION: Determine current flight mode and set Slider Curves appropriately
 	
@@ -259,7 +248,7 @@
 			printf("!!	DEBUG:	fnGetFlightMode() - Flight Mode = (%d) %s\x0a", FlightMode, ModeTxt);
 		}
 		
-		fnSetSliderCurve(FlightMode);	
+		initSliderCurve(FlightMode);	
 	}
 
 
@@ -563,7 +552,7 @@
 		
 		int GameVersion;
 		
-		printf("\x0a!!!	GAME STARTED @	%s	!!!\x0a\x0a", fnGetTOD());
+		printf("\x0a++	GAME STARTED @	%s\x0a\x0a", fnGetTOD());
 		
 		GameLoaded = YES;
 		StartupLock = OFF;
@@ -581,7 +570,7 @@
 			//
 		}
 		if (!ConnectionStatus) {
-	//		ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
+//-			ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
 			ActKey(KEYON+PULSE+ShowFramerate);										// ...turn on frame rate. Alternate="m_ShowGameStats()"			
 			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
@@ -1393,8 +1382,16 @@
 				ActKey(KEYON+PULSE+m_FastModeSwitch0);												// Selects OPEN mode
 			}
 			else if (mode == 1) {
+				
 				fnVPOutput("Menu log to private group selected.. please wait for game reload", 0, 1);			
-				ActKey(KEYON+PULSE+m_FastModeSwitch1);												// Selects PRIVATE mode
+//-		Remove "Clicker check" if/else block before publish
+				if (strcmp(&CMDRName, "Clicker") == 0) {
+					ActKey(KEYON+PULSE+m_FastModeSwitch1b);											// Selects 2nd option in PRIVATE mode
+				}
+				else {
+					ActKey(KEYON+PULSE+m_FastModeSwitch1a);											// Selects 1st option in PRIVATE mode					
+				}
+//-
 			}
 			else {
 				fnVPOutput("Menu log to solo selected.. please wait for game reload", 0, 1);			
@@ -1426,7 +1423,7 @@
 	// FUNCTION:	Voice + Print output
 	// Parameter:	VPOutput: string to send to fnTextToSpeech() and printf
 	//				VolumeOverride: integer, 0 = no override, 1 - 100 = Volume. (Default Volume = 75)
-	//				Type: game ("=="), script ("++") or DEBUG ("!!") related
+	//				Type: 0 - game ("=="), 1 - script ("++") or 2 - DEBUG ("!!") related
 
 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
 		if (Type == 1) {
@@ -1621,30 +1618,34 @@
 
 	// FUNCTION:	Get Time of Day
 	// Usage1:		"int variablename = fnGetTOD();"
-	// Usage2:		"printf("The local PC time is %s", fnTOD());"
+	// Usage2:		"printf("The local PC time is %s", fnGetTOD());"
 
+	//	Global vars
+	
+	alias TOD24 = "HH:MM";
+	
 	int fnGetTOD() {
 
-		int	TOD	= "HH:MM PM";							// Set type and format
-		int AmPm = "XX";
-		int HH = "HH";
-		int MM = ":MM";
+		// --- NOTE: On my PC Windows CMD statement time /t now returns the 24 horu formatted time since upgrading to Win11
+		
+		int	TOD	= "##:## ##";								// Set type and am/pm format
+		int AmPm = "##";
+		int HH = "##";
+		int MM = "###";
 
-		alias TOD24 = "HH:MM";
+		system("time /T > c:\\tod.txt");					// Create local timestamp and write to a file at C:\
 
-		system("time /T > c:\\tod.txt");				// Create local timestamp and write to a file at C:\
-
-		int fp = fopen("c:\\tod.txt", "r");				// Open the file to read
+		int fp = fopen("c:\\tod.txt", "r");					// Open the file to read
 
 		if (fp) {
-			fread(TOD, 1, 8, fp);						// Reads contents of file into TOD
+			fread(TOD, 1, 8, fp);							// Reads contents of file into TOD
 			fclose(fp);
 
-			strsub(HH, TOD, 0, 1);						// Extract 'HH'
-			strsub(MM, TOD, 2, 4);						// Extract ":MM'
-			strsub(AmPm, TOD, 6, 7); 					// Extract 'AM' or 'PM'
-
-			if (strcmp(AmPm, "PM") == 0) {				// If so...convert 'HH' to 24hr equivalent. No need to check/convert 12PM
+			strsub(HH, TOD, 0, 1);							// Extract 'HH'
+			strsub(MM, TOD, 2, 4);							// Extract ":MM'
+			
+			strsub(AmPm, TOD, 6, 7); 						// Extract 'AM' or 'PM' if present
+			if (strcmp(AmPm, "PM") == 0) {					// If so...convert 'HH' to 24hr equivalent. No need to check/convert 12PM
 				if (strcmp(HH, "01") == 0) HH = "13";		
 				if (strcmp(HH, "02") == 0) HH = "14";		
 				if (strcmp(HH, "03") == 0) HH = "15";		
@@ -1657,12 +1658,12 @@
 				if (strcmp(HH, "10") == 0) HH = "22";		
 				if (strcmp(HH, "11") == 0) HH = "23";		
 			}
-			else {										// AM 
+			else if (strcmp(AmPm, "AM") == 0){				// AM 
 				if (strcmp(HH, "12") == 0) HH = "00";		
 			}
 
-			sprintf(&TOD24, "%s%s", HH, MM);			// Reconstruct TOD as TOD24
-			return &TOD24;								// Return the result
+			sprintf(&TOD24, "%s%s", HH, MM);				// Reconstruct TOD as TOD24
+			return &TOD24;									// Return the result
 		}	
 	}
 
@@ -1804,19 +1805,19 @@
 		StationName[0] = 0;
 		strcpy(&StationName, &keyvalue);
 		
-//	DEBUG +++++ START
+//-	DEBUG +++++ START
 		if (strlen(&StationName) == 0) {
 			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - StationName has returned as zero length string\x0a");
 		}
 		else {
-//	DEBUG +++++ END 
+//-	DEBUG +++++ END 
 		
 			StationName[strlen(&StationName)] = 0;
 			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - Station Name = %s\x0a", &StationName);
 		
-//	DEBUG +++++ START
+//-	DEBUG +++++ START
 		}
-//	DEBUG +++++ END 
+//-	DEBUG +++++ END 
 		
 	}
 	
@@ -1864,7 +1865,7 @@
 			pad10	= (LandingPad % 100) / 10;
 			pad1 	= (LandingPad % 100) % 10;
 
-		//	sprintf(&LPMsg, "Landing Pad %d", LandingPad);				// Speak Lanading pad as whole number
+//-			sprintf(&LPMsg, "Landing Pad %d", LandingPad);				// Speak Landing pad as whole number
 			sprintf(&LPMsg, "Landing Pad: %d %d", pad10, pad1);			// Speaks each digit ... eg 5,9,8
 			LPMsg[strlen(&LPMsg)] = 0;
 			fnTextToSpeech(&LPMsg);
@@ -1940,13 +1941,46 @@
 	}
 
 
-	//	Function:	Process InputCMD and CMDParameter
+	//	FUNCTION:	Instant abort for script
+	//	Parameter:	panic - 0 = panic button hit, 1 = called from game shutdown via DeferCall()
+	//	NOTE:		DEBUG Feature if the script goes nuclear and we seemingly lose control
+	
+	int fnPANIC(int panic = 0) {
+		if (DEBUG > 0) {
+			if (panic == 0) {
+				printf("\x0a");
+				printf("!! DEBUG:	PANIC	!!\x0a");
+				printf("!! DEBUG:	You pressed the Script EJECT button (MSP)\x0a");
+				printf("!! DEBUG:	PANIC	!!\x0a");
+			}
+			else {
+				printf("\x0a");
+				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 292\x0a");				
+			}
+		}
+		fnSoundFX("wstop");
+		Sleep(500);
+		Abort();
+	}
+
+	
+	//	Function:	DEBUG/Development Code - Process InputCMD and CMDParameter
 	//	Parameter:	dummy allows function to be called via REXEC() or DeferCall()
 	//	Called by:	stfnProcessMyJournalData() if either InputCMD or CMDParameter have changed 
 	//	Usage:		In game, open chat panel and enter "!set <InputCMD> <InputCMDParameter>"
 	//	NOTE:		PS-Journal powershell script intercepts these via Journal and writes entry into MyJournalData.json file
 	//				Set Debug ON first
 	//
+
+	// Global VARS
+	// Used in stfnProcessMyJournalData()
+	
+	char 	InputCMD;
+	char	lastInputCMD;
+	char	CMDParameter;
+	char	lastCMDParameter;
+	
+	int		InputCMDcharsSET = 0;
 		
 	int fnInputCMD(int dummy = 0) {
 	
@@ -2006,29 +2040,155 @@
 	}
 
 
-	//	FUNCTION:	Instant abort for script
-	//	Parameter:	panic - 0 = panic button hit, 1 = called from game shutdown via DeferCall()
-	//	NOTE:		DEBUG Feature if the script goes nuclear and we seemingly lose control
+	//	FUNCTION:	Calculate and output TripTime 
+
+	//	Global vars
+	alias	LandedTOD	= "HH:MM";
+	alias	LiftoffTOD	= "HH:MM";
+	alias	TripTime	= "HH:MM";
 	
-	int fnPANIC(int panic = 0) {
-		if (DEBUG > 0) {
-			if (panic == 0) {
-				printf("\x0a");
-				printf("!! DEBUG:	PANIC	!!\x0a");
-				printf("!! DEBUG:	You pressed the Script EJECT button (MSP)\x0a");
-				printf("!! DEBUG:	PANIC	!!\x0a");
+	int fnTripTime(int dummy = 0) {
+
+		// --- string working variables
+		alias H1 = "HH";
+		alias M1 = "MM";
+		alias H2 = "HH";
+		alias M2 = "MM";
+		alias HH = "HH";
+		alias MM = "MM";
+		
+		// --- string container for spoken trip time
+		alias TT = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
+
+		// --- Integer working variables ---
+		int iH1, iM1, iH2, iM2, t1, t2, diff, dh, dm;
+
+		// --- Extract hours and minutes ---
+		strsub(&H1, &LiftoffTOD, 0, 1);
+		strsub(&M1, &LiftoffTOD, 3, 4);
+		strsub(&H2, &LandedTOD, 0, 1);
+		strsub(&M2, &LandedTOD, 3, 4);
+
+		// --- Convert to integers ---
+		iH1 = ieval(&H1);
+		iM1 = ieval(&M1);
+		iH2 = ieval(&H2);
+		iM2 = ieval(&M2);
+
+		// --- Convert both to minutes since midnight ---
+		t1 = iH1 * 60 + iM1;
+		t2 = iH2 * 60 + iM2;
+
+		// --- Handle next-day rollover ---
+		if (t2 < t1) t2 = t2 + 24 * 60;
+
+		// --- Difference in total minutes ---
+		diff = t2 - t1;
+
+		// --- Split into hours/minutes ---
+		dh = diff / 60;
+		dm = diff - (dh * 60);
+
+		// --- Convert back to zero-padded strings ---
+		sprintf(&HH, "%02d", dh);
+		sprintf(&MM, "%02d", dm);
+
+		// --- Compose TripTime alias ---
+		sprintf(&TripTime, "%s:%s", &HH, &MM);
+		
+
+		// --- Output result ---
+		printf("==	TripTime = %s (from %s to %s)\x0a", &TripTime, &LiftoffTOD, &LandedTOD);
+		if (AnnounceTripTime) {
+			if (strcmp(&HH, "00") == 0) {
+				sprintf(&TT, "Elapsed trip time, %d minutes", ieval(&MM));		
 			}
 			else {
-				printf("\x0a");
-				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 292\x0a");				
+				sprintf(&TT, "Elapsed trip time, %d hours %d minutes", ieval(&HH), ieval(&MM));
 			}
+			fnTextToSpeech(&TT);
 		}
-		fnSoundFX("wstop");
-		Sleep(500);
-		Abort();
+
+		// --- Reset Original Station and timers
+		fnSetOriginStation(0);
+		
 	}
 
+
+	//	FUNCTION:	Sets Original Station Name in order to track round trip time
+	//	Parameters:	0 - Set oStation to "not set" and reset trip timers
+	//				1 - Set oStation to current Station Name
+
+	//	Global Vars
 	
+	char oStation;
+	
+	int fnSetOriginStation(int action) {
+	
+		int fnName = "fnSetOriginStation";
+		int reason = 0;
+		
+		int msg = "Origin Station set to";
+		
+		char txtmsg;
+		Dim (&txtmsg, 96);
+		txtmsg[0] = 0;
+		
+		
+		if (action == 0) {
+			
+			strcpy(&TripTime, "HH:MM");
+			strcpy(&LandedTOD, "HH:MM");
+			strcpy(&LiftoffTOD, "HH:MM");
+
+			Dim(&oStation, 8);
+			oStation[0] = 0;
+			strcpy(&oStation, "not set");
+			oStation[7] = 0;	
+
+			AnnounceTripTime = 0;
+		}
+		
+		if (action == 1) {
+			if (fDocked) {
+				Dim(&oStation, strlen(&StationName)+1);
+				oStation[0] = 0;
+				strcpy(&oStation, &StationName);
+				oStation[strlen(&oStation)] = 0;
+				
+				sprintf(&txtmsg, "%s %s", msg, &oStation);
+				txtmsg[strlen(&txtmsg)] = 0;
+				
+				fnVPOutput(&txtmsg);
+				
+				AnnounceTripTime = 1;
+			}
+			else {
+				reason = "we are not docked";
+			}
+		}
+		if (reason != 0) fnNotValid(fnName, reason);
+	}
+
+
+	//	FUNCTION:	Use this DEBUG function to test code whilst game running
+	//	Parameter:	dummy - enables REXEC or DeferCall
+	//	Usage:		PSF+EFLNORM calls this function
+	
+	int fnDEBUG(int dummy = 0) {
+
+		fnVPOutput("Reinitialising controllers", 0, 2);							// DEBUG message
+		
+		initJoystickAxis();
+		initThrottleAxis();
+		initSliderAxis();
+		initSlewAxis();
+		initRudderAxis();
+		initCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
+
+	}
+
+
 	//	FUNCTION:	Find substring within a string and return first char position or -1 if not found
 	//	NOTE:		sys.tmh has strstr() listed to provide this functionality, however it seems to always
 	//				return a '0' no matter what you plug in. So, I decided to write my own.
@@ -2061,30 +2221,5 @@
 	int strcpy(alias dst, alias src) {
 		sprintf(&dst, "%s", &src);
 	}
-
-
-	//	FUNCTION:	Use this DEBUG function to test code whilst game running
-	//	Parameter:	dummy - enables REXEC or DeferCall
-	//	Usage:		PSF+EFLNORM calls this function
-	
-	int fnDEBUG(int dummy = 0) {
-
-		char c;
-		Dim(&c, 64);
-		c[0] = 0;
-
-		int altflag;
-		int Altitude = stfnGetKeyValue("Altitude", INTEGER);
-		
-		if (fAltFromAvgRad) altflag = "set";
-		else altflag = "reset";
-		
-		sprintf(&c, "Altitude flag %s", altflag);
-		c[strlen(&c)] = 0;
-		
-		fnVPOutput(&c, 0, 2);
-
-	}
-
 	
 // END
