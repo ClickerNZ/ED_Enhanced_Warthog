@@ -1,25 +1,11 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_Initialise.tmh ... supports Elite Dangerous (Vanguards)
+	//									WARTHOG REQUIRED									//
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
+	//								This file: ED_Initialise.tmh							//
 
 /*
 	Index:		FUNCTION
@@ -28,7 +14,9 @@
 	Line 190: 	int initThrottleAxis()
 	Line 207: 	int initSliderAxis()
 	Line 223: 	int initSlewAxis()
-	Line 240: 	int initRudderAxis()	
+	Line 240: 	int initRudderAxis()
+	Line xxx: 	int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
+	Line xxx: 	int initSliderCurve(int x) {	
 	Line 254: 	int initTextToSpeech()
 	Line 266: 	int initSoundFX()
 	Line 319: 	int initUserSettings(int dummy = 0)
@@ -40,6 +28,15 @@
 */
 
 	// START
+
+	//----------------------------------------------------------------------//
+	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
+	//----------------------------------------------------------------------//
+
+	define VMajor		 			5						// Script Version Major Value			ie. 2xx
+	define VMinor		 			1						// Script Version Minor Value			ie. x3x
+	define VPoint					0						// Script Version Point Update			ie. xx4
+	define VBranch					"1"						// Script Version Branch				ie. xxx.01
 
 	//--------------------------//
 	// INITIALISATION FUNCTIONS //
@@ -67,22 +64,27 @@
 		
 		if (&Joystick != &joy0) {
 			&MyJoystick = &Joystick;
+			ControllerType = "WARTHOG";
 			printf("\x0a\++	Connected joystick	is WARTHOG Base + F16 Flight stick.\x0a");
 		}
 		else if (&JoystickF18 != &joy0) {
 			&MyJoystick = &JoystickF18;
+			ControllerType = "WARTHOG";
 			printf("\x0a\++	Connected joystick	is WARTHOG Base + F18 Flight stick.\x0a");
 		}
 		else if (&AVA_F16 != &joy0) {
-			&MyJoystick = &AVA_F16;		
+			&MyJoystick = &AVA_F16;
+			ControllerType = "WARTHOG";
 			printf("\x0a\++	Connected joystick	is AVA Base + F16 Flight stick.\x0a");
 		}
 		else if (&AVA_F18 != &joy0) {
 			&MyJoystick = &AVA_F18;
+			ControllerType = "WARTHOG";
 			printf("\x0a\++	Connected joystick	is AVA Base + F18 Flight stick.\x0a");
 		}
 		else if (&AVA_SolR != &joy0) {
 			&MyJoystick = &AVA_SolR;
+			ControllerType = "WARTHOG";
 			printf("\x0a\++	Connected joystick	is AVA Base + SolR Flight stick.\x0a");
 		}
 		else {
@@ -162,7 +164,7 @@
 	// INITIALISE all AXES //
 	// ------------------- //
 
-// REVIEW:	If only called once, perhaps we include  a call to fnSetCurves in each block???
+// REVIEW:	If only called once, perhaps we include  a call to initCurves() in each block???
 
 	// FUNCTION: Initialise Joystick Axes 
 	
@@ -207,7 +209,7 @@
 	
 		// Slider Mapping...
 		MapAxis(&MyThrottle, THR_FC, DX_SLIDER_AXIS, AXIS_NORMAL, MAP_ABSOLUTE);				// Set Friction Control Axis Curve (Sensor Range Zoom Scaling)
-		fnSetSliderCurve(1);
+		initSliderCurve(1);
 		if (StartupLock) {
 			printf("Slider Axis	... done		");
 		}
@@ -245,6 +247,122 @@
 			if (StartupLock) printf("Rudder Axis	... disabled\x0a");		
 		}
 		if (StartupLock) printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a\x0a");
+	}
+
+
+	// FUNCTION:	Set joystick and rudder curves according to Autopilot switch position.
+	// Parameters:	profile			=	0 - 5 (see JSProfile in EDGlobalVars)
+	// 				print			=	NO (default) to supress console print of Curve settings, YES to print
+	//				announce		=	NO to supress voice announcement at game start/restart, else YES (default) to announce
+	//				SaveCurveInfo	=	TRUE (default) when called using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
+	//									...this saves last manually selected state for FA-ON
+	
+	int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
+
+		int VoiceTxt;
+
+		if (SaveCurveInfo == TRUE) {
+			OldCurves = JSProfile;
+		}
+
+		JSProfile = profile;
+
+		if (profile == NONE) {
+			JSCurveSetting = "NONE";
+			VoiceTxt = "Curves None";
+		}
+		if (profile == MILD) {
+			JSCurveSetting = "MILD";
+			VoiceTxt = "Curves mild";
+		}
+		if (profile == MEDIUM) {
+			JSCurveSetting = "MEDIUM";
+			VoiceTxt = "Curves medium";			
+		}
+		if (profile == SLOW) {
+			JSCurveSetting = "SLOW";
+			VoiceTxt = "Curves slow";					
+		}
+		if (profile == SLOWEST) {
+			JSCurveSetting = "SLOWEST";
+			VoiceTxt = "Curves slowest";					
+		}
+		
+		// SetSCurve() Syntax:
+		// SetSCurve(&Device, axis name, left_deadzone%, center_deadzone%, right_deadzone%, curve, scale);
+		//		curve = -20 to +20. Negative values more sensitive around center, positive values better control in the center
+		//		scale = -20 to +20. Negative value limits travel on axis. Positive will reach minimum and maximum values quicker
+		// Refer: Values options set in ED_UserSettings.tmh
+		// SetCustomCurve() Syntax:
+		// SetCustomCurve(&device, axis name, LIST(Axis physical position 1, Axis output value 1, Axis physical position 2, Axis output value 2, …);
+		// values are %  
+
+		// Set Joystick curves and force re-read of axes
+		SetSCurve(&MyJoystick, JOYX,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
+		SetSCurve(&MyJoystick, JOYY,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
+
+		DefEventHandler(EV_HID_INPUT_DATA, &MyJoystick, JOYX);
+		DefEventHandler(EV_HID_INPUT_DATA, &MyJoystick, JOYY);
+
+		// Set Rudder curve and force re-read of axis
+		SetSCurve(&MyRudder, TRUDDER, Rudder_L_DZ,	Rudder_C_DZ,	Rudder_R_DZ,	Rudder_Curve[profile],	Rudder_Zoom);
+		DefEventHandler(EV_HID_INPUT_DATA, &MyRudder, TRUDDER);
+
+		// Set Slew Control curves and force re-read of axes 
+		SetSCurve(&MyThrottle, SCX, 		Slew_L_DZ,		Slew_C_DZ,		Slew_R_DZ,		Slew_Curve[profile],		Slew_Zoom);
+		SetSCurve(&MyThrottle, SCY, 		Slew_L_DZ,		Slew_C_DZ,		Slew_R_DZ,		Slew_Curve[profile],		Slew_Zoom);
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, SCX);
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, SCY);
+
+
+		if (StartupLock) {
+			printf("++	Joystick & Rudder Curves	... done\x0a\x0a");
+			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
+		}
+		else if (announce) {
+			fnTextToSpeech(VoiceTxt);
+		}
+		
+		if (print) {
+			printf("++	Curve Profile: [%s]\x0a", JSCurveSetting);
+			printf("++	Joystick Curves[%s]	: LDZ=%d, CDZ=%d,  RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Joystick_L_DZ, Joystick_C_DZ, Joystick_R_DZ, Joystick_Curve[profile], Joystick_Zoom);
+			printf("++	Rudder Curves[%s]	: LDZ=%d, CDZ=%d, RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Rudder_L_DZ, Rudder_C_DZ, Rudder_R_DZ, Rudder_Curve[profile], Rudder_Zoom);
+			printf("++	Slew Curves[%s]	: LDZ=%d, CDZ=%d, RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Slew_L_DZ, Slew_C_DZ, Slew_R_DZ, Slew_Curve[profile], Slew_Zoom);
+		}
+	}
+
+
+	// FUNCTION:	Set context driven DX-SLIDER curves
+	// Parameter:	0 = linear, 1 or 2 = non-linear
+
+	int initSliderCurve(int x) {
+		DXCurveSetting = x;												// Variable used in Status Printout
+		int SliderProfile;
+		int SliderCurve;												// Used to define the LIST and can use within EXEC
+		
+		if (x == 0) {													// FSS Mode Radar
+			SetJCurve(&MyThrottle, THR_FC, 50, 50);						// Linear progression. Low sensitivity
+			SliderProfile = "FSS Mode";
+		}
+		if (x == 1)	{													// Normal flight
+//-			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);		// TESTING 
+			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
+			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
+			SliderProfile = "Normal Flight";
+			
+		}
+		if (x == 2)	{													// Supercruise or SAA Mode
+//-			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);		// TESTING 
+			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
+			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
+			SliderProfile = "Supercruise";
+		}
+		
+		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);		// Forces re-read of WARTHOG Throttle slider axis
+
+		if (!StartupLock) {
+			printf("++	Slider Curve Profile:	[%d] %s\x0a", x, SliderProfile);
+		}
 	}
 
 
@@ -306,6 +424,7 @@
 	int		defAutoAbort;			// ENABLED/DISABLED
 	int		defSCOLowFuelFailsafe;	// ENABLED/DISABLED
 	int		defAutoDisembark;		// ENABLED/DISABLED
+	int		defAnnounceTripTime;	// ENABLED/DISABLED
 
 	// Integer settings
 	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
@@ -317,10 +436,11 @@
 	int		defThrustUpTime;		// 0 - ???? (milliseconds)
 	int		defPIPMode;				// 0 - 5
 	int		defUserSettings;		// Binary encoded via fnEncodeUserSettings()
+
+	int		DEBUGMODE;
 	
 	int initUserSettings(int dummy = 0) {
 		
-	
 		printf("\x0a++	Record User Settings ...\x0a");
 
 		// Binary flag settings
@@ -345,6 +465,7 @@
 		defAutoAbort			= AutoAbort;			// ENABLED/DISABLED
 		defSCOLowFuelFailsafe	= SCOLowFuelFailsafe;	// ENABLED/DISABLED
 		defAutoDisembark		= AutoDisembark;		// ENABLED/DISABLED
+		defAnnounceTripTime		= AnnounceTripTime; 	// ENABLED/DISABLED
 		
 		// Integer settings
 		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
@@ -365,6 +486,9 @@
 		if (DEBUG == 2) DEBUGMODE = "LOG";
 		if (DEBUG == 3) DEBUGMODE = "VERBOSE";
 		if (DEBUG > 3 | DEBUG < 0)	DEBUGMODE = "NOT SET";
+		
+		// --- Reset Trip timers
+		fnSetOriginStation(0);
 				
 	}
 	
@@ -398,6 +522,7 @@
 		AutoAbort			= defAutoAbort;				// ENABLED/DISABLED
 		SCOLowFuelFailsafe	= defSCOLowFuelFailsafe;	// ENABLED/DISABLED
 		AutoDisembark		= defAutoDisembark;			// ENABLED/DISABLED
+		AnnounceTripTime	= defAnnounceTripTime;		// ENABLED/DISABLED 
 		
 		// Integer settings
 		FAOFFCurves			= defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
@@ -441,6 +566,7 @@
 		if (AutoAbort)			EncodedSettings = EncodedSettings | (1 << 18);	// Bit 18
 		if (SCOLowFuelFailsafe) EncodedSettings = EncodedSettings | (1 << 19);  // Bit 19
 		if (AutoDisembark)		EncodedSettings = EncodedSettings | (1 << 20);	// Bit 20
+		if (AnnounceTripTime)	EncodedSettings = EncodedSettings | (1 << 21);	// Bit 21
 		
 		printf("++	Encoded User Settings = %d\x0a", EncodedSettings);
 		
@@ -474,6 +600,7 @@
 		if ((DecodeSettings & (1 << 18))	!= 0) AutoAbort = 1;			else AutoAbort = 0;
 		if ((DecodeSettings & (1 << 19))	!= 0) SCOLowFuelFailsafe = 1;	else SCOLowFuelFailsafe = 0;
 		if ((DecodeSettings & (1 << 20))	!= 0) AutoDisembark = 1;		else AutoDisembark = 0;
+		if ((DecodeSettings & (1 << 21))	!= 0) AnnounceTripTime = 1;		else AnnounceTripTime = 0;
 
 		printf("++	User settings decoded\x0a");
 		
@@ -510,6 +637,7 @@
 		if (AutoAbort			!= defAutoAbort)			printf("	AutoAbort		= %d	(%d)\x0a",	AutoAbort, defAutoAbort);
 		if (SCOLowFuelFailsafe	!= defSCOLowFuelFailsafe)	printf("	SCOLowFuelFailsafe	= %d	(%d)\x0a",	SCOLowFuelFailsafe, defSCOLowFuelFailsafe);
 		if (AutoDisembark		!= defAutoDisembark)		printf("	AutoDisembark		= %d	(%d)\x0a",	AutoDisembark, defAutoDisembark);
+		if (AnnounceTripTime	!= defAnnounceTripTime)		printf("	AnnounceTripTime	= %d	(%d)\x0a",	AnnounceTripTime, defAnnounceTripTime);
 			
 		// Integer user settings
 		if (FAOFFCurves			!= defFAOFFCurves)			printf("	FAOFFCurves		= %d	(%d)\x0a", FAOFFCurves, defFAOFFCurves);		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
