@@ -6,10 +6,12 @@
 	//----------------------------------------------------------------------//
 
 	// This file:	ED_Enhanced_Warthog.tmc 		v510.1					// New Minor Version
-	// Supports:	Elite Dangerous 				v4.2.1.1				// Does not support Legacy Horizons
+	// Supports:	Elite Dangerous 				v4.2.1.2				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.127_rev1		// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
 	//				Throttle firmware 				v23
+	
+	// Refer Change Log.txt in parent folder
 
 	// LEGEND: This script calls functions within the support files with the following naming formats
 	// ==============================================================================================
@@ -45,6 +47,7 @@
 
 	CMDR Clicker	
 */
+
 	// START
 
 	// -------------- //
@@ -54,13 +57,11 @@
 	include "target.tmh"
 
 	// 'target.tmh' include is mandatory.
-	// 		when loaded, target.tmh then includes "defines.tmh" and "hid.tmh"
-	// 		when loaded, hid.tmh then includes "sys.tmh"
+	// 		when loaded, target.tmh includes "defines.tmh" and "hid.tmh"
+	// 		when loaded, hid.tmh includes "sys.tmh"
 	//		...this ensures these critical files are loaded in the correct order
 
-	//      The above 4x .tmh files are bundled with the TARGET software and will be replaced each time you apply an update.
-	//		The rest of this package has been written. Ideas are both mine and borrowed from others.
-	//		Some code (~10%) has been borrowed from code found on line
+	//      The above 4x .tmh files are bundled with the TARGET software and will be replaced each time update.
 
 	/////////////////////////////////////////////////////////////////////////////
 	///                                                                       ///
@@ -79,10 +80,10 @@
 	include "ED_StateTracker.tmh"
 	include "ED_Toggles.tmh"
 
-// Excluded from github - remove prior to publishing
-//	DEBUG	+++++
+//- Excluded from github - remove prior to publishing
+//-	DEBUG	+++++
 	include "ED_Development.tmh"
-//	DEBUG	+++++
+//-	DEBUG	+++++
 		
 	//--------------//
 	// Main Program //
@@ -156,10 +157,10 @@
 		printf("\x0a\++	Initialise Macro Chains...\x0a");
 		initMacroChains();														// Initialise Custom Macros (See ED_Macros.tmh)
 
-// Excluded from github - remove prior to publishing
-//	DEBUG	+++++
+//- Excluded from github - remove prior to publishing
+//-	DEBUG	+++++
 		initDevMacros();														// Initialise any development macros (refer ED_Development.tmh)
-//	DEBUG	+++++
+//-	DEBUG	+++++
 		
 	// -------------------------- //
 	// Initialise Flight controls //
@@ -174,7 +175,7 @@
 		initSliderAxis();
 		initSlewAxis();
 		initRudderAxis();
-		fnSetCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
+		initCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
 
 		printf("\x0a\++	Initialise Hardware	...	Complete	++\x0a\x0a");
 		
@@ -186,7 +187,7 @@
 		
 		stfnStartCheck();														// Check for vital files and game start. Bootstrap script execution.
 		
-		printf("\x0a++	DEBUG MODE = %s\x0a\x0a", DEBUGMODE);
+		if (DEBUG > 0) printf("\x0a++	DEBUG MODE = %s\x0a\x0a", DEBUGMODE);
 	}	
 	
 	// end of int main()	
