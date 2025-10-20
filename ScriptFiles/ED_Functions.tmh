@@ -6,50 +6,53 @@
 	//							This file: ED_UserSettings.tmh								//
 
 /*
-	Index:		FUNCTION
-	Line   80: 	int fnNotValid(int fnName, int reason=0) {
-	Line   98: 	int fnStartupMapKeyMode() {
-	Line  239: 	int fnGetFlightMode() {
-	Line  269: 	int fnLEDBrightness(int x = NOCHANGE) {
-	Line  289: 	int fnFlashLED(int x) {																					// Flashes LED# (parsed as parameter when calling) odd number of times.
-	Line  306: 	int fnSetLEDs(int dummy=NUL) {
-	Line  339: 	int fnFlashStart() {
-	Line  378: 	int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
-	Line  413: 	int fnVoiceVolume(int x) {
-	Line  464: 	int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
-	Line  539: 	int fnSoundFX(int wavfile, int vol = 100, int loops = 1) {
-	Line  556: 	int fnGameStarted(int dummy = 0) {
-	Line  649: 	int fnPIPMode(int x) {
-	Line  700: 	int fnPIPManager(int PwrPriority) {
-	Line  737: 	int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
-	Line  777: 	int fnAdvFireControl(int x) {
-	Line  858: 	int fnAdvancedSCB(int x = 0) {
-	Line  916: 	int fnHeatsink(int param = 0) {
-	Line  955: 	int fnChaff(int dummy = 0) {
-	Line  983: 	int fnDeploySRV(int x) {
-	Line 1035: 	int fnDeployFighter(int x) {
-	Line 1088: 	int fnDRShip() {
-	Line 1106: 	int fnRequestDock() {
-	Line 1130: 	int fnHangarServices(int x) {
-	Line 1200: 	int fnIdleLock(int x) {
-	Line 1235: 	int fnCheckFSDCharge(int EngineText) {
-	Line 1266: 	int fnCheckFiregroup() {
-	Line 1282: 	int fnClearChatBox(int mode = 0) {
-	Line 1346: 	int fnModeSwitch(int mode) {
-	Line 1428: 	int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
-	Line 1450: 	int fnPrintState() {
-	Line 1461: 	int fnStateDump() {
-	Line 1623: 	int fnGetTOD() {
-	Line 1674: 	int fnMyName() {
-	Line 1759: 	int fnSelectFiregroup(int fg) {
-	Line 1797: 	int fnGetStationName(int dummy=0) {
-	Line 1825: 	int fnDockingStatus(int dummy) {
-	Line 1923: 	int fnFighterStatus(int dummy = 0) {
-	Line 2010: 	int fnPANIC(int panic = 0) {
-Placeholder
-Placeholder
-	Line 2033:	int findstr(alias string, alias substring)
-	Line 2058:	int strcpy(alias dst, alias src)
+	Index:				FUNCTION
+	Line    65: 		int fnNotValid(int fnName, int reason=0) {
+	Line    83: 		int fnStartupMapKeyMode() {
+	Line   109: 		int fnGetFlightMode() {
+	Line   139: 		int fnLEDBrightness(int x = NOCHANGE) {
+	Line   159: 		int fnFlashLED(int x) {
+	Line   176: 		int fnSetLEDs(int dummy=NUL) {
+	Line   209: 		int fnFlashStart() {
+	Line   248: 		int fnTextToSpeech(int text, int VolumeOverride=0, int Voice=DefaultVoice) {
+	Line   283: 		int fnVoiceVolume(int x) {
+	Line   334: 		int fnTTSExport(alias TTSText, int TTSVoice = DefaultVoice, int TTSVolume=75 ) {
+	Line   409: 		int fnSoundFX(int wavfile, int vol = 100, int loops = 1) {
+	Line   426: 		int fnGameStarted(int dummy = 0) {
+	Line   519: 		int fnPIPMode(int x) {
+	Line   570: 		int fnPIPManager(int PwrPriority) {
+	Line   607: 		int fnPIPMapper(int maxPIPx=0, int minPIPy=0, int balPIPz=0) {
+	Line   647: 		int fnAdvFireControl(int x) {
+	Line   728: 		int fnAdvancedSCB(int x = 0) {
+	Line   786: 		int fnHeatsink(int param = 0) {
+	Line   825: 		int fnChaff(int dummy = 0) {
+	Line   853: 		int fnDeploySRV(int x) {
+	Line   905: 		int fnDeployFighter(int x) {
+	Line   958: 		int fnDRShip() {
+	Line   976: 		int fnRequestDock() {
+	Line  1000: 		int fnHangarServices(int x) {
+	Line  1070: 		int fnIdleLock(int x) {
+	Line  1105: 		int fnCheckFSDCharge(int EngineText) {
+	Line  1136: 		int fnCheckFiregroup() {
+	Line  1152: 		int fnClearChatBox(int mode = 0) {
+	Line  1216: 		int fnModeSwitch(int mode) {
+	Line  1309: 		int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
+	Line  1331: 		int fnPrintState() {
+	Line  1342: 		int fnStateDump() {
+	Line  1508: 		int fnGetTOD() {
+	Line  1559: 		int fnMyName() {
+	Line  1590: 		int	fnGreetCMDR(int dummy = 0) {
+	Line  1644: 		int fnSelectFiregroup(int fg) {
+	Line  1682: 		int fnGetStationName(int dummy=0) {
+	Line  1710: 		int fnDockingStatus(int dummy) {
+	Line  1808: 		int fnFighterStatus(int dummy = 0) {
+	Line  1829: 		int fnPANIC(int panic = 0) {
+	Line  1866: 		int fnInputCMD(int dummy = 0) {
+	Line  1931: 		int fnTripTime(int dummy = 0) {
+	Line  2007: 		int fnSetOriginStation(int action) {
+	Line  2059: 		int fnDEBUG(int dummy = 0) {
+	Line  2081: 		int findstr(alias string, alias substring) {
+	Line  2106: 		int strcpy(alias dst, alias src) {
 */
 
 	//------------------//
@@ -100,128 +103,6 @@ Placeholder
 		}	
 	}
 	
-/*		MOVED TO ED_initialise.tmh 
-	
-	// FUNCTION:	Set joystick and rudder curves according to Autopilot switch position.
-	// Parameters:	profile			=	0 - 5 (see JSProfile in EDGlobalVars)
-	// 				print			=	NO (default) to supress console print of Curve settings, YES to print
-	//				announce		=	NO to supress voice announcement at game start/restart, else YES (default) to announce
-	//				SaveCurveInfo	=	TRUE (default) when called using Autopilot Switch, FALSE when called via tgEnhancedFAOff()
-	//									...this saves last manually selected state for FA-ON
-	
-	int fnSetCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
-
-		int VoiceTxt;
-
-		if (SaveCurveInfo == TRUE) {
-			OldCurves = JSProfile;
-		}
-
-		JSProfile = profile;
-
-		if (profile == NONE) {
-			JSCurveSetting = "NONE";
-			VoiceTxt = "Curves None";
-		}
-		if (profile == MILD) {
-			JSCurveSetting = "MILD";
-			VoiceTxt = "Curves mild";
-		}
-		if (profile == MEDIUM) {
-			JSCurveSetting = "MEDIUM";
-			VoiceTxt = "Curves medium";			
-		}
-		if (profile == SLOW) {
-			JSCurveSetting = "SLOW";
-			VoiceTxt = "Curves slow";					
-		}
-		if (profile == SLOWEST) {
-			JSCurveSetting = "SLOWEST";
-			VoiceTxt = "Curves slowest";					
-		}
-		
-		// SetSCurve() Syntax:
-		// SetSCurve(&Device, axis name, left_deadzone%, center_deadzone%, right_deadzone%, curve, scale);
-		//		curve = -20 to +20. Negative values more sensitive around center, positive values better control in the center
-		//		scale = -20 to +20. Negative value limits travel on axis. Positive will reach minimum and maximum values quicker
-		// Refer: Values options set in ED_UserSettings.tmh
-		// SetCustomCurve() Syntax:
-		// SetCustomCurve(&device, axis name, LIST(Axis physical position 1, Axis output value 1, Axis physical position 2, Axis output value 2, …);
-		// values are %  
-
-		// Set Joystick curves and force re-read of axes
-		SetSCurve(&MyJoystick, JOYX,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
-		SetSCurve(&MyJoystick, JOYY,		Joystick_L_DZ,	Joystick_C_DZ,	Joystick_R_DZ,	Joystick_Curve[profile],	Joystick_Zoom);
-		DefEventHandler(EV_HID_INPUT_DATA, &MyJoystick, JOYX);
-		DefEventHandler(EV_HID_INPUT_DATA, &MyJoystick, JOYY);
-
-		// Set Rudder curve and force re-read of axis
-		SetSCurve(&MyRudder, TRUDDER, Rudder_L_DZ,	Rudder_C_DZ,	Rudder_R_DZ,	Rudder_Curve[profile],	Rudder_Zoom);
-		DefEventHandler(EV_HID_INPUT_DATA, &MyRudder, TRUDDER);
-
-		// Set Slew Control curves and force re-read of axes 
-		SetSCurve(&MyThrottle, SCX, 		Slew_L_DZ,		Slew_C_DZ,		Slew_R_DZ,		Slew_Curve[profile],		Slew_Zoom);
-		SetSCurve(&MyThrottle, SCY, 		Slew_L_DZ,		Slew_C_DZ,		Slew_R_DZ,		Slew_Curve[profile],		Slew_Zoom);
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, SCX);
-		DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, SCY);
-
-
-		if (StartupLock) {
-			printf("++	Joystick & Pedal Curves	... done\x0a\x0a");
-			printf("-----------------------------------------------------------------------------------------------------------------------------------------------\x0a");
-		}
-		else if (announce) {
-			fnTextToSpeech(VoiceTxt);
-		}
-		
-		if (print) {
-			printf("++	Curve Profile: [%s]\x0a", JSCurveSetting);
-			printf("++	Joystick Curves[%s]	: LDZ=%d, CDZ=%d,  RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Joystick_L_DZ, Joystick_C_DZ, Joystick_R_DZ, Joystick_Curve[profile], Joystick_Zoom);
-			printf("++	Rudder Curves[%s]	: LDZ=%d, CDZ=%d, RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Rudder_L_DZ, Rudder_C_DZ, Rudder_R_DZ, Rudder_Curve[profile], Rudder_Zoom);
-			printf("++	Slew Curves[%s]	: LDZ=%d, CDZ=%d, RDZ=%d, Curve= %d, Zoom= %d\x0a", JSCurveSetting, Slew_L_DZ, Slew_C_DZ, Slew_R_DZ, Slew_Curve[profile], Slew_Zoom);
-		}
-	}
-
-
-	// FUNCTION:	Set context driven DX-SLIDER curves
-	// Parameter:	0 = linear, 1 or 2 = non-linear
-
-	int fnSetSliderCurve(int x) {
-		DXCurveSetting = x;												// Variable used in Status Printout
-		int SliderProfile;
-		int SliderCurve;												// Used to define the LIST and can use within EXEC
-		
-		if (x == 0) {													// FSS Mode Radar
-			SetJCurve(&MyThrottle, THR_FC, 50, 50);						// Linear progression. Low sensitivity
-			SliderProfile = "FSS Mode";
-		}
-		if (x == 1)	{													// Normal flight
-//-			SliderCurve = LIST(0,0, 40,25, 75,50, 85,75, 100,100);		// TESTING 
-			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
-			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
-			SliderProfile = "Normal Flight";
-			
-		}
-		if (x == 2)	{													// Supercruise or SAA Mode
-//-			SliderCurve = LIST(0,0, 50,10, 75,30, 90,50, 100,100);		// TESTING 
-			SliderCurve = LIST(0,0, 25,25, 50,50, 75,75, 100,100);		// Linear 
-			SetCustomCurve(&MyThrottle, THR_FC, SliderCurve);
-			SliderProfile = "Supercruise";
-		}
-		
-		if (ControllerType = "T16000") {
-			DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, TANT);			// Forces re-read of TWCS Throttle slider axis
-		}
-		if (ControllerType = "WARTHOG") {
-			DefEventHandler(EV_HID_INPUT_DATA, &MyThrottle, THR_FC);		// Forces re-read of WARTHOG Throttle slider axis
-		}
-
-		if (!StartupLock) {
-			printf("++	Slider Curve Profile:	[%d] %s\x0a", x, SliderProfile);
-		}
-	}
-
-*/
 
 	// FUNCTION: Determine current flight mode and set Slider Curves appropriately
 	
@@ -2177,6 +2058,10 @@ Placeholder
 	
 	int fnDEBUG(int dummy = 0) {
 
+		// I sometimes start or restart TARGET script and find the joystick unresponsive.
+		// I'm hoping this might be a fix.
+		// Rather than just reseting the joystick I reset everything.
+		
 		fnVPOutput("Reinitialising controllers", 0, 2);							// DEBUG message
 		
 		initJoystickAxis();

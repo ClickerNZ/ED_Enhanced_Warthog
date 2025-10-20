@@ -6,27 +6,27 @@
 	//							This file: ED_Toggles.tmh									//
 
 /*
-	Index:		FUNCTION
-	Line  58: 	int tgTxt2Speech()
-	Line  74: 	int tgEnhancedFAOFF(int dummy = 0)
-	Line 120: 	int tgTriggerMode(int x)
-	Line 168: 	int tgLights(int x)
-	Line 229: 	int tgSilentRunning(int x)
-	Line 286: 	int tgCargoScoop(int x)
-	Line 348: 	int tgLandingGear(int Speedbrake)
-	Line 408: 	int tgReverseThrust(int EnableSpeedBrake)				////////////// NEEDS FURTHER TESTING
-	Line 481: 	int tgBoost()
-	Line 508: 	int tgHardpoints(int dummy = 0)
-	Line 548: 	int tgHUDMode(int delayannounce=0)
-	Line 587: 	int tgFSSMode()
-	Line 614: 	int tgPlanetView()
-	Line 647: 	int tgWarpDrive(int JumpType)
-	Line 759: 	int tgExtCamera()
-	Line 779: 	int tgXAxis(int param = RESET)
-	Line 858: 	int tgGALMap (int action)
-	Line 878: 	int tgSYSMap (int action)
-	Line 902: 	int tgWingBeacon(int dummy = 0)
-	Line 924: 	int tgReportCrimes(int dummy = 0)
+	Index:				FUNCTION
+	Line    40: 		int tgTxt2Speech() {
+	Line    56: 		int tgEnhancedFAOFF(int dummy = 0) {
+	Line   102: 		int tgTriggerMode(int x) {
+	Line   150: 		int tgLights(int x) {
+	Line   211: 		int tgSilentRunning(int x) {
+	Line   268: 		int tgCargoScoop(int x) {
+	Line   330: 		int tgLandingGear(int Speedbrake) {
+	Line   390: 		int tgReverseThrust(int EnableSpeedBrake) {
+	Line   459: 		int tgBoost(int dummy = 0) {
+	Line   505: 		int tgHardpoints(int dummy = 0) {
+	Line   548: 		int tgHUDMode(int delayannounce=0) {
+	Line   587: 		int tgFSSMode() {
+	Line   614: 		int tgPlanetView() {
+	Line   647: 		int tgWarpDrive(int JumpType) {
+	Line   757: 		int tgExtCamera() {
+	Line   777: 		int tgXAxis(int param = RESET) {
+	Line   802: 		int tgGALMap (int action) {
+	Line   822: 		int tgSYSMap (int action) {
+	Line   846: 		int tgWingBeacon(int dummy = 0) {
+	Line   868: 		int tgReportCrimes(int dummy = 0) {
 */
 	
 	// START

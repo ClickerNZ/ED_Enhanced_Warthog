@@ -12,14 +12,14 @@
 
 	/*
 	Index:		FUNCTION
-	Line   47: 	int LiveKeyMap()
-	Line   52:		Joystick Triggers
-	Line  285:		Throttle Lever Switches
-	Line  443:		Throttle Base Buttons
-	Line  712: 	int TrainingKeyMap()
-	Line  717:		Joystick Triggers
-	Line  932:		Throttle Lever Switches
-	Line 1087:		Throttle Base Buttons 
+	Line   33: 	int LiveKeyMap()
+	Line   38:		Joystick Triggers
+	Line  271:		Throttle Lever Switches
+	Line  431:		Throttle Base Buttons
+	Line  700: 	int TrainingKeyMap()
+	Line  705:		Joystick Triggers
+	Line  920:		Throttle Lever Switches
+	Line 1079:		Throttle Base Buttons 
 	*/
 
 	// START

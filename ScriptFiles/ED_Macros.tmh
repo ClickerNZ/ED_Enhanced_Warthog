@@ -6,26 +6,27 @@
 	//							This file: ED_Macros.tmh									//
 
 /*
-	Index:			FUNCTION
-	Line  63:		int initMacroChains()
-	Line  71: 		m_RequestDock  
-	Line  84: 		m_DeploySRV  
-	Line  96: 		m_BoardShip  
-	Line 107: 		m_DeployNPCFighter  
-	Line 121: 		m_DeployFighter  
-	Line 135: 		m_ShowGameStats
-	Line 141: 		m_FastModeSwitch0  
-	Line 152: 		m_FastModeSwitch1  
-	Line 172: 		m_FastModeSwitch2  
-	Line 185: 		m_ReportCrimesToggle
-	Line 207: 		m_WingBeaconTeam  
-	Line 234: 		m_WingBeaconOff  
-	Line 259: 		m_EnterHangar  
-	Line 275: 		m_Launch  
-	Line 286: 		m_Disembark  
-	Line 300: 		m_ChangeColours  
-	Line 306: 		m_NextFG  
-	Line 311: 		m_PrevFG  
+	Index:				FUNCTION
+	Line    45: 		int initMacroChains() {
+	Line    50: 			m_RequestDock = CHAIN(
+	Line    63: 			m_DeploySRV = CHAIN(
+	Line    75: 			m_BoardShip = CHAIN(
+	Line    86: 			m_DeployNPCFighter = CHAIN(
+	Line   100: 			m_DeployFighter = CHAIN(
+	Line   114: 			m_ShowGameStats = CHAIN(
+	Line   120: 			m_FastModeSwitch0 = CHAIN(
+	Line   131: 			m_FastModeSwitch1a = CHAIN(
+	Line   152: 			m_FastModeSwitch1b = CHAIN(
+	Line   173: 			m_FastModeSwitch2 = CHAIN(
+	Line   186: 			m_ReportCrimesToggle = CHAIN(
+	Line   208: 			m_WingBeaconTeam = CHAIN(
+	Line   235: 			m_WingBeaconOff = CHAIN(
+	Line   260: 			m_EnterHangar = CHAIN(
+	Line   276: 			m_Launch = CHAIN(
+	Line   287: 			m_Disembark = CHAIN(
+	Line   301: 			m_ChangeColours = CHAIN(
+	Line   307: 			m_NextFG = CHAIN(
+	Line   312: 			m_PrevFG = CHAIN(
 */
 
 	// START

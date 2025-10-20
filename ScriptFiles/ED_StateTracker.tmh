@@ -6,20 +6,22 @@
 	//							This file: ED_StateTracker.tmh								//
 
 /*
-	Index:		FUNCTION
-	Line   58: 	int stfnReadMyJournalData()
-	Line  140: 	int stfnReadStatusJson()
-	Line  279: 	int stfnWriteMaxJson()
-	Line  336: 	int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0)
-	Line  451: 	int stfnDecodeFlags()
-	Line  555: 	int stfnDecodeFlags2()
-	Line  660: 	int stfnProcessFlags(int UpdateLEDs = NO)
-	Line 1526: 	int stfnDecodeModules(int dummy = 0)
-	Line 1569: 	int stfnProcessMyJournalData(int dummy = 0)
-	Line 1639: 	int stfnProcessGuiFocus()
-	Line 1668: 	int stfnStartCheck()
-	Line 1735: 	int stfnMyStates(int action)
+	Index:				FUNCTION
+	Line    44: 		int stfnReadMyJournalData() {
+	Line   141: 		int stfnReadStatusJson() {
+	Line   302: 		int stfnWriteMaxJson() {
+	Line   359: 		int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
+	Line   474: 		int stfnDecodeFlags() {
+	Line   578: 		int stfnDecodeFlags2() {
+	Line   688: 		int stfnTripTime(int dummy = 0) {
+	Line   767: 		int stfnProcessFlags(int UpdateLEDs = NO) {
+	Line  1632: 		int stfnDecodeModules(int dummy = 0) {
+	Line  1664: 		int stfnProcessMyJournalData(int dummy = 0) {
+	Line  1736: 		int stfnProcessGuiFocus() {
+	Line  1783: 		int stfnStartCheck() {
+	Line  1853: 		int stfnMyStates(int action) {
 */
+
 	// START
 
 	// FUNCTION:	Read MyJournalData.json into 'myJournalData' char variable
