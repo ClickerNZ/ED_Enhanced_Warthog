@@ -37,7 +37,7 @@
 	int		ReadError2Sent;
 //-	int		initmyJournalData = 0;			// flag set once per script run 
 //-	int		initlastJournalData = 0;
-	int		readloops = 0;
+//-	int		readloops = 0;
 	
 	// ------------
 	
@@ -380,8 +380,8 @@
 		Dim(&keyvalue, 128);										// keyvalue char is global
 		keyvalue[0] = NUL;
 
-		float	fkeyvalue;											// floating point key values
-		int		ikeyvalue;											// integer key value
+//-		float	fkeyvalue;											// floating point key values
+//-		int		ikeyvalue;											// integer key value
 		int		myResult;
 
 		if(jsonfile == 0) {
