@@ -6,7 +6,7 @@
 	//							This file: ED_Toggles.tmh									//
 
 /*
-	Index:				FUNCTION
+	Index:			FUNCTION
 	Line    40: 		int tgTxt2Speech() {
 	Line    56: 		int tgEnhancedFAOFF(int dummy = 0) {
 	Line   102: 		int tgTriggerMode(int x) {
