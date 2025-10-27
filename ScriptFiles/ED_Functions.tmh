@@ -6,7 +6,7 @@
 	//							This file: ED_UserSettings.tmh								//
 
 /*
-	Index:				FUNCTION
+	Index:			FUNCTION
 	Line    65: 		int fnNotValid(int fnName, int reason=0) {
 	Line    83: 		int fnStartupMapKeyMode() {
 	Line   109: 		int fnGetFlightMode() {
@@ -36,23 +36,23 @@
 	Line  1136: 		int fnCheckFiregroup() {
 	Line  1152: 		int fnClearChatBox(int mode = 0) {
 	Line  1216: 		int fnModeSwitch(int mode) {
-	Line  1309: 		int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
-	Line  1331: 		int fnPrintState() {
-	Line  1342: 		int fnStateDump() {
-	Line  1508: 		int fnGetTOD() {
-	Line  1559: 		int fnMyName() {
-	Line  1590: 		int	fnGreetCMDR(int dummy = 0) {
-	Line  1644: 		int fnSelectFiregroup(int fg) {
-	Line  1682: 		int fnGetStationName(int dummy=0) {
-	Line  1710: 		int fnDockingStatus(int dummy) {
-	Line  1808: 		int fnFighterStatus(int dummy = 0) {
-	Line  1829: 		int fnPANIC(int panic = 0) {
-	Line  1866: 		int fnInputCMD(int dummy = 0) {
-	Line  1931: 		int fnTripTime(int dummy = 0) {
-	Line  2007: 		int fnSetOriginStation(int action) {
-	Line  2059: 		int fnDEBUG(int dummy = 0) {
-	Line  2081: 		int findstr(alias string, alias substring) {
-	Line  2106: 		int strcpy(alias dst, alias src) {
+	Line  1312: 		int fnVPOutput(int VPOutput, int VolumeOverride=0, int Type=0) {
+	Line  1334: 		int fnPrintState() {
+	Line  1345: 		int fnStateDump() {
+	Line  1511: 		int fnGetTOD() {
+	Line  1562: 		int fnMyName() {
+	Line  1593: 		int	fnGreetCMDR(int dummy = 0) {
+	Line  1647: 		int fnSelectFiregroup(int fg) {
+	Line  1685: 		int fnGetStationName(int dummy=0) {
+	Line  1713: 		int fnDockingStatus(int dummy) {
+	Line  1811: 		int fnFighterStatus(int dummy = 0) {
+	Line  1832: 		int fnPANIC(int panic = 0) {
+	Line  1869: 		int fnInputCMD(int dummy = 0) {
+	Line  1934: 		int fnTripTime(int dummy = 0) {
+	Line  2010: 		int fnSetOriginStation(int action) {
+	Line  2065: 		int fnDEBUG(int dummy = 0) {
+	Line  2090: 		int findstr(alias string, alias substring) {
+	Line  2115: 		int strcpy(alias dst, alias src) {
 */
 
 	//------------------//
@@ -1265,14 +1265,17 @@
 			else if (mode == 1) {
 				
 				fnVPOutput("Menu log to private group selected.. please wait for game reload", 0, 1);			
-//-		Remove "Clicker check" if/else block before publish
-				if (strcmp(&CMDRName, "Clicker") == 0) {
-					ActKey(KEYON+PULSE+m_FastModeSwitch1b);											// Selects 2nd option in PRIVATE mode
+
+ 				if (PrivateGroup == 1) {
+					ActKey(KEYON+PULSE+m_FastModeSwitch1a);											// Selects 1st option in PRIVATE GROUP
 				}
-				else {
-					ActKey(KEYON+PULSE+m_FastModeSwitch1a);											// Selects 1st option in PRIVATE mode					
+				else if (PrivateGroup == 2) {
+					ActKey(KEYON+PULSE+m_FastModeSwitch1b);											// Selects 2nd option in PRIVATE GROUP 					
 				}
-//-
+				else if (PrivateGroup == 3) {
+					ActKey(KEYON+PULSE+m_FastModeSwitch1c);											// Selects 3rd option in PRIVATE GROUP
+				}
+				else reason = "Set PrivateGroup Varaibal to 1, 2 or 3 in USer settings";
 			}
 			else {
 				fnVPOutput("Menu log to solo selected.. please wait for game reload", 0, 1);			
@@ -2055,22 +2058,28 @@
 	//	FUNCTION:	Use this DEBUG function to test code whilst game running
 	//	Parameter:	dummy - enables REXEC or DeferCall
 	//	Usage:		PSF+EFLNORM calls this function
-	
+
+	// --- GLOBALS
+	int DebugFunction = "Reset Controllers";		// Print to console at script run time
+		
 	int fnDEBUG(int dummy = 0) {
-
-		// I sometimes start or restart TARGET script and find the joystick unresponsive.
-		// I'm hoping this might be a fix.
-		// Rather than just reseting the joystick I reset everything.
+		int fnName = "fnDebug";
+		reason = 0;
 		
-		fnVPOutput("Reinitialising controllers", 0, 2);							// DEBUG message
+		// Issue: joystick unresponsive
+		if (DEBUG > 0) {
+			fnVPOutput("DEBUG: Reinitialising controllers", 0, 2);					// DEBUG message
+			
+			initJoystickAxis();
+			initThrottleAxis();
+			initSliderAxis();
+			initSlewAxis();
+			initRudderAxis();
+			initCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
+		}
+		else reason = "Debug must be set greater than 0";
 		
-		initJoystickAxis();
-		initThrottleAxis();
-		initSliderAxis();
-		initSlewAxis();
-		initRudderAxis();
-		initCurves(NONE, PRINT, YES, FALSE);									// Parameters: Curve profile=NONE, Print to console=NO, TTS Announce= YES, Save Curves = FALSE 
-
+		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
 
