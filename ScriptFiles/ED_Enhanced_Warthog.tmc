@@ -187,7 +187,10 @@
 		
 		stfnStartCheck();														// Check for vital files and game start. Bootstrap script execution.
 		
-		if (DEBUG > 0) printf("\x0a++	DEBUG MODE = %s\x0a\x0a", DEBUGMODE);
+		if (DEBUG > 0) {
+			printf("\x0a!!	DEBUG MODE = %s\x0a", DEBUGMODE);
+			printf("!!	DEBUG: Debug Function = %s\x0a", DebugFunction);		// Refer fnDEBUG() 
+		}
 	}	
 	
 	// end of int main()	
