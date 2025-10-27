@@ -1291,7 +1291,7 @@
 		}
 		else {
 			MapKeyUMD(&MyThrottle, EFLNORM,
-				EXEC("fnVPOutput(\"Function test switch\", 0, 1);"),
+				EXEC("fnVPOutput(\"Run debug function\", 0, 1);"),
 //-				EXEC("fnDEBUG(0);"),
 				EXEC("fnVPOutput(\"Take screen shot\", 0, 1);"),
 				EXEC("fnVPOutput(\"Not mapped\", 0, 1);")
