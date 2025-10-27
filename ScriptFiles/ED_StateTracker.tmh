@@ -6,20 +6,19 @@
 	//							This file: ED_StateTracker.tmh								//
 
 /*
-	Index:				FUNCTION
-	Line    44: 		int stfnReadMyJournalData() {
-	Line   141: 		int stfnReadStatusJson() {
-	Line   302: 		int stfnWriteMaxJson() {
-	Line   359: 		int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
-	Line   474: 		int stfnDecodeFlags() {
-	Line   578: 		int stfnDecodeFlags2() {
-	Line   688: 		int stfnTripTime(int dummy = 0) {
-	Line   767: 		int stfnProcessFlags(int UpdateLEDs = NO) {
-	Line  1632: 		int stfnDecodeModules(int dummy = 0) {
-	Line  1664: 		int stfnProcessMyJournalData(int dummy = 0) {
-	Line  1736: 		int stfnProcessGuiFocus() {
-	Line  1783: 		int stfnStartCheck() {
-	Line  1853: 		int stfnMyStates(int action) {
+	Index:			FUNCTION
+	Line    43: 		int stfnReadMyJournalData() {
+	Line   140: 		int stfnReadStatusJson() {
+	Line   301: 		int stfnWriteMaxJson() {			// This may now be redundant if the dynamic buf sizing code works.
+	Line   358: 		int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
+	Line   473: 		int stfnDecodeFlags() {
+	Line   577: 		int stfnDecodeFlags2() {
+	Line   683: 		int stfnProcessFlags(int UpdateLEDs = NO) {
+	Line  1548: 		int stfnDecodeModules(int dummy = 0) {
+	Line  1580: 		int stfnProcessMyJournalData(int dummy = 0) {
+	Line  1652: 		int stfnProcessGuiFocus() {
+	Line  1699: 		int stfnStartCheck() {
+	Line  1769: 		int stfnMyStates(int action) {
 */
 
 	// START
@@ -675,90 +674,7 @@
 	
 	}
 
-/*	
-	//	FUNCTION:	Calculate and output TripTime 
 
-	//	Global vars
-	alias	LandedTOD	= "HH:MM";
-	alias	LiftoffTOD	= "HH:MM";
-	alias	TripTime	= "HH:MM";
-
-	char oStation;
-	
-	int stfnTripTime(int dummy = 0) {
-
-		// --- string working variables
-		alias H1 = "HH";
-		alias M1 = "MM";
-		alias H2 = "HH";
-		alias M2 = "MM";
-		alias HH = "HH";
-		alias MM = "MM";
-		
-		// --- string container for spoken trip time
-		alias TT = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-
-		// --- Integer working variables ---
-		int iH1, iM1, iH2, iM2, t1, t2, diff, dh, dm;
-
-		// --- Extract hours and minutes ---
-		strsub(&H1, &LiftoffTOD, 0, 1);
-		strsub(&M1, &LiftoffTOD, 3, 4);
-		strsub(&H2, &LandedTOD, 0, 1);
-		strsub(&M2, &LandedTOD, 3, 4);
-
-		// --- Convert to integers ---
-		iH1 = ieval(&H1);
-		iM1 = ieval(&M1);
-		iH2 = ieval(&H2);
-		iM2 = ieval(&M2);
-
-		// --- Convert both to minutes since midnight ---
-		t1 = iH1 * 60 + iM1;
-		t2 = iH2 * 60 + iM2;
-
-		// --- Handle next-day rollover ---
-		if (t2 < t1) t2 = t2 + 24 * 60;
-
-		// --- Difference in total minutes ---
-		diff = t2 - t1;
-
-		// --- Split into hours/minutes ---
-		dh = diff / 60;
-		dm = diff - (dh * 60);
-
-		// --- Convert back to zero-padded strings ---
-		sprintf(&HH, "%02d", dh);
-		sprintf(&MM, "%02d", dm);
-
-		// --- Compose TripTime alias ---
-		sprintf(&TripTime, "%s:%s", &HH, &MM);
-		
-
-		// --- Output result ---
-		printf("==	TripTime = %s (from %s to %s)\x0a", &TripTime, &LiftoffTOD, &LandedTOD);
-		if (AnnounceTripTime) {
-			if (strcmp(&HH, "00") == 0) {
-				sprintf(&TT, "Elapsed trip time, %d minutes", ieval(&MM));		
-			}
-			else {
-				sprintf(&TT, "Elapsed trip time, %d hours %d minutes", ieval(&HH), ieval(&MM));
-			}
-			fnTextToSpeech(&TT);
-		}
-		// --- Reset trip time aliases
-		strcpy(&TripTime, "HH:MM");
-		strcpy(&LandedTOD, "HH:MM");
-		strcpy(&LiftoffTOD, "HH:MM");
-
-		// --- Reset Original Station 
-		Dim(&oStation, 8);
-		oStation[0] = 0;
-		strcpy(&oStation, "not set");
-		oStation[7] = 0;		
-		
-	}
-*/
 	//	FUNCTION:	Read and process "Flags" value from "status.json"
 	//	Input:		'UpdateLEDs', YES (1) = update, NO (0) = no update (default)
 	//	Output:		Flags variables set/reset
