@@ -8,9 +8,9 @@
 	//								This file: ED_Initialise.tmh							//
 
 /*
-	Index:				FUNCTION
+	Index:			FUNCTION
 	Line    50: 		int CheckControllers() {
-	Line   171: 		int initJoystickAxis() {
+	Line   171: 		int initJoystickAxis() { 
 	Line   191: 		int initThrottleAxis() {
 	Line   208: 		int initSliderAxis() {
 	Line   224: 		int initSlewAxis() {
