@@ -57,7 +57,6 @@
 	int SAAMode				= 0;		// Used in tgPlanetView()
 	int CameraMode			= 0;		// Set/Reset in tgExtCamera() and used in fnAdvancedSCB() and fnHeatsink() (for console Zoom messages)
 	int SelectDrop			= 0;		// Use to detect if Supercruise drop was selected or forced
-//-	int OrbitalCruise		= 0;		// Track when entering Orbital Cruise
 	int FireModeP			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int FireModeS			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int ShipDismissed		= 0;		// Track when Ship is dismissed/recalled via EORIGN-U
@@ -72,6 +71,9 @@
 	int ThrustUpTime		= 1500;		// Used in m_Launch macro. Future feature = table of ships and thruster stats and modify on the fly
 
 	int	UseAltVoice			= NO;		// Set UseAltVoice = 'YES'; prior to calling fnTextToSpeech() or fnVPOutput() for situations you cannot parse the voice alias to be used
+
+	int AnnounceTripTime	= DISABLED;	//	Enabled when we set Origin Station Name (&oStation). Disabled when we finish the circuit.
+
 
 				
 	// END
