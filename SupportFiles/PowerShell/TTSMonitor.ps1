@@ -1,9 +1,14 @@
 # TTSMonitor-v21.ps1 - announce helper app + version
-# This script monitors the TTS queue folder and processes individual JSON files using an external TTS module.
-# After processing, each JSON file is archived (moved to an Archive folder) rather than being removed.
+
+# This script is an Elite Dangerous / TARGET Script helper application
+
+# It monitors a Text-To-Speech (TTS) queue folder and processes individual JSON files using an external TTS module.
+# After processing, each TTS JSON file is archived (option = deletion).
 # The ED TARGET script writes files named TTSMsg0000.json, TTSMsg0001.json, etc.
 # The last 4 characters of the filename must match the TTSSeq key in the JSON file.
-# On restart, the script will process any remaining files in order before resuming monitoring.
+
+# If the TARGET Script package is installed in the suggested folder the below will be correct.
+# If you installed the package somewhere else you need to change the folder paths and Import-Module location to match.
 
 # Set the queue folder path
 $queueFolder = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output\TTSQueue"
@@ -33,6 +38,12 @@ function Test-FileLocked {
         return $true
     }
 }
+
+# The following TTS voice should be installed for this application to function as intended.
+# If it is not installed, the Windows default voice will be used.
+# Refer to the following links. These work in Windows 10 and Windows 11
+# https://support.microsoft.com/en-nz/help/22805/windows-10-supported-narrator-languages-voices 
+# https://www.ghacks.net/2018/08/11/unlock-all-windows-10-tts-voices-system-wide-to-get-more-of-them/
 
 # TTS startup
 $voice = "Microsoft Catherine"
@@ -73,10 +84,10 @@ while ($true) {
                 continue
             }
 
-            # Check if the file is 5 minutes old or older. If yes, archive it and skip processing.
+            # Check if the file is 2 minutes old or older. If yes, archive it and skip processing.
 
 			$fileAge = (Get-Date) - $file.LastWriteTime
-            if ($fileAge.TotalMinutes -ge 5) {
+            if ($fileAge.TotalMinutes -ge 2) {
                 Write-Host "File $($file.Name) is older than 5 minutes (Age: $([math]::Round($fileAge.TotalMinutes,2)) minutes), archiving it." -ForegroundColor Yellow
                 try {
                     $destinationPath = Join-Path -Path $archiveFolder -ChildPath $file.Name
@@ -128,7 +139,7 @@ while ($true) {
             # Archive the processed file by moving it to the Archive folder.
             try {
 			
-				#	Remove file option...
+				#	Delete file option...
                 #Remove-Item $file.FullName -Force
                 #Write-Host "Removed file: $($file.Name)" -ForegroundColor Yellow 
 
@@ -141,8 +152,8 @@ while ($true) {
             }
 			
             if ($ttsString -match "GAME HALTED") {
-                Write-Host "Game Halted detected, exiting in 20 seconds..." -ForegroundColor Yellow
-				Start-Sleep -Milliseconds 20000
+                Write-Host "Game Halted detected, exiting in 30 seconds..." -ForegroundColor Yellow
+				Start-Sleep -Milliseconds 30000
                 Stop-Process -Id $PID -Force  # Forcefully kill script
             }
         }
