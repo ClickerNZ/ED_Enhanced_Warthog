@@ -674,7 +674,6 @@
 	
 	}
 
-
 	//	FUNCTION:	Read and process "Flags" value from "status.json"
 	//	Input:		'UpdateLEDs', YES (1) = update, NO (0) = no update (default)
 	//	Output:		Flags variables set/reset
@@ -747,6 +746,10 @@
 
 		if (fLanded != lLanded) {												// Framework for future functionality
 			if (fLanded) {
+				if (fSRV | fOnFoot) {
+//					if (ShipDismissed) ShipDismissed = 0;						// do not need ShipDismissed if using fLanded ???
+					if (DEBUG > 0) printf("==	Ship Status:		RECALLED\x0a");
+				}
 /*
 				strcpy(&LandedTOD, fnGetTOD());
 				printf("==	Landed @ %s\x0a", &LandedTOD);
@@ -769,7 +772,11 @@
 					printf("==	Liftoff @ %s\x0a", &LiftoffTOD);
 				}
 */
-				ShipDismissed = NO;			
+//				ShipDismissed = NO;
+				if (fSRV | fOnFoot) {
+//					if (!ShipDismissed) ShipDismissed = 1;						// do not need ShipDismissed if using fLanded ???
+					if (DEBUG > 0) printf("==	Ship Status:		DISMISSED\x0a");
+				}
 			}
 		}
 
@@ -1429,100 +1436,118 @@
 
 			if (fRESERVED24 != lRESERVED24) {
 				if (fRESERVED24) {
-					if (DEBUG == LOG)		printf("F2 Bit 24\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24");
+		//			if (DEBUG == LOG)		printf("F2 Bit 24\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24");
+					fnVPOutput("F2 Bit 24");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 24 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 24 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 24 OFF");
+					fnVPOutput("F2 Bit 24 off");
 				}
 			}
 
 			if (fRESERVED25 != lRESERVED25) {
 				if (fRESERVED25) {
-					if (DEBUG == LOG)		printf("F2 Bit 25\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25");
+		//			if (DEBUG == LOG)		printf("F2 Bit 25\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25");
+					fnVPOutput("F2 Bit 25");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 25 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 25 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 25 OFF");
+					fnVPOutput("F2 Bit 25 off");
 				}
 			}
 			
 			if (fRESERVED26 != lRESERVED26) {
 				if (fRESERVED26) {
-					if (DEBUG == LOG)		printf("F2 Bit 26\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26");
+		//			if (DEBUG == LOG)		printf("F2 Bit 26\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26");
+					fnVPOutput("F2 Bit 26");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 26 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 26 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 26 OFF");
+					fnVPOutput("F2 Bit 26 off");
 				}
 			}
 
 			if (fRESERVED27 != lRESERVED27) {
 				if (fRESERVED27) {
-					if (DEBUG == LOG)		printf("F2 Bit 27\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27");
+		//			if (DEBUG == LOG)		printf("F2 Bit 27\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27");
+					fnVPOutput("F2 Bit 27");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 27 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 27 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 27 OFF");
+					fnVPOutput("F2 Bit 27 off");
 				}
 			}
 
 			if (fRESERVED28 != lRESERVED28) {
 				if (fRESERVED28) {
-					if (DEBUG == LOG)		printf("F2 Bit 28\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28");
+		//			if (DEBUG == LOG)		printf("F2 Bit 28\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28");
+					fnVPOutput("F2 Bit 28");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 28 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 28 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 28 OFF");
+					fnVPOutput("F2 Bit 28 off");
 				}
 			}
 
 			if (fRESERVED29 != lRESERVED29) {
 				if (fRESERVED29) {
-					if (DEBUG == LOG)		printf("F2 Bit 29\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29");
+		//			if (DEBUG == LOG)		printf("F2 Bit 29\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29");
+					fnVPOutput("F2 Bit 29");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 29 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 29 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 29 OFF");
+					fnVPOutput("F2 Bit 29 off");
 				}
 			}
 			
 			if (fRESERVED30 != lRESERVED30) {
 				if (fRESERVED30) {
-					if (DEBUG == LOG)		printf("F2 Bit 30\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30");
+		//			if (DEBUG == LOG)		printf("F2 Bit 30\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30");
+					fnVPOutput("F2 Bit 30");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 30 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 30 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 30 OFF");
+					fnVPOutput("F2 Bit 30 off");
 				}
 			}
 
 			if (fRESERVED31 != lRESERVED31) {
 				if (fRESERVED31) {
-					if (DEBUG == LOG)		printf("F2 Bit 31\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31");
+		//			if (DEBUG == LOG)		printf("F2 Bit 31\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31");
+					fnVPOutput("F2 Bit 31");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 31 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31 OFF");
+		//			if (DEBUG == LOG)		printf("F2 Bit 31 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 31 OFF");
+					fnVPOutput("F2 Bit 31 off");
 				}
 			}
 
 			if (fRESERVED32 != lRESERVED32) {
 				if (fRESERVED32) {
-					if (DEBUG == LOG)		printf("F2 Bit 32\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32");
+		//			if (DEBUG == LOG)		printf("F2 Bit 32\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32");
+					fnVPOutput("F2 Bit 32");
 				}
 				else {
-					if (DEBUG == LOG)		printf("F2 Bit 32 OFF\x0a");
-					if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32 OFF");				
+		//			if (DEBUG == LOG)		printf("F2 Bit 32 OFF\x0a");
+		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32 OFF");
+					fnVPOutput("F2 Bit 32 off");
 				}
 			}			
 		}
@@ -1784,7 +1809,8 @@
 
 			UserSettings = fnEncodeUserSettings(0);
 			
-			sprintf(&MyStatesJson, "{\"ShipDismissed\":%d,\"NewMaxJson\":%d,\"VoiceVolume\":%d,\"VoiceRate\":%d,\"AltVoiceRate\":%d,\"ChatTABs\":%d,\"FAOFFCurves\":%d,\"OldCurves\":%d,\"LEDLevel\":%d,\"PIPMode\":%d,\"ThrustUpTime\":%d,\"UserSettings\":%d}", ShipDismissed, NewMaxJson, VoiceVolume, VoiceRate, AltVoiceRate, ChatTABs, FAOFFCurves, OldCurves, LEDLevel, PIPMode, ThrustUpTime, UserSettings);
+//			sprintf(&MyStatesJson, "{\"ShipDismissed\":%d,\"NewMaxJson\":%d,\"VoiceVolume\":%d,\"VoiceRate\":%d,\"AltVoiceRate\":%d,\"ChatTABs\":%d,\"FAOFFCurves\":%d,\"OldCurves\":%d,\"LEDLevel\":%d,\"PIPMode\":%d,\"ThrustUpTime\":%d,\"PrivateGroup\":%d,\"UserSettings\":%d}", ShipDismissed, NewMaxJson, VoiceVolume, VoiceRate, AltVoiceRate, ChatTABs, FAOFFCurves, OldCurves, LEDLevel, PIPMode, ThrustUpTime, PrivateGroup, UserSettings);
+			sprintf(&MyStatesJson, "{\"NewMaxJson\":%d,\"VoiceVolume\":%d,\"VoiceRate\":%d,\"AltVoiceRate\":%d,\"ChatTABs\":%d,\"FAOFFCurves\":%d,\"OldCurves\":%d,\"LEDLevel\":%d,\"PIPMode\":%d,\"ThrustUpTime\":%d,\"PrivateGroup\":%d,\"UserSettings\":%d}", NewMaxJson, VoiceVolume, VoiceRate, AltVoiceRate, ChatTABs, FAOFFCurves, OldCurves, LEDLevel, PIPMode, ThrustUpTime, PrivateGroup, UserSettings);
 			mySIZE = strlen(&MyStatesJson);
 			if (mySIZE > buf) {
 				reason = "Buffer size too small";
@@ -1803,20 +1829,24 @@
 				}	
 				else {
 					printf("++	MyStates successfully saved @ %s\x0a", fnGetTOD());
-					printf("=====================================\x0a\x0a");
-					printf("	ShipDismissed		= %d\x0a", ShipDismissed);
-					printf("	NewMaxJson		= %d\x0a", NewMaxJson);
-					printf("	VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("	VoiceRate		= %d\x0a", VoiceRate);
-					printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
-					printf("	ChatTABs		= %d\x0a", ChatTABs);
-					printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
-					printf("	OldCurves		= %d\x0a", OldCurves);
-					printf("	LEDLevel		= %d\x0a", LEDLevel);
-					printf("	PIPMode		= %d\x0a", PIPMode); 
-					printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
-					printf("	UserSettings		= %d\x0a\x0a", UserSettings);
-					printf("=====================================\x0a\x0a");
+					
+					if (DEBUG > 0) {
+						printf("=====================================\x0a\x0a");
+//						printf("	ShipDismissed		= %d\x0a", ShipDismissed);
+						printf("	NewMaxJson		= %d\x0a", NewMaxJson);
+						printf("	VoiceVolume		= %d\x0a", VoiceVolume);
+						printf("	VoiceRate		= %d\x0a", VoiceRate);
+						printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
+						printf("	ChatTABs		= %d\x0a", ChatTABs);
+						printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
+						printf("	OldCurves		= %d\x0a", OldCurves);
+						printf("	LEDLevel		= %d\x0a", LEDLevel);
+						printf("	PIPMode		= %d\x0a", PIPMode); 
+						printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
+						printf("	PrivateGroup		= %d\x0a", PrivateGroup);
+						printf("	UserSettings		= %d\x0a\x0a", UserSettings);
+						printf("=====================================\x0a\x0a");
+					}
 				}
 			}
 			else {
@@ -1841,7 +1871,7 @@
 				if (fpresult > 0) {	// Read from file was successful
 
 					// Extract our variables from our struct array
-					ShipDismissed	= stfnGetKeyValue("ShipDismissed", INTEGER, 2);
+//					ShipDismissed	= stfnGetKeyValue("ShipDismissed", INTEGER, 2);
 					NewMaxJson		= stfnGetKeyValue("NewMaxJson", INTEGER, 2);
 					VoiceVolume		= stfnGetKeyValue("VoiceVolume", INTEGER, 2);
 					VoiceRate		= stfnGetKeyValue("VoiceRate", INTEGER, 2);
@@ -1852,24 +1882,28 @@
 					LEDLevel		= stfnGetKeyValue("LEDLevel", INTEGER, 2);
 					PIPMode			= stfnGetKeyValue("PIPMode", INTEGER, 2);
 					ThrustUpTime	= stfnGetKeyValue("ThrustUpTime", INTEGER, 2);
+					PrivateGroup	= stfnGetKeyValue("PrivateGroup", INTEGER, 2);
 					UserSettings	= stfnGetKeyValue("UserSettings", INTEGER, 2);
-					
-					printf("\x0a\++	MyStates successfully loaded @ %s\x0a", fnGetTOD());
-					printf("=====================================\x0a");
-					printf("	ShipDismissed		= %d\x0a", ShipDismissed);
-					printf("	NewMaxJson		= %d\x0a", NewMaxJson);
-					printf("	VoiceVolume		= %d\x0a", VoiceVolume);
-					printf("	VoiceRate		= %d\x0a", VoiceRate);
-					printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
-					printf("	ChatTABs		= %d\x0a", ChatTABs);
-					printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
-					printf("	OldCurves		= %d\x0a", OldCurves);
-					printf("	LEDLevel		= %d\x0a", LEDLevel);
-					printf("	PIPMode		= %d\x0a", PIPMode); 
-					printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
-					printf("	UserSettings		= %d\x0a", UserSettings);
-					printf("====================================\x0a\x0a");
-					
+
+					if (DEBUG > 0) {
+						printf("\x0a\++	MyStates successfully loaded @ %s\x0a", fnGetTOD());
+						printf("=====================================\x0a");
+//						printf("	ShipDismissed		= %d\x0a", ShipDismissed);
+						printf("	NewMaxJson		= %d\x0a", NewMaxJson);
+						printf("	VoiceVolume		= %d\x0a", VoiceVolume);
+						printf("	VoiceRate		= %d\x0a", VoiceRate);
+						printf("	AltVoiceRate		= %d\x0a", AltVoiceRate);
+						printf("	ChatTABs		= %d\x0a", ChatTABs);
+						printf("	FAOFFCurves		= %d\x0a", FAOFFCurves);
+						printf("	OldCurves		= %d\x0a", OldCurves);
+						printf("	LEDLevel		= %d\x0a", LEDLevel);
+						printf("	PIPMode		= %d\x0a", PIPMode); 
+						printf("	ThrustUpTime		= %d\x0a", ThrustUpTime);
+						printf("	PrivateGroup		= %d\x0a", PrivateGroup);
+						printf("	UserSettings		= %d\x0a", UserSettings);
+						printf("====================================\x0a\x0a");
+					}
+				
 					if (UserSettings != defUserSettings) {
 						fnDecodeUserSettings(UserSettings);
 					}
