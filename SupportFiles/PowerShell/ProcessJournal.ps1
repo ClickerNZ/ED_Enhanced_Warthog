@@ -1,17 +1,38 @@
-# v31 - Autopilot feature added - in development 
+# v33 	- ATC Chatter functions added - Grabs any NPC chatter sent to LOCAL and sends to [TTS]
+#		- Global $script:StatusPath created so we can easily grab status.json key/values
+#
+# ProcessJournal.ps1
+#
+# This is an Elite Dangerous / TARGET Script helper application.
+# It watches the Elite Dangerous journal file for changes then grabs selected key values and writes these
+# to MyJournalData.json JSON file or uses Windows Text-To-Speech to announce certain events.
+#
+# My Warthog TARGET Script periodically processes MyJournalData.json and uses the key/values in various ways.
+# The script can also write special values to the Journal file for this application to process.
 #
 
+# The following paths are created by default when installing Elite Dangerous and my TARGET Scripts.
+# They may be changed when installing, so you must ensure the below paths are correct.
+
 param (
+	# Make sure this path points to where Elite Dangerous writes the journal files to...
     [string]$inputFolderPath    = "D:\Users\Den\Saved Games\Frontier Developments\Elite Dangerous",
+
+	# Make sure these paths have been created and available...
     [string]$outputFolderPath   = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output",
     [string]$trackingFilePath   = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output\Tracking.json"
 )
+
+$MyVersion = 33
 
 # Path to our output JSON
 $JsonFilePath = Join-Path -Path $outputFolderPath -ChildPath "MyJournalData.json"
 
 # Ensure directories exist
 if (-not (Test-Path $outputFolderPath)) { New-Item -Path $outputFolderPath -ItemType Directory | Out-Null }
+
+# --- Status.json path (standard ED location) ---
+$script:StatusPath = Join-Path -Path $inputFolderPath -ChildPath "Status.json" 
 
 # Initialize tracking file if missing
 if (-not (Test-Path $trackingFilePath)) {
@@ -21,22 +42,55 @@ if (-not (Test-Path $trackingFilePath)) {
 # Module imports
 $customModulePath = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Modules"
 if (-not ($env:PSModulePath -like "*$customModulePath*")) { $env:PSModulePath += ";$customModulePath" }
-Import-Module TransformUtilities -ErrorAction Stop
-Import-Module TTS               -ErrorAction Stop
+Import-Module TransformUtilities	-ErrorAction Stop
+Import-Module TTS               	-ErrorAction Stop
+Import-Module ATCChatter			-ErrorAction Stop 
+
+$Global:ATCChatter = $false
+
+<#
+# DEBUG: Testing the ATCChatter module...
+Add-ATCChatter "ATC chatter test one" "Station"
+Add-ATCChatter "ATC chatter test two" "Traffic"
+Add-ATCChatter "ATC chatter test three" "Security"
+Invoke-ATCChatter
+Invoke-ATCChatter
+Invoke-ATCChatter
+#>
 
 # TTS startup
+# The following voice should be installed on your Windows PC to work as intended.
+# If this voice is unavailable the default Windows TTS voice will be used.
+# Refer:
+# https://support.microsoft.com/en-nz/help/22805/windows-10-supported-narrator-languages-voices 
+# https://www.ghacks.net/2018/08/11/unlock-all-windows-10-tts-voices-system-wide-to-get-more-of-them/
+
+
 $voice = "Microsoft Catherine"
 $rate  = 1
 $volume= 100
-[TTS]::SpeakText("Journal processor version 31 loading", $voice, $rate, $volume)
+[TTS]::SpeakText("Journal processor version $MyVersion loading", $voice, $rate, $volume)
+
+<#
+[TTS]::SpeakText("Catherine, Journal processor version $MyVersion loading", "Microsoft Catherine", $rate, $volume)
+[TTS]::SpeakText("James, Journal processor version $MyVersion loading", "Microsoft James", $rate, $volume)
+[TTS]::SpeakText("David, Journal processor version $MyVersion loading", "Microsoft David Desktop", $rate, $volume)
+[TTS]::SpeakText("Zira, Journal processor version $MyVersion loading", "Microsoft Zira Desktop", $rate, $volume)
+[TTS]::SpeakText("Heera, Journal processor version $MyVersion loading", "Microsoft Heera", $rate, $volume)
+[TTS]::SpeakText("Ravi, Journal processor version $MyVersion loading", "Microsoft Ravi", $rate, $volume)
+[TTS]::SpeakText("Sean, Journal processor version $MyVersion loading", "Microsoft Sean", $rate, $volume)
+[TTS]::SpeakText("Richard, Journal processor version $MyVersion loading", "Microsoft Richard", $rate, $volume)
+[TTS]::SpeakText("Linda, Journal processor version $MyVersion loading", "Microsoft Linda", $rate, $volume)
+[TTS]::SpeakText("Mark, Journal processor version $MyVersion loading", "Microsoft Mark", $rate, $volume)
+#>
 
 # Set window title
-try { $host.UI.RawUI.WindowTitle = "Journal Processor v31" } catch {}
+try { $host.UI.RawUI.WindowTitle = "Journal Processor v$MyVersion" } catch {}
 
 # Load lookup maps
 Import-MapFile -FilePath "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\PowerShell\Lookup\EDData.json"
 
-Write-Host "ProcessJournal v31" -ForegroundColor Green
+Write-Host "ProcessJournal v$MyVersion" -ForegroundColor Green
 
 # === Global data initialization ===
 function Initialize-GlobalVariables {
@@ -49,16 +103,42 @@ function Initialize-GlobalVariables {
 			Modules = 0; ActiveFighter = $false;
 			InputCMD = "not set"; CMDParameter = "not set";
         }
-        $defaults | ConvertTo-Json | Set-Content $JsonFilePath
+        $jsonDefaults = $defaults | ConvertTo-Json -Compress
+        [System.IO.File]::WriteAllText($JsonFilePath, $jsonDefaults, [System.Text.Encoding]::ASCII)
+#        $defaults | ConvertTo-Json | Set-Content $JsonFilePath
     }
-    $data = Get-Content $JsonFilePath | ConvertFrom-Json
+    $data = Get-Content -Path $JsonFilePath -Encoding ascii | ConvertFrom-Json
+#    $data = Get-Content $JsonFilePath | ConvertFrom-Json
     foreach ($prop in $data.PSObject.Properties) {
         Set-Variable -Name $prop.Name -Value $prop.Value -Scope Global
     }
 	
-	# Read the old bitmask for compare:
-	$Global:Modules = [int](Get-Content $JsonFilePath | ConvertFrom-Json).Modules
+	# Read the saved bitmask to compare:
+	$Global:Modules = [int](Get-Content -Path $JsonFilePath -Encoding ascii | ConvertFrom-Json).Modules
+#	$Global:Modules = [int](Get-Content $JsonFilePath | ConvertFrom-Json).Modules
 }
+
+# Convert strings to plain ASCII for TARGET compatibility.
+# - Fixes “smart” punctuation (e.g., ’) and then forces ASCII (anything else becomes '?').
+function Convert-ToTargetAscii {
+    param([AllowNull()][string]$Text)
+
+    if ($null -eq $Text) { return $null }
+
+    # Common smart punctuation -> ASCII
+    $Text = $Text -replace [char]0x2019, "'"   # ’
+    $Text = $Text -replace [char]0x2018, "'"   # ‘
+    $Text = $Text -replace [char]0x201C, '"'   # “
+    $Text = $Text -replace [char]0x201D, '"'   # ”
+    $Text = $Text -replace [char]0x2013, '-'   # –
+    $Text = $Text -replace [char]0x2014, '-'   # —
+    $Text = $Text -replace [char]0x2026, '...' # …
+    $Text = $Text -replace [char]0x00A0, ' '   # non-breaking space
+
+    # Force ASCII for TARGET (unrepresentable chars -> '?')
+    return [System.Text.Encoding]::ASCII.GetString([System.Text.Encoding]::ASCII.GetBytes($Text))
+}
+
 
 # Compare new vs old, then update JSON
 function Compare-And-UpdateVariables {
@@ -107,6 +187,10 @@ function Compare-And-UpdateVariables {
             destDistance   = $Global:destDistance
         }
 
+        foreach ($k in @($updated.Keys)) {  # snapshot keys to avoid 'collection was modified' error
+            if ($updated[$k] -is [string]) { $updated[$k] = Convert-ToTargetAscii $updated[$k] }
+        }
+
         $json = $updated | ConvertTo-Json -Compress
         $json = $json -replace '\\u0027', "'"
 		[System.IO.File]::WriteAllText($JsonFilePath, $json, [System.Text.Encoding]::ASCII)
@@ -115,7 +199,8 @@ function Compare-And-UpdateVariables {
 
 # === Tracking file helpers ===
 function Load-TrackingData {
-    return Get-Content $trackingFilePath | ConvertFrom-Json
+    return Get-Content -Path $trackingFilePath -Encoding ascii | ConvertFrom-Json
+#   return Get-Content $trackingFilePath | ConvertFrom-Json
 }
 
 function Save-TrackingData($data) {
@@ -142,17 +227,43 @@ function Update-LastLineCount {
     Save-TrackingData $t
 }
 
+#$script:StatusPath = Join-Path $env:USERPROFILE "Saved Games\Frontier Developments\Elite Dangerous\Status.json"
+$script:LastStatusWriteUtc = [datetime]::MinValue
+$script:NextStatusPollUtc  = [datetime]::MinValue
+
+function Refresh-StatusAndATCState {
+    if ([datetime]::UtcNow -lt $script:NextStatusPollUtc) { return }
+    $script:NextStatusPollUtc = [datetime]::UtcNow.AddMilliseconds(250)
+
+    if (-not (Test-Path $script:StatusPath)) { return }
+
+    $fi = Get-Item $script:StatusPath -ErrorAction SilentlyContinue
+    if (-not $fi) { return }
+    if ($fi.LastWriteTimeUtc -le $script:LastStatusWriteUtc) { return }
+    $script:LastStatusWriteUtc = $fi.LastWriteTimeUtc
+
+    try {
+        $raw = Get-Content $script:StatusPath -Raw -Encoding UTF8
+        if ([string]::IsNullOrWhiteSpace($raw)) { return }
+        $status = $raw | ConvertFrom-Json
+        Update-ATCChatterStateFromStatus $status
+    } catch { }
+}
+
 # === Core processing ===
 function Process-NewLines {
     param([string]$filePath)
     $fileName = Split-Path -Leaf $filePath
     $prevCount = Get-LastLineCount $fileName
-    $allLines  = Get-Content -Path $filePath
+    $allLines  = Get-Content -Path $filePath -Encoding utf8
     $total     = $allLines.Count
     if ($total -le $prevCount) { return }
     $newLines = $allLines[$prevCount..($total-1)]
-		
+
     foreach ($line in $newLines) {
+		
+		Refresh-StatusAndATCState
+
         try {
             $entry = $line | ConvertFrom-Json
         } catch { continue }
@@ -183,17 +294,14 @@ function Process-NewLines {
 				}
 			}
 			"LoadGame" {	
-#				$Global:newLoadGameDetect++
 				if ("Ship" -in $entry.PSObject.Properties.Name) {
 					$ShipType = Get-MappedValue -MapName "ShipType_map" -Key $entry.ship
 					$Global:newShipType = $ShipType
 					if ($Global:Debug) {
 						if (-not $Global:GameRunning) {
-#							Write-Host "[$localtime] : Event: LoadGame, LoadGameDetect = $Global:newLoadGameDetect" -ForegroundColor Yellow
 							Write-Host "[$localtime] : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Yellow 
 						}
 						else {
-#							Write-Host "[$localtime] : Event: LoadGame, LoadGameDetect = $Global:newLoadGameDetect" -ForegroundColor Cyan 							
 							Write-Host "[$localtime] : Event: LoadGame, Ship = $Global:newShipType" -ForegroundColor Cyan 
 						}
 					}
@@ -279,14 +387,12 @@ function Process-NewLines {
 					}
 				}
 
+				# DEBUG: Display bit mask for modules installed on ship...
 				$mask = Encode-ModulesBitmask -Flags $Global:moduleFlags
 				$bin  = [Convert]::ToString($mask,2).PadLeft($Global:moduleNames.Count,'0')
-				Write-Host ("->Encoded mask: DEC:{0}  BIN(msb->lsb):{1}" -f $mask, $bin) -ForegroundColor Magenta
-
 				$Global:newModules = $mask
-
-
-				$Global:newModules = Encode-ModulesBitmask -Flags $Global:moduleFlags
+				# DEBUG: Display bit mask for modules installed on ship...
+	#			Write-Host ("->Encoded mask: DEC:{0}  BIN(msb->lsb):{1}" -f $mask, $bin) -ForegroundColor Magenta
 			}	
 			"Location" {
 				if ("StarSystem" -in $entry.PSObject.Properties.Name) {
@@ -505,12 +611,12 @@ function Process-NewLines {
 					$msg = $entry.Message.Substring(5)   # chop off "!set "
 
 					# split on whitespace into at most 2 pieces
-					#   part[0] = the setting name
-					#   part[1] = everything else
+					#   part[0] = the action or variable name 
+					#   part[1] = the variable name (for query) or variable value we wish to set/reset 
 					$part = $msg -split '\s+', 2
 
 					switch ($part[0].ToUpper()) {
-						"AP" {
+						"AP" {		# AP = AutoPilot Action 
 							# Normalize to upper-case so matching is simpler
 							$param = $part[1].ToUpper()
 
@@ -550,7 +656,7 @@ function Process-NewLines {
 							}
 							break
 						}
-						"LAT" {
+						"LAT" {		# ...to set Latitude for AutoPilot
 							if ($part.Count -ge 2 -and $part[1] -match '^-?\d+(\.\d+)?$') {
 								$Global:destLat = [double]$part[1]
 								Write-Host "[$localtime] : Autopilot LAT set to $($Global:destLat)"
@@ -560,7 +666,7 @@ function Process-NewLines {
 							}
 							break
 						}
-						"LON" {
+						"LON" {		# ...to set Longitude for AutoPilot 
 							if ($part.Count -ge 2 -and $part[1] -match '^-?\d+(\.\d+)?$') {
 								$Global:destLon = [double]$part[1]
 								Write-Host "[$localtime] : Autopilot LON set to $($Global:destLon)"
@@ -589,6 +695,45 @@ function Process-NewLines {
 					}
 				}
 			}
+			
+			"ReceiveText" {
+				if ($entry.Channel -eq "npc" -and
+					-not [string]::IsNullOrWhiteSpace($entry.From) -and
+					-not [string]::IsNullOrWhiteSpace($entry.Message_Localised) -and
+					$entry.Message -notin @(
+						'$STATION_NoFireZone_entered;',
+						'$STATION_docking_granted;',
+						'$STATION_NoFireZone_exited;'
+					))
+				{
+					$group = Get-ATCGroupForNpcReceiveText $entry
+
+					# If the sender matches the current station name tracked by ProcessJournal, force Station group
+					if (-not [string]::IsNullOrWhiteSpace($Global:newStationName)) {
+						$fromNorm = $entry.From.Trim() -replace '[’`]', "'"
+						$stnNorm  = $Global:newStationName.Trim() -replace '[’`]', "'"
+
+						if ($fromNorm.Equals($stnNorm, [System.StringComparison]::InvariantCultureIgnoreCase)) {
+							$group = "Station"
+						}
+					}
+
+					# Option 1 (strict): speak only the message (your requirement)
+					if ($Global:ATCChatter) {
+						# Write-Host "ATC queued: $($entry.Message_Localised) (Group=$group, From=$($entry.From))" -ForegroundColor Green
+						Add-ATCChatter $entry.Message_Localised $group
+					}
+
+					# Option 2 (more ATC-like): uncomment if you want the speaker name too
+					# $speaker = $entry.From_Localised
+					# if ([string]::IsNullOrWhiteSpace($speaker)) { $speaker = $entry.From }
+					#	if ($Global:ATCChatter) {
+							# Write-Host "ATC queued: $($speaker): $($entry.Message_Localised) (Group=$group)" -ForegroundColor Cyan
+							# Add-ATCChatter ("$speaker. " + $entry.Message_Localised) $group
+					#	}
+				}
+			}
+			
 			"Shutdown" {
 				$localtime = Get-Date -Format "yyyy-MM-dd HH:mm:ss"
 				Write-Host "[$localtime] Shutdown event encountered: Game Running is $Global:GameRunning" -ForegroundColor Yellow -BackgroundColor Green
@@ -604,14 +749,16 @@ function Process-NewLines {
 					} catch {
 						Write-Host "[$localtime] Error disposing watcher: $_" -ForegroundColor Red
 					}
-					Write-Host "[$localtime] Exiting script in 20 seconds..." -ForegroundColor Cyan
-					Start-Sleep -Milliseconds 20000
+					Write-Host "[$localtime] Exiting script in 30 seconds..." -ForegroundColor Yellow
+					Start-Sleep -Milliseconds 30000
 					Stop-Process -Id $PID -Force  # Forcefully kill script
 				}
 			}
         }
     }
-	
+
+	Invoke-ATCChatter
+			
     # update tracker
     Update-LastLineCount $fileName $total
 	
@@ -694,20 +841,20 @@ function Get-GroundHeading {
 
 function Test-AutopilotReady {
     # Load status
-    $statusFile = Join-Path $inputFolderPath 'Status.json'
-    if (-not (Test-Path $statusFile)) { 
+#    $script:StatusPath = Join-Path $inputFolderPath 'Status.json'
+    if (-not (Test-Path $script:StatusPath)) { 
 		$Global:APInvalidReason = "status.json not found"
 		return $false
 	}
 
     try {
-        $status = Get-Content $statusFile -Raw | ConvertFrom-Json
+#        $status = Get-Content -Path $script:StatusPath -Raw -Encoding ascii | ConvertFrom-Json
+        $status = Get-Content $script:StatusPath -Raw | ConvertFrom-Json
     } catch {
         return $false
     }
 
     # Check docked (bit 1 of Flags)
-#    if ($status.Docked) { 
     if (( $status.Flags -band 0x000001 ) -eq 1) {
 		$Global:APInvalidReason = "Ship is docked"
 		return $false 
@@ -746,19 +893,19 @@ function Invoke-AutopilotTick {
     if (-not $Global:autopilotEnabled) {
         $timer.Stop(); return
     }
-    $statusFile = Join-Path -Path $inputFolderPath -ChildPath "Status.json"
+#    $script:StatusPath = Join-Path -Path $inputFolderPath -ChildPath "Status.json"
     $localtime = $((Get-Date).ToString('HH:mm:ss'))
 
 	Write-Host "[$localtime] : AutopilotLoop started."	
 	
-	if (Test-Path $statusFile) {
+	if (Test-Path $script:StatusPath) {
 		try {
-			$status = Get-Content $statusFile -Raw | ConvertFrom-Json
+#			$status = Get-Content -Path $script:StatusPath -Raw -Encoding ascii | ConvertFrom-Json
+			$status = Get-Content $script:StatusPath -Raw | ConvertFrom-Json
 
 #			$hasAltitudeData = ($status.Flags -band 0x20000000) -ne 0
 
 			# Validate planetary surface condition
-#			if ($status.Docked -eq $true) {
 			if (( $status.Flags -band 0x000001 ) -eq 1) {
 				Write-Host "[$localtime] : Autopilot disabled -- ship is docked."
 				$Global:autopilotEnabled = $false
@@ -917,6 +1064,5 @@ Register-ObjectEvent -InputObject $watcher1 -EventName Created -Action {
     Write-Host "Game is running" -ForegroundColor Green -BackgroundColor Yellow
 }
 
-#Write-Host "FileSystemWatcher is monitoring $inputFolderPath for new entries..." -ForegroundColor Yellow
 Write-Host "Monitoring journal (watcher + 500 ms poll)..." -ForegroundColor Yellow
 while ($true) { Wait-Event }
