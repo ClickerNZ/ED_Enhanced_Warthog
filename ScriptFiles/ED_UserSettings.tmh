@@ -1,25 +1,11 @@
 
-	//----------------------------------------------------------------------//
-	//	CMDR Clicker's Elite Dangerous Thrustmaster Warthog + TFRP Script	//
-	//----------------------------------------------------------------------//
+	//--------------------------------------------------------------------------------------//
+	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
+	//--------------------------------------------------------------------------------------//
 
-	// This file: ED_UserSettings.tmh ... supports Elite Dangerous (Vanguards)
+	//									WARTHOG REQUIRED									//
 
-	// Refer Change Log.txt in parent folder
-
-	// LEGEND: 
-	// ========================================================================
-	// fnName()								refer to ED_Functions file
-	// initName()							refer to ED_Initialise file
-	// stfnName()							refer to ED_StateTracker file
-	// tgName()								refer to ED_Toggles file
-	// mName								refer to ED_Macros file
-	// MapKey statements					refer to ED_MapKeyAssignment file
-	// Global State and Boolean Defines		refer to ED_ScriptDefines file
-	// Global Game Key Bind Defines			refer to ED_GameBindings file 
-	// Global Script Variables				refer to ED_GlobalVars file
-	// User Config Settings					refer to ED_UserSettings file
-	// ========================================================================
+	//							This file: ED_UserSettings.tmh								//
 
 	// START
 
@@ -27,22 +13,29 @@
 	// CRITICAL File Path Settings //		REFER TO DEDICATED SECTIONS BELOW FOR EXPLANATIONS
 	//-----------------------------//
 
-	// Refer 'status.json' section
-	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
-	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
+	// --- Refer 'status.json' section below for more info
+	// --- Change '<username>' to your windows user name
+	alias	StatusFile			= "c:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
+	alias	MaxStatusFile		= "c:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
 
-	// Refer 'MyStatusFile' section																								// If you unzipped the package to 'c:\Thrustmaster\ED_TargetScript_Warthog\' as suggested...
-	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";	// ... this won't need changing
+	// 		!!! IMPORTANT !!! 
+	// If you have chosen to unzip/install to somewhere other than 'c:\Thrustmaster\ED_TargetScript_Warthog\' on your PC
+	// you will also need to edit both the ProcessJournal.ps1 and TTSMonitor.ps1 powershell helper scripts
 
-	// Refer 'MyJournalData' section
-	alias	MyJournalData		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";		// ... this won't need changing
+	// --- Refer 'MyStatusFile' section	below for more info																		// If you unzipped the package to 'c:\Thrustmaster\ED_TargetScript_Warthog\' as suggested you
+																																// won't need to change the next five paths.
+	// --- WARTHOG 
+	alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyStatusFile.json";			// Only change this if you have chosen not to use the suggested installation path on your PC
+	
+	// Refer 'MyJournalData' section below for more info 
+	alias	MyJournalData		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";		// Only change this if you have chosen not to use the suggested installation path on your PC
 
-	// Refer 'Text To Speech' section
-	alias	TTSQueue 			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\TTSQueue\\";				// ... this won't need changing
+	// Refer 'Text To Speech' section below for more info 
+	alias	TTSQueue 			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\TTSQueue\\";				// Only change this if you have chosen not to use the suggested installation path on your PC
 
-	// Refer 'WAV Sound Player' section 
-	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";						// ... this won't need changing
-	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";							// ... this won't need changing
+	// Refer 'WAV Sound Player' section below for more info 
+	alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";						// Only change this if you have chosen not to use the suggested installation path on your PC
+	alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";							// Only change this if you have chosen not to use the suggested installation path on your PC
 	
 	//----------//
 	// Identity //
@@ -56,8 +49,8 @@
 
 	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one
 	alias	MyFCName			= "Clicker's Folly";	// Replace with the name you've given to your Fleetcarrier
-	alias	FCOwner				= "Clicker";			// Commander's name who owns the 'MyFC'. Script will assume this CMDR owns this FC.
-														// This caters for players with multiple accounts (but only one fleetcarrier)
+	alias	FCOwner				= "Clicker";			// Commander's name who owns 'MyFC'. Script will assume 'FCOwner' owns this FC.
+														// This caters for Squadron Carriers and for players with multiple accounts (but only one fleetcarrier)
 	//----------------//									
 	// MapKey Profile //
 	//----------------//
@@ -70,9 +63,9 @@
 	//-------------------//
 
 	int 	EnableMyRudder		= ENABLED;				// Set to DISABLED if you do not have a Thrustmaster TFRP or TFRPHA Rudder.
-
+	
 	//--------------//
-	// LED settings //
+	// LED settings //		WARTHOG ONLY
 	//--------------//
 
 	int		FlashLEDs			= ENABLED;				// Flash the Status LEDs when status changes. ENABLED or DISABLED
@@ -83,7 +76,6 @@
 														// LEDLevel 3: 129 	- 171
 														// LEDLevel 4: 172	- 214
 														// LEDLevel 5: 215 	- 255 (brightest)
-
 	//----------------//
 	// Status.json    //
 	//----------------//
@@ -91,38 +83,37 @@
 	// WARNING:		This script relies on and makes extensive use of 'status.json' key values
 	//				If the script cannot find status.json, it will abort.
 
-	// NOTE:		Set the 'alias' below to point to the Elite Dangerous journal folder / status.json file
-	//				The below path is usually where the Elite Dangerous journal files can be found.
+	// NOTE:		Set aliases at top of this file for StatusFile and MaxStatusFile point to the Elite Dangerous journal folder / status.json file
+	//				These paths are usually where the Elite Dangerous journal files can be found.
 	//				Just replace '<username>' with your Windows username, NOT your CMDR Name!!!
-	
-	// Set at top in CRITICAL Settings
-	// alias	StatusFile			= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";
-	// alias	MaxStatusFile		= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";
-	
-	define	StatusReadRate		500		// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
-										// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
+		
+	define	StatusReadRate		500			// Set Read Loop rate in milliseconds. (ie 500 = read status.json twice a second)
+											// You may see issues if this is set too small. If you do, raise this value to 750, 1000, or higher
+	int	PreserveMaxJson			= ENABLED;	// If Enabled, keeps a copy of the longest status.json found in the journal folder
 
 	//----------------//
 	//  MyStatusFile  //
 	//----------------//
 
-	// NOTE:		Set the 'alias' below to point to where you want to save and load script variables that are not tracked via status.json
+	//	NOTE:		Set the 'alias' at top of this file to point to where you want to save and load script variables that are not tracked via status.json
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
-	//				Saves the script states after a game restart or relog. 
+	//	FUNCTION:	Stores/Restores additional script states when games starts/stops or during script initiated relog. 
 
 	// Set at top in CRITICAL Settings	
-	// alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyWarthogStatusFile.json";
+	// alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyStatusFile.json";
 
 	//---------------//
 	// MyJournalData //
 	//---------------//
+
+	//	NOTE:		Set the 'alias' at top of this file to point to where the output folder is. 
+	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
+	//				If you do change the location, you will also need to edit the ProcessJournal.ps1 powershell file found in the SupportFiles Folder
 	
-	// Set above in CRITICAL Settings
 	// alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
 	
 	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
 												// You may see issues if this is set too small. If you do, raise this value
-	int	PreserveMaxJson				= ENABLED;	// If Enabled, keeps a copy of the longest status.json found in the journal folder
 													
 	//----------------//
 	// Text To Speech //
@@ -145,7 +136,7 @@
 														// Note: VoiceVolume gets saved to MyStatus file when game halts and is reloaded at script start
 	int		VoiceRate			= 1;					// Slightly faster than default. You can set this using DEBUG + InputCMD
 	int		AltVoiceRate		= 1;					// Default. You can set this using DEBUG + InputCMD
-
+	
 	// Run 'voice.exe -l" (lower case L) in a command line to see which voices are installed
 	// 'voice.exe' is located under the SupportFiles folder
 	// Add or remove the below voices to match what's available on your PC.
@@ -250,6 +241,8 @@
 	int SCOLowFuelFailsafe		= ENABLED;				//	Enable disconnects SCO if Low fuel threshold is met. Disabled risks running out of fuel
 	
 	int	ChatTABs				= 2;					//	Set to number of Chat Tabs you have setup within the Comms Panel, in game. (Valid = 1-4)
+	
+	int	PrivateGroup			= 1;					//	Value 1 - 3. Select Private Group 1, 2 or 3. Used for menulog automation
 
 	//--------------------------//
 	// Axis Curves and Settings //
@@ -288,10 +281,10 @@
 	//		AP Switch set to APALT-I	= (Curve = 4)
 	 
 	// Define curve & zoom arrays
-	// --------------------------   APPAT-O	APPAT-I	APAH	APALT-O	APALT-I	// Used within fnSetCurves() and applied to JS, Rudder and Slew  (x, y & z axis)
-	short	Joystick_Curve[] 	= {	1,		2,		0,		3,		4 };	// Autopilot switch (Up = MILD curves, down = SLOWER curves)
+	//			WARTHOG				APPAT-O	APPAT-I	APAH	APALT-O	APALT-I
+	short	Joystick_Curve[] 	= {	1,		2,		0,		3,		4 };
 	
-	short	Rudder_Curve[]		= { 1,		2,		0,		3,		4 };	// Autopilot switch (Up = MILD curves, down = SLOWER curves)
+	short	Rudder_Curve[]		= { 1,		2,		0,		3,		4 };
 	 
 	short	Slew_Curve[]		= {	2,		2,		0,		2,		2 };	// Set Slew Curve
 	// --------------------------  MILD	  MEDIUM   NONE    SLOW   SLOWEST	//
