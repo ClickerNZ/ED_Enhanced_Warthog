@@ -22,8 +22,6 @@
 	alias	MyJoystick;					// Global Joystick handle. Set in ED_Main depending on which compatible Joystic/Base is detected
 	alias	MyThrottle;					// Global Throttle handle. Set in ED_Main depending on which compatible Throttle is detected
 	alias	MyRudder;					// Global Rudder handle. Set in ED_Main depending on which compatible Rudder is detected	
-
-	int		ControllerType;				// Set in ED-Initialise during Controller check
 	
 	char	NOJOYSTICK	= 0;			// Set during CheckControllers if no compatible device found
 	char	NOTHROTTLE	= 0;			// Set during CheckControllers if no compatible device found
@@ -59,7 +57,6 @@
 	int SelectDrop			= 0;		// Use to detect if Supercruise drop was selected or forced
 	int FireModeP			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
 	int FireModeS			= 0;		// 0 = Press to fire/Release to Stop, 1 = Press to fire, Press again to stop
-	int ShipDismissed		= 0;		// Track when Ship is dismissed/recalled via EORIGN-U
 	int SilentStrobe		= 0;		// Used to track when we are using the Silent Running Strobe feature
 	int XAxisYAW			= 0;		// Used to track which mode X-Axis is, Roll (default) or Yaw
 	int GUIState			= 1;		// Used to track when ship's HUD GUI is turned off or on (default = ON)
