@@ -10,8 +10,8 @@ public class TTS {
     public static void SpeakText(string text, string voiceName = "Microsoft Catherine", int rate = 1, int volume = 100) {		
         using (var synth = new SpeechSynthesizer()) {	
         synth.SelectVoice(voiceName);
-        synth.Rate = rate; // Rate: -10 (slowest) to 10 (fastest)
-        synth.Volume = volume; // Volume: 0 to 100            
+        synth.Rate = rate; 		// Rate: -10 (slowest) to 10 (fastest)
+        synth.Volume = volume; 	// Volume: 0 to 100            
 		synth.Speak(text);
         }
     }

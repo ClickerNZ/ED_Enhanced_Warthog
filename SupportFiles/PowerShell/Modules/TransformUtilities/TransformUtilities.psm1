@@ -1,6 +1,7 @@
 # JSON Lookup using external lookup maps
 # Global variable to store the imported maps
 # Import-MapFile: Loads a JSON file into memory
+
 function Import-MapFile {
     param (
         [string]$FilePath
@@ -19,7 +20,7 @@ function Import-MapFile {
 # Get-MappedValue: Retrieves a value from a map
 function Get-MappedValue {
     param (
-        [string]$MapName, # The name of the map (e.g., ShipType_map)
+        [string]$MapName, # The name of the map (e.g ShipType_map)
         [string]$Key      # Accepts string keys
     )
 
