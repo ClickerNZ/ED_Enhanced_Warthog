@@ -20,27 +20,6 @@
 	// START
 
 	define KBLayout 				KB_ENG					// Default Keyboard Layout. Options = KB_FR or KB_GER
-
-//-	//----------------------------------------------------------------------//
-//-	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //		MOVED INTO ED_Initialise.tmh
-//-	//----------------------------------------------------------------------//
-
-//-	define VMajor		 			5						// Script Version Major Value			ie. 2xx
-//-	define VMinor		 			1						// Script Version Minor Value			ie. x3x
-//-	define VPoint					0						// Script Version Point Update			ie. xx4
-//-	define VBranch					"1"						// Script Version Branch				ie. xxx.01
-
-	//---------------//
-	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
-	//---------------//
-
-	define OFF						0
-	define ON						1
-
-//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
-	int		DEBUG					= ON;					// Development/DEBUG Mode. example InputCMD enabled 
-//	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
-//	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
 	
 	define	ControllerCheck			ENABLED					// ENABLED:		Abort script if compatible Joystick or Throttle not found during CheckControllers() function at script start
 
@@ -90,6 +69,9 @@
 	// SCRIPT BOOLEAN and STATE DEFINES										//
 	//----------------------------------------------------------------------//
 			
+	define OFF						0
+	define ON						1
+	
 	define LOG						2						// DEBUG Levels
 	define VERBOSE					3						// DEBUG Levels
 
@@ -145,6 +127,16 @@
 
 	define LOAD						0						// used in stfnMyStates()	
 	define SAVE						1						// used in stfnMyStates()
+
+	//---------------//
+	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
+	//---------------//
+
+//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
+	int		DEBUG					= ON;					// Development/DEBUG Mode. example InputCMD enabled 
+//	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
+//	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
+
 
 	//-----------------------------------------------------------------------------------------------------------------------------//
 	//                                                                                                                             //
@@ -439,7 +431,7 @@
 
 	int Modules					=	0;						//  Read from MyJournalData.json 
 //-	int oldModules				=	0;						//	Track when changed via stfnProcessMyJournalData()
-															// Read and decode 'Modules' each time Modules != oldModules
+//-															// Read and decode 'Modules' each time Modules != oldModules
 	int	fSCOPresent				=	0;
 	int fFighterPresent			= 	0;
 	int fSRVPresent				=	0;	
