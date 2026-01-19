@@ -508,6 +508,7 @@
 				ActKey(KEYON+Pulse+SilentRunning);
 				SilentRunningState = 0;
 			}
+			stfnMyStates(LOAD);
 		}
 		DeferCall(1100, &fnSetLEDs, NUL);
 	}
@@ -961,15 +962,16 @@
 		
 		if(fSRV | fOnFootOnPlanet) {											// TESTING: sometimes flag not set for fOnFoot or fOnFootOnPlanet
 			ActKey(KEYON+PULSE+SRVRecallDismissShip);							// 'LeftALT+k'			
-			printf("==	Ship Status: ");
-			ShipDismissed = !ShipDismissed;
-			stfnMyStates(SAVE);													// saves my status variables 			
+//			printf("==	Ship Status: ");
+//			ShipDismissed = !ShipDismissed;
+//			stfnMyStates(SAVE);			// Moved into fnModeSwitch()			// we save MyStates to allow ShipDismissed state to carry over in case of menulog
 		}
 		else {
 			reason = "we are not in the S R V or on foot";
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
+
 
 	// FUNCTION: Calls Request Dock macro. Set power to shields
 
@@ -1217,6 +1219,10 @@
 	
 		int fnName = "Mode Switch";
 		int reason = 0;
+
+		stfnMyStates(SAVE);
+		
+		alias PVTGRP = "Menu log to private group x selected.. please wait for game reload";	// we sprintf PrivateGroup value into 'x' within this template
 		
 		int counter = 0;
 		
@@ -1263,9 +1269,11 @@
 				ActKey(KEYON+PULSE+m_FastModeSwitch0);												// Selects OPEN mode
 			}
 			else if (mode == 1) {
+				sprintf(&PVTGRP, "Menu log to private group %d selected.. please wait for game reload", PrivateGroup);
+				PVTGRP[strlen(&PVTGRP)] = 0;
+//-				fnVPOutput("Menu log to private group selected.. please wait for game reload", 0, 1);			
+				fnVPOutput(&PVTGRP, 0, 1);
 				
-				fnVPOutput("Menu log to private group selected.. please wait for game reload", 0, 1);			
-
  				if (PrivateGroup == 1) {
 					ActKey(KEYON+PULSE+m_FastModeSwitch1a);											// Selects 1st option in PRIVATE GROUP
 				}
@@ -1697,7 +1705,8 @@
 //-	DEBUG +++++ END 
 		
 			StationName[strlen(&StationName)] = 0;
-			if (DEBUG >= LOG) printf("!!	DEBUG: fnGetStationName() - Station Name = %s\x0a", &StationName);
+//-	DEBUG: Having some issues with station names with hyphens being parsed as '???'
+//			if (DEBUG >= 1) printf("!!	DEBUG: fnGetStationName() - Station Name = %s\x0a", &StationName);
 		
 //-	DEBUG +++++ START
 		}
@@ -1742,7 +1751,13 @@
 			}
 			fnPIPMapper(SYS,ENG);		
 			printf("==	Power to shields\x0a");
-
+			
+			if (DEBUG > 0) {
+				if (AutoHangar) fnVPOutput("Arrival mode: station services");
+				else if (AutoDisembark) fnVPOutput("Arrival mode: disembark");
+				else fnVPOutput("Arrival mode: just sit tight");
+			}
+			
 			LandingPad = stfnGetKeyValue("LandingPad", INTEGER, 1);
 			printf("==	Landing Pad %d\x0a", LandingPad);			
 			
@@ -2064,7 +2079,7 @@
 		
 	int fnDEBUG(int dummy = 0) {
 		int fnName = "fnDebug";
-		reason = 0;
+		int reason = 0;
 		
 		// Issue: joystick unresponsive
 		if (DEBUG > 0) {
