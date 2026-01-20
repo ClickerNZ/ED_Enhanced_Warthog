@@ -13,7 +13,7 @@
 	Line    77: 			m_BoardShip = CHAIN(
 	Line    88: 			m_DeployNPCFighter = CHAIN(
 	Line   102: 			m_DeployFighter = CHAIN(
-	Line   116: 			m_ShowGameStats = CHAIN(
+	Line   116: 			m_ShowGameStats = CHAIN(		
 	Line   122: 			m_FastModeSwitch0 = CHAIN(
 	Line   133: 			m_FastModeSwitch1a = CHAIN(
 	Line   147: 			m_FastModeSwitch1b = CHAIN(
