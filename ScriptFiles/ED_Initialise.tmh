@@ -10,21 +10,21 @@
 /*
 	Index:			FUNCTION
 	Line    50: 		int CheckControllers() {
-	Line   171: 		int initJoystickAxis() { 
-	Line   191: 		int initThrottleAxis() {
-	Line   208: 		int initSliderAxis() {
-	Line   224: 		int initSlewAxis() {
-	Line   241: 		int initRudderAxis() {	
-	Line   260: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
-	Line   338: 		int initSliderCurve(int x) {
-	Line   371: 		int initTextToSpeech() {
-	Line   383: 		int initSoundFX() {
-	Line   442: 		int initUserSettings(int dummy = 0) {
-	Line   499: 		int fnResetUserSettings(int dummy = 0) {
-	Line   544: 		int fnEncodeUserSettings(int dummy = 0) {
-	Line   580: 		int fnDecodeUserSettings(int DecodeSettings) {
-	Line   612: 		int fnUserSettingsDelta(int dummy = 0)	{
-	Line   659: 		int fnCompareIntSettings(int dummy = 0) {
+	Line   164: 		int initJoystickAxis() { 
+	Line   184: 		int initThrottleAxis() {
+	Line   201: 		int initSliderAxis() {
+	Line   217: 		int initSlewAxis() {
+	Line   234: 		int initRudderAxis() {	
+	Line   253: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
+	Line   332: 		int initSliderCurve(int x) {
+	Line   364: 		int initTextToSpeech() {
+	Line   376: 		int initSoundFX() {
+	Line   435: 		int initUserSettings(int dummy = 0) {
+	Line   492: 		int fnResetUserSettings(int dummy = 0) {
+	Line   537: 		int fnEncodeUserSettings(int dummy = 0) {
+	Line   572: 		int fnDecodeUserSettings(int DecodeSettings) {
+	Line   603: 		int fnUserSettingsDelta(int dummy = 0)	{
+	Line   650: 		int fnCompareIntSettings(int dummy = 0) {
 */
 
 	// START
