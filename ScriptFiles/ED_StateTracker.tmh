@@ -13,12 +13,12 @@
 	Line   358: 		int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
 	Line   473: 		int stfnDecodeFlags() {
 	Line   577: 		int stfnDecodeFlags2() {
-	Line   683: 		int stfnProcessFlags(int UpdateLEDs = NO) {
-	Line  1548: 		int stfnDecodeModules(int dummy = 0) {
-	Line  1580: 		int stfnProcessMyJournalData(int dummy = 0) {
-	Line  1652: 		int stfnProcessGuiFocus() {
-	Line  1699: 		int stfnStartCheck() {
-	Line  1769: 		int stfnMyStates(int action) {
+	Line   682: 		int stfnProcessFlags(int UpdateLEDs = NO) {
+	Line  1573: 		int stfnDecodeModules(int dummy = 0) {
+	Line  1605: 		int stfnProcessMyJournalData(int dummy = 0) {
+	Line  1677: 		int stfnProcessGuiFocus() {
+	Line  1724: 		int stfnStartCheck() {
+	Line  1794: 		int stfnMyStates(int action) {
 */
 
 	// START
