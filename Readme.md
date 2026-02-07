@@ -1,5 +1,7 @@
 CMDR Clicker's Thrustmaster TARGET Script for Elite Dangerous 
 
+NOTE: The entire documentation set needs an overhaul!
+
 Version 510.1 (Vanguards)
 
 STATUS: BETA (Development phase)
@@ -49,7 +51,8 @@ status.json file that Elite Dangerous writes to the journal folder.
 Together, these enable the script to align all of the state tracking I need.
 - Version 410b no longer uses the external C++ file. I've replaced this with an REXEC statement to run fnsReadStatusJson() every 500 ms.
 - Version 420 and later contain changes required for ED 3.7 - Fleet Carriers
-- Version 500 and later contain changes and additional code to support ED 4.0 - Odyssey
+- Version 500 and later contain changes and additional code to support ED 4.0 - Odyssey  
+- Version 510 and later use external Powershell helper scripts
 
 PACKAGE CONTENTS: 
 
@@ -70,17 +73,17 @@ When publishing or sharing this script the following should be included in the z
 		ED_StateTracker.tmh
 		ED_Toggles.tmh
 		ED_UserSettings.tmh
-- Voice.exe (users can find this on github and check out the source if they wish)
-- sounder.exe (users can find this on github via the same author as voice.exe)
-- target_enhanced.tmh As of version 4.0.0, I use a modified target.tmh file which itself was modified by Sedenion
-(whenever Thrustmaster update their TARGET software, I will update it and provide a new version here)
-- Windows batch file (SAMPLE_Launcher.cmd) to use to launch Elite Dangerous, my TARGET script and supporting apps)
-- The Elite Dangerous .bind file created to support this script
-- The image files created to summarise the Joystick and Throttle button assignments
-- The image files created to summarise keyboard key utilisation
-- The change log for this version
+- Voice.exe (users can find this on github and check out the source if they wish) - No longer used  
+- sounder.exe (users can find this on github via the same author as voice.exe)  
+- target_enhanced.tmh As of version 4.0.0, I use a modified target.tmh file which itself was modified by Sedenion  
+(whenever Thrustmaster update their TARGET software, I will update it and provide a new version here)  
+- Windows batch file (SAMPLE_Launcher.cmd) to use to launch Elite Dangerous, my TARGET script and supporting apps)  
+- The Elite Dangerous .bind file created to support this script  
+- The image files created to summarise the Joystick and Throttle button assignments  
+- The image files created to summarise keyboard key utilisation  
+- The change log for this version  
 
-INSTALLATION:
+INSTALLATION:  
 
 Refer User Reference guide for complete installation instructions 
 
