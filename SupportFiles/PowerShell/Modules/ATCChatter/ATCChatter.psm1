@@ -11,20 +11,24 @@
 # -------------------------
 $script:AllVoices = @(
   "Microsoft David Desktop",
-  "Microsoft Zira Desktop",
-  "Microsoft Heera",
-  "Microsoft Ravi",
-  "Microsoft Sean",
+#  "Microsoft Zira Desktop",
+#  "Microsoft Heera",
+#  "Microsoft Ravi",
+#  "Microsoft Sean",
   "Microsoft Richard",
-  "Microsoft Linda",
-  "Microsoft Mark"
+  "Microsoft Linda"
+#  "Microsoft Mark"
 )
 
 # Voice groups (subset per type). Any missing names are ignored at pick-time.
 $script:VoiceGroups = @{
-  Station  = @("Microsoft David Desktop","Microsoft Mark","Microsoft Richard")
-  Security = @("Microsoft Sean","Microsoft Richard","Microsoft Ravi")
-  Traffic  = @("Microsoft Zira Desktop","Microsoft Linda","Microsoft Heera","Microsoft Mark")
+  Station  = @("Microsoft David Desktop","Microsoft Richard")
+  Security = @("Microsoft Richard","Microsoft David Desktop")
+  Traffic  = @("Microsoft Linda","Microsoft David Desktop")
+
+#  Station  = @("Microsoft David Desktop","Microsoft Mark","Microsoft Richard")
+#  Security = @("Microsoft Sean","Microsoft Richard","Microsoft Ravi")
+#  Traffic  = @("Microsoft Zira Desktop","Microsoft Linda","Microsoft Heera","Microsoft Mark")
 }
 
 # Background feel
@@ -177,12 +181,28 @@ function Invoke-ATCChatter {
   # Clamp 0–100
   $vol = [Math]::Max(0, [Math]::Min(100, $vol))
 
-  try {
-    [TTS]::SpeakText($text, $voice, $script:ATCRate, $vol)
-  } catch {
-    # If a voice fails, fall back to David Desktop once.
-    try { [TTS]::SpeakText($text, "Microsoft David Desktop", $script:ATCRate, $vol) } catch { }
-  }
+	# --- Make delivery less robotic ---
+	$spoken = $text.Trim()
+	$spoken = $spoken -replace '\s+', ' '                  # normalize whitespace
+	$spoken = $spoken -replace '(\.|!|\?)', '$1 '          # ensure space after sentence punctuation
+	$spoken = $spoken -replace ',', ', '                   # slight pause cue
+
+	# Light ATC-ish phrasing tweaks (optional; safe)
+	$spoken = $spoken -replace '\bCommander\b', 'Commander,'
+
+	# Small random variation each line
+	$rate = $script:ATCRate + (Get-Random -Minimum -2 -Maximum 3)   # -2..+2
+	$vol2 = $vol + (Get-Random -Minimum -2 -Maximum 3)              # -2..+2
+
+	# Clamp
+	$rate = [Math]::Max(-10, [Math]::Min(10, $rate))
+	$vol2 = [Math]::Max(0, [Math]::Min(100, $vol2))
+
+	try {
+		[TTS]::SpeakText($spoken, $voice, $rate, $vol2)
+	} catch {
+		try { [TTS]::SpeakText($spoken, "Microsoft David Desktop", $rate, $vol2) } catch { }
+	}
 }
 
 Export-ModuleMember -Function `
