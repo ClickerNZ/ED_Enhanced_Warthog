@@ -504,7 +504,7 @@
 		lInterdicted		= fInterdicted;
 
 		lMainShip 			= fMainShip;							// Track in/out of MainShip
-		lFighter 			= fFighter;								// Track in/out off Fighter
+		lFighter 			= fFighter;								// Track in/out of Fighter
 		lSRV 				= fSRV;									// Track in/out of SRV
 		lHUDAnalysis		= fHUDAnalysis;
 
@@ -698,16 +698,19 @@
 							DeferCall(4000, &fnHangarServices, 3);				// ... disembark
 						}
 						
-						strcpy(&LandedTOD, fnGetTOD());
-						printf("==	Docked: %s @ %s\x0a\x0a", &StationName, &LandedTOD);
+//						strcpy(&LandedTOD, fnGetTOD());
+						strcpy(&DockedTOD, fnGetTOD());
+//						printf("==	Docked: %s @ %s\x0a\x0a", &StationName, &LandedTOD);
+						printf("==	Docked: %s @ %s\x0a\x0a", &StationName, &DockedTOD);
 						
 						if (fLights) tgLights(0);
-						DeferCall(1000, &ActKey, KEYON+PULSE+BalancePower);		// Much more efficient than calling fnPIPMapper()
+						DeferCall(1000, &ActKey, KEYON+PULSE+BalancePower);		// More efficient than calling fnPIPMapper()
 						DeferCall(11000, &fnGreetCMDR, 0);
 
 						// --- Calculate and output Trip time
 						if (strcmp(&oStation, &StationName) == 0) {
-							if (strcmp(&LiftoffTOD, "HH:MM") != 0) {
+//							if (strcmp(&LiftoffTOD, "HH:MM") != 0) {
+							if (strcmp(&UnDockedTOD, "HH:MM") != 0) {
 								DeferCall(16000, &fnTripTime, 0);
 							}
 							else {
@@ -717,7 +720,7 @@
 						}
 
 						if (fLimpetPresent) {
-							DeferCall(20000, &fnTextToSpeech, "Don't forget your limpets");
+							DeferCall(20000, &fnTextToSpeech, "Do we need limpets?");
 						}
 					}
 				}
@@ -728,7 +731,8 @@
 					
 					if (strcmp(&oStation, "not set") != 0) {
 						if (strcmp(&oStation, &StationName) == 0 ) {			// Hoping &StationName has not yet been reset, otherwise 
-							strcpy(&LiftoffTOD, fnGetTOD());					// move this to fnSetOriginStation() and start timer there
+//							strcpy(&LiftoffTOD, fnGetTOD());					// move this to fnSetOriginStation() and start timer there
+							strcpy(&UnDockedTOD, fnGetTOD());					// move this to fnSetOriginStation() and start timer there
 							fnTextToSpeech("Trip timer started");
 						}
 					}
@@ -744,38 +748,27 @@
 			}
 		}
 
-		if (fLanded != lLanded) {												// Framework for future functionality
+		if (fLanded != lLanded) {
 			if (fLanded) {
 				if (fSRV | fOnFoot) {
-//					if (ShipDismissed) ShipDismissed = 0;						// do not need ShipDismissed if using fLanded ???
 					if (DEBUG > 0) printf("==	Ship Status:		RECALLED\x0a");
 				}
-/*
 				strcpy(&LandedTOD, fnGetTOD());
-				printf("==	Landed @ %s\x0a", &LandedTOD);
-				
-				if (strcmp(&LiftoffTOD, "HH:MM") != 0) {						// Calculate and output Trip time
-					DeferCall(2000, &fnTripTime, 0);
-				}
-				else {
-					DeferCall(2000, &fnVPOutput, "Departure time not logged");
-				}
-*/				
+				printf("==	Landed @ %s\x0a", &LandedTOD);				
 			}
 			else {
-				if (AutoGearUP) {
-					DeferCall(1500, &ActKey, KEYON+PULSE+LandingGear);
+				if (AutoGearUP) {											// This may conflict with Advanced Docking Computer...
+					DeferCall(1500, &ActKey, KEYON+PULSE+LandingGear);		// ... which raises the landing gear automatically
 				}
-/*				
-				if (strcmp(&oStation, &StationName) == 0) {
-					strcpy(&LiftoffTOD, fnGetTOD());
-					printf("==	Liftoff @ %s\x0a", &LiftoffTOD);
-				}
-*/
-//				ShipDismissed = NO;
+				strcpy(&LiftoffTOD, fnGetTOD());
+				printf("==	Liftoff @ %s\x0a", &LiftoffTOD);
+
 				if (fSRV | fOnFoot) {
-//					if (!ShipDismissed) ShipDismissed = 1;						// do not need ShipDismissed if using fLanded ???
-					if (DEBUG > 0) printf("==	Ship Status:		DISMISSED\x0a");
+					if (!ShipDismissed) {
+						fnVPOutput("Ship has departed");
+					}
+					
+					if (DEBUG > 1) printf("==	Ship Status:		DISMISSED\x0a");
 				}
 			}
 		}
@@ -783,11 +776,9 @@
 		//	Placeholder for future development
 		//	LOGIC: fLandingGear gets set when Landing gear is deployed and reset when retracted
 		if (fLandingGear != lLandingGear) {									// This may be announced via in game setting
-//-			if (fLandingGear & fMainShip) {									// Do we need to trap if in ship? (eg Taxi/DropShip)
 			if (fLandingGear) {												// Dealt with in tgLandingGear
 				// Landing Gear Deployed 
 			}
-//-			else if (fMainShip) {
 			else {
 				// Landing Gear retracted  
 			}
@@ -1020,7 +1011,8 @@
 				}
 			}
 			else {
-				if (fFighter == lFighter) {
+//				if (fFighter == lFighter) {
+				if (fMainShip | fSRV) {
 					fnVPOutput("Fuel above low threshold");
 				}
 			}				
@@ -1614,6 +1606,7 @@
 		
 			stfnDecodeModules(0);																	// Individual flags used to enable trigger and switch functions etc
 			fnFighterStatus(0);																		// Determines if Fighter is active 
+			fnGetShipType(0);																		// Grabs ShipType and updates if changed
 			LoadGameDetect = stfnGetKeyValue("LoadGameDetect", INTEGER, 1);
 
 //-		DEVELOPMENT CODE - REMOVE BELOW FROM HERE...
