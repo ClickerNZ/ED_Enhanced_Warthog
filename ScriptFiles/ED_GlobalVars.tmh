@@ -14,7 +14,8 @@
 	char 	CMDRName;					// Set via fnMyName() and read from MyJournalData.json 
 	char	StationName;				// Set via fnGetStationName() and read from MyJournalData.json 
 	char	DockingStatus;				// Set via fnDockingStatus() and read from MyJournalData.json 
-
+	char	ShipType;					// Set via fnGetShipType() and read from MyJournalData.json
+	
 	//--------------------//
 	// Connected Hardware //
 	//--------------------//
