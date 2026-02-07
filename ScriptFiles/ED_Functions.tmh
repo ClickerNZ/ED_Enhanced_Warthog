@@ -955,10 +955,20 @@
 	// FUNCTION: 	Dismiss/Recall Ship
 	// NOTE:		1. Use to manually dismiss/recall the ship from SRV or on-foot 
 	//				2. Console messages may be wrong if ship leaves automatically
+
+	// Globals:
+	int	ShipDismissed = 0;
 	
 	int fnDRShip() {
 		int fnName = "Dismiss or Recall Ship";
 		int reason = 0;
+
+		if (fLanded) {															// This enables fLanded trap in stfmStateTracker to differentiate auto v manual dismissal
+			ShipDismissed = 1;													// I sent the ship away
+		}
+		else {
+			ShipDismissed = 0;													// I recalled the ship
+		}
 		
 		if(fSRV | fOnFootOnPlanet) {											// TESTING: sometimes flag not set for fOnFoot or fOnFootOnPlanet
 			ActKey(KEYON+PULSE+SRVRecallDismissShip);							// 'LeftALT+k'			
@@ -1942,9 +1952,14 @@
 	//	FUNCTION:	Calculate and output TripTime 
 
 	//	Global vars
+	// Used for TripTime...
+	alias	DockedTOD	= "HH:MM";
+	alias	UnDockedTOD	= "HH:MM";
+	alias	TripTime	= "HH:MM";
+
+	// Used for fLanded trap in stfnStateTracker
 	alias	LandedTOD	= "HH:MM";
 	alias	LiftoffTOD	= "HH:MM";
-	alias	TripTime	= "HH:MM";
 	
 	int fnTripTime(int dummy = 0) {
 
@@ -1963,10 +1978,14 @@
 		int iH1, iM1, iH2, iM2, t1, t2, diff, dh, dm;
 
 		// --- Extract hours and minutes ---
-		strsub(&H1, &LiftoffTOD, 0, 1);
-		strsub(&M1, &LiftoffTOD, 3, 4);
-		strsub(&H2, &LandedTOD, 0, 1);
-		strsub(&M2, &LandedTOD, 3, 4);
+//		strsub(&H1, &LiftoffTOD, 0, 1);
+//		strsub(&M1, &LiftoffTOD, 3, 4);
+//		strsub(&H2, &LandedTOD, 0, 1);
+//		strsub(&M2, &LandedTOD, 3, 4);
+		strsub(&H1, &UnDockedTOD, 0, 1);
+		strsub(&M1, &UnDockedTOD, 3, 4);
+		strsub(&H2, &DockedTOD, 0, 1);
+		strsub(&M2, &DockedTOD, 3, 4);
 
 		// --- Convert to integers ---
 		iH1 = ieval(&H1);
@@ -1997,7 +2016,8 @@
 		
 
 		// --- Output result ---
-		printf("==	TripTime = %s (from %s to %s)\x0a", &TripTime, &LiftoffTOD, &LandedTOD);
+//		printf("==	TripTime = %s (from %s to %s)\x0a", &TripTime, &LiftoffTOD, &LandedTOD);
+		printf("==	TripTime = %s (from %s to %s)\x0a", &TripTime, &UnDockedTOD, &DockedTOD);
 		if (AnnounceTripTime) {
 			if (strcmp(&HH, "00") == 0) {
 				sprintf(&TT, "Elapsed trip time, %d minutes", ieval(&MM));		
@@ -2037,8 +2057,10 @@
 		if (action == 0) {
 			
 			strcpy(&TripTime, "HH:MM");
-			strcpy(&LandedTOD, "HH:MM");
-			strcpy(&LiftoffTOD, "HH:MM");
+//			strcpy(&LandedTOD, "HH:MM");
+			strcpy(&DockedTOD, "HH:MM");
+//			strcpy(&LiftoffTOD, "HH:MM");
+			strcpy(&UnDockedTOD, "HH:MM");
 
 			Dim(&oStation, 8);
 			oStation[0] = 0;
@@ -2067,6 +2089,38 @@
 			}
 		}
 		if (reason != 0) fnNotValid(fnName, reason);
+	}
+
+
+	//	FUNCTION:	Get ShipType from MyJournalData.json
+	//	Parameter:	dummy - enables DeferCall() or REXEC()
+	//	Globals:	Uses &ShipType, defined in ED_GlobalVars
+	
+	int fnGetShipType(int dummy=0) {
+
+		stfnGetKeyValue("ShipType", STRING, 1);						// sets global &keyvalue
+		Dim(&ShipType, strlen(&keyvalue)+1);						// init our ShipType char array 
+
+		if (strcmp(&keyvalue, &ShipType)==0) {						// Do nothing if &ShipType already matches what's in MyJournalData.json ...
+			// do nothing, or maybe "return"
+		}
+		else {														// ... otherwise update our variable etc.
+			ShipType[0] = 0;										// Resets char array
+			strcpy(&ShipType, &keyvalue);							// copy in results from stfnGetKeyValue call above
+			ShipType[strlen(&ShipType)] = 0;						// nul terminate char array 
+
+			if (DEBUG >= 1) { 
+				if (strlen(&ShipType) == 0) {						// trap empty string...
+					printf("!!	DEBUG: fnGetShipType() - ShipType has returned as zero length string\x0a");
+				}
+				else {												// if not empty, print result
+					printf("!!	DEBUG: fnGetShipType() - ShipType = %s\x0a", &ShipType);
+				}
+			}
+		}
+	//		Specific shiptype caode goes here, example...
+	//		Call KeyMap Profile or set "MapKeyProfile" for specific ship
+	
 	}
 
 
