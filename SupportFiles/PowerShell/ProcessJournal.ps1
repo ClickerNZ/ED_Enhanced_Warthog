@@ -47,7 +47,7 @@ Import-Module TTS               	-ErrorAction Stop
 Import-Module ATCChatter			-ErrorAction Stop 
 
 # Enables ATC Chatter function for ReceiveText trap 
-$Global:ATCChatter = $true 
+$Global:ATCChatter = $false 
 
 <#
 # DEBUG: Testing the ATCChatter module...
