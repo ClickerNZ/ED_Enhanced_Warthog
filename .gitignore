@@ -10,12 +10,10 @@ SupportFiles/Output/MyJournalData.json
 SupportFiles/Output/Tracking.json
 SupportFiles/Output/TTSQueue/*.*
 SupportFiles/Output/TTSQueue/Archive/*.*
-
 Output/
 Archive/
 *.log
 *.tmp
-
 ScriptFiles/TARGET Session
 SupportFiles/PowerShell/Autopilot Functions.ps1
 SupportFiles/PowerShell/TTSMonitor-v21.ps1
@@ -24,6 +22,4 @@ SupportFiles/PowerShell/ProcessJournal-v33.ps1
 SupportFiles/PowerShell/ProcessJournal-v32.ps1
 SupportFiles/ED_Launcher_2.cmd
 *.orig
-ScriptFiles/TARGET Session
 *.bak
-ScriptFiles/TARGET Session
