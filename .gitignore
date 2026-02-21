@@ -14,7 +14,7 @@ Output/
 Archive/
 *.log
 *.tmp
-ScriptFiles/TARGET Session
+ScriptFiles/TARGET_Session
 SupportFiles/PowerShell/Autopilot Functions.ps1
 SupportFiles/PowerShell/TTSMonitor-v21.ps1
 SupportFiles/PowerShell/TTSMonitor-v20.ps1
@@ -23,4 +23,3 @@ SupportFiles/PowerShell/ProcessJournal-v32.ps1
 SupportFiles/ED_Launcher_2.cmd
 *.orig
 *.bak
-ScriptFiles/TARGET Session
