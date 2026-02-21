@@ -1,5 +1,7 @@
 // CMDR Clicker's Enhanced WARTHOG TARGET Script Change Log //
 
+THIS FILE NO LONGER MAINTAINED - SEE INIDVIDUAL COMMENTS WITHIN GITHUB FOR CHANGES
+
 v510.1	
 		- Rename fnSetCurves() as initCurves() and move into ED_Initialise 
 		- Rename fnSetSliderCurve() as initSliderCurve() and move into ED_Initialise
