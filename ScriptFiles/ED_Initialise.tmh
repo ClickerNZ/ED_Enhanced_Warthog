@@ -8,13 +8,13 @@
 	//								This file: ED_Initialise.tmh							//
 
 /*
-	Index:			FUNCTION
+	Index:				FUNCTION
 	Line    50: 		int CheckControllers() {
 	Line   164: 		int initJoystickAxis() { 
-	Line   184: 		int initThrottleAxis() {
+	Line   184: 		int initThrottleAxis() {	
 	Line   201: 		int initSliderAxis() {
 	Line   217: 		int initSlewAxis() {
-	Line   234: 		int initRudderAxis() {	
+	Line   234: 		int initRudderAxis() {		
 	Line   253: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
 	Line   332: 		int initSliderCurve(int x) {
 	Line   364: 		int initTextToSpeech() {
