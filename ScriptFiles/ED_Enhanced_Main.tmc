@@ -143,7 +143,7 @@
 		
 		SetShiftButton(&MyJoystick, S3, &MyThrottle, PSF, PSB);					// ** DO NOT TOUCH **  Joystick Nosewheel Switch (S3) = IO, Throttle pinky switch (PSF/PSB) = UMD
 
-		SetKBRate(PulseTime, DelayTime);										// Basic Settings 	(See ED_UserSettings.tmh)
+		SetKBRate(PulseTime, DelayTime);										// Basic Settings 	(See ED_ScriptDefines.tmh)
 		SetKBLayout(KBLayout);													//					(See ED_ScriptDefines.ttm)
 
 		fnPIPMode(RESET);														// Reset PIPMode before calling stfnMyStates(LOAD). Refer ED_UserSettings.tmh to set your preferred default PIP Mode
