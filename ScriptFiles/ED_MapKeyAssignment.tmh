@@ -76,7 +76,7 @@
 				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints();"),																	// M - Deploy/Retract Hard-points
 //-				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
-				EXEC("tgHUDMode(0);")																		// D - Toggle - AutoHUD
+				EXEC("tgHUDMode(2);")																		// D - Toggle - AutoHUD
 				);
 		}
 	
