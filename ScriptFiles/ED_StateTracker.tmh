@@ -813,6 +813,9 @@
 		}
 
 		if (fMainShip & (fSupercruise != lSupercruise)) {					// Detect when Supercruise toggles ie not Taxi or Dropship 
+
+			if(DEBUG>0) printf("!!	DEBUG:	Supercruise flag trap\x0a");
+			
 			if(fSupercruise) {
 				// do nothing 
 			}
@@ -834,7 +837,7 @@
 							tgHUDMode(1);												// Select Combat HUD, delay announce 
 							
 						//	TEST the delaysettings here...
-							DeferCall(2000, &fnSelectFiregroup, 1);						// Select fire group 1. NOTE: Pre-Assign primary weapons to fg 1 (B) in game
+							DeferCall(2000, &fnSelectFiregroup, 1);						// Select fire group 1. NOTE: Pre-Assign primary weapons to FG 1 (B) in game
 						}
 						if (!fHardpoints) {
 							DeferCall(2500, &tgHardpoints, 0);							// Deploy weapons
