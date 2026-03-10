@@ -502,6 +502,8 @@
 	//	TOGGLE:		Hardpoints
 	//	Parameter:	dummy - allows REXEC or DeferCall
 	
+//		ISSUE: S1 may be double/tripple bouncing
+	
 	int tgHardpoints(int dummy = 0) {
 		int fnName = "t g hardpoints";
 		int reason = 0;
@@ -531,8 +533,9 @@
 				}						
 			}
 			if(fSRV | fMainShip) {
-				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
-				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 551\x0a");
+//				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
+				ActKey(KEYON+CHAIN(PULSE+DeployHardpoints, D(250)));			// Depoy Hardpoints only if we're not in Supercruise + handle key bounce
+				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 536\x0a");
 			}
 		}
 		else {
@@ -543,7 +546,7 @@
 
 
 	// TOGGLE: 		Analysis/Combat HUD Modes
-	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 1 second, 2 = Toggle AutoHUD 
+	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 2 seconds, 2 = Toggle AutoHUD 
 
 	int tgHUDMode(int delayannounce=0) {
 		
