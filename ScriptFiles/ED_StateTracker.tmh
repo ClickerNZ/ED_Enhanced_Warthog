@@ -813,9 +813,9 @@
 		}
 
 		if (fMainShip & (fSupercruise != lSupercruise)) {					// Detect when Supercruise toggles ie not Taxi or Dropship 
-
+//	!!!	DEBUG 
 			if(DEBUG>0) printf("!!	DEBUG:	Supercruise flag trap\x0a");
-			
+//	!!!	DEBUG 			
 			if(fSupercruise) {
 				// do nothing 
 			}
