@@ -74,9 +74,9 @@
 		else {		
 			MapKeyUMD(&MyJoystick, S1,
 				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
-				EXEC("tgHardpoints();"),																	// M - Deploy/Retract Hard-points
+				EXEC("tgHardpoints(0);"),																	// M - Deploy/Retract Hard-points
 //-				EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
-				EXEC("tgHUDMode(2);")																		// D - Toggle - AutoHUD
+				TEMPO(EXEC("tgHUDMode(2);"), EXEC("tgHardpoints(1);"), LongPress)							// D - Toggle - AutoHUD, Fix S1_Lock
 				);
 		}
 	
@@ -733,7 +733,7 @@
 			MapKeyUMD(&MyJoystick, S1, 
 				EXEC("fnVPOutput(\"Toggle HUD Mode\", 0, 1);"),
 				EXEC("fnVPOutput(\"Toggle Hardpoints\", 0, 1);"),
-				EXEC("fnVPOutput(\"Toggle Auto hud user setting\", 0, 1);")
+				EXEC("fnVPOutput(\"TEMPO. Toggle Auto hud user setting or fix S 1 lock\", 0, 1);")
 				);
 		}
 	
