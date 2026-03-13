@@ -500,13 +500,24 @@
 
 
 	//	TOGGLE:		Hardpoints
-	//	Parameter:	dummy - allows REXEC or DeferCall
+	//	Parameter:	FixS1_Lock - 0 normal toggle, 1 = Fix S1_Lock
 	
-//		ISSUE: S1 may be double/tripple bouncing
+	//	ISSUE: S1 is double/triple bouncing
 	
-	int tgHardpoints(int dummy = 0) {
+	//	Globals
+	int	S1_Lock = 1;
+	
+	int tgHardpoints(int FixS1_Lock = 0) {
 		int fnName = "t g hardpoints";
 		int reason = 0;
+		
+		if(FixS1_Lock == 1) S1_Lock = 1;
+		
+		if(!S1_Lock) {
+		//	if (DEBUG>0) printf("!!	DEBUG:	S1 button bounced !! \x0a");
+			return 0;						// S1 button bounced
+		}
+		S1_Lock = 0;
 		
 		if (!fSupercruise) {
 			if(fMainShip) {
@@ -533,21 +544,26 @@
 				}						
 			}
 			if(fSRV | fMainShip) {
-//				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
-				ActKey(KEYON+CHAIN(PULSE+DeployHardpoints, D(250)));			// Depoy Hardpoints only if we're not in Supercruise + handle key bounce
-				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 536\x0a");
+				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
+				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 545\x0a");
+				DeferCall(80, &UnlockS1, 0);									// double bounce fix. increase delay if button still bounces
 			}
 		}
 		else {
 			tgHUDMode(0);														// If we're in Supercruise, just toggle HUD Mode
 		}
+		
 		if (reason != 0) fnNotValid(fnName, reason);
+	}
+	
+	int UnlockS1(int dummy) {
+		S1_Lock = 1;
 	}
 
 
 	// TOGGLE: 		Analysis/Combat HUD Modes
-	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 2 seconds, 2 = Toggle AutoHUD 
-
+	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 2 second, 2 = Toggle AutoHUD 
+	
 	int tgHUDMode(int delayannounce=0) {
 		
 		if (delayannounce == 2) {
