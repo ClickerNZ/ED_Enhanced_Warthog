@@ -132,11 +132,12 @@
 	// DEBUG DEFINES //										// Options = OFF (0), ON (1),  LOG (2), VERBOSE (3). 
 	//---------------//
 
-//	int		DEBUG					= OFF;					// InputCMD disabled. Many DEBUG outputs supressed
-	int		DEBUG					= ON;					// Development/DEBUG Mode. example InputCMD enabled 
+	// Select one by removing comment marker
+	
+//	int		DEBUG					= OFF;					// No DEBUG. InputCMD disabled. DEBUG outputs supressed
+	int		DEBUG					= ON;					// Basic Development/DEBUG Mode. example InputCMD enabled 
 //	int		DEBUG					= LOG;					// Many DEBUG outputs go to console
 //	int		DEBUG					= VERBOSE;				// Many DEBUG outputs go to console and TTS
-
 
 	//-----------------------------------------------------------------------------------------------------------------------------//
 	//                                                                                                                             //
@@ -425,31 +426,50 @@
 	define ED_ECMPresent				0x0000000000000040 	// 64	- Electronic Counter Measures installed on ship
 	define ED_LimpetPresent				0x0000000000000080	// 128	- Limpet controller installed on ship
 
+	define ED_AdvDockingPresent			0x0000000000000100	// 256	- Advanced Docking Computer installed on ship
+//	define ED_ReservedModule			0x0000000000000200	// 512	- 
+//	define ED_ReservedModule			0x0000000000000400	// 1024	- 
+//	define ED_ReservedModule			0x0000000000000800	// 2048	- 
+
 	//-----------------------------------//
 	//  Corresponding MODULES Variables  //
 	//-----------------------------------//
 
 	int Modules					=	0;						//  Read from MyJournalData.json 
-//-	int oldModules				=	0;						//	Track when changed via stfnProcessMyJournalData()
-//-															// Read and decode 'Modules' each time Modules != oldModules
+	int oldModules				=	0;						//	Track when changed via stfnProcessMyJournalData()
+															// Read and decode 'Modules' each time Modules != oldModules
 	int	fSCOPresent				=	0;
 	int fFighterPresent			= 	0;
 	int fSRVPresent				=	0;	
 	int fHeatsinkPresent		=	0;
-	int	fChaffLauncherPresent	=	0;
+
+	int	fChaffLauncherPresent	=	0;	
 	int fSCBPresent				=	0;
 	int fECMPresent				=	0;
 	int fLimpetPresent			=	0;
+
+	int fAdvDockingPresent		=	0;
+//	int fReservedModule			=	0;
+//	int fReservedModule			=	0;
+//	int fReservedModule			=	0;
+
+// --
 
 	int	lSCOPresent				=	0;						// Granular level - which module bits have changed
 	int lFighterPresent			= 	0;
 	int lSRVPresent				=	0;
 	int lHeatsinkPresent		=	0;
+
 	int	lChaffLauncherPresent	=	0;
 	int lSCBPresent				=	0;
 	int lECMPresent				=	0;
 	int lLimpetPresent			=	0;
 
+	int lAdvDockingPresent		=	0;
+//	int lReservedModule			=	0;
+//	int lReservedModule			=	0;
+//	int lReservedModule			=	0;
+	
 	//--------------------//
 	// GUIFocus Variables //
 	//--------------------//
