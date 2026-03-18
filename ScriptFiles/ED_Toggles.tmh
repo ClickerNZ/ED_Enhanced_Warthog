@@ -4,9 +4,8 @@
 	//--------------------------------------------------------------------------------------//
 
 	//							This file: ED_Toggles.tmh									//
-
 /*
-	Index:			FUNCTION
+	Index:				FUNCTION
 	Line    40: 		int tgTxt2Speech() {
 	Line    56: 		int tgEnhancedFAOFF(int dummy = 0) {
 	Line   102: 		int tgTriggerMode(int x) {
@@ -16,17 +15,18 @@
 	Line   330: 		int tgLandingGear(int Speedbrake) {
 	Line   390: 		int tgReverseThrust(int EnableSpeedBrake) {
 	Line   459: 		int tgBoost(int dummy = 0) {
-	Line   505: 		int tgHardpoints(int dummy = 0) {
-	Line   548: 		int tgHUDMode(int delayannounce=0) {
-	Line   587: 		int tgFSSMode() {
-	Line   614: 		int tgPlanetView() {
-	Line   647: 		int tgWarpDrive(int JumpType) {
-	Line   757: 		int tgExtCamera() {
-	Line   777: 		int tgXAxis(int param = RESET) {
-	Line   802: 		int tgGALMap (int action) {
-	Line   822: 		int tgSYSMap (int action) {
-	Line   846: 		int tgWingBeacon(int dummy = 0) {
-	Line   868: 		int tgReportCrimes(int dummy = 0) {
+	Line   510: 		int tgHardpoints(int FixS1_Lock = 0) {
+	Line   561: 		int UnlockS1(int dummy) {
+	Line   569: 		int tgHUDMode(int delayannounce=0) {
+	Line   608: 		int tgFSSMode() {
+	Line   635: 		int tgPlanetView() {
+	Line   668: 		int tgWarpDrive(int JumpType) {
+	Line   778: 		int tgExtCamera() {
+	Line   798: 		int tgXAxis(int param = RESET) {
+	Line   823: 		int tgGALMap (int action) {
+	Line   843: 		int tgSYSMap (int action) {
+	Line   867: 		int tgWingBeacon(int dummy = 0) {
+	Line   889: 		int tgReportCrimes(int dummy = 0) {
 */
 	
 	// START
@@ -514,8 +514,9 @@
 		if(FixS1_Lock == 1) S1_Lock = 1;
 		
 		if(!S1_Lock) {
-		//	if (DEBUG>0) printf("!!	DEBUG:	S1 button bounced !! \x0a");
-			return 0;						// S1 button bounced
+	//		if (DEBUG>0) printf("!!	DEBUG:	S1 button bounced !! \x0a");
+	//		return 0;						// S1 button bounced
+			goto bounce;
 		}
 		S1_Lock = 0;
 		
@@ -546,13 +547,14 @@
 			if(fSRV | fMainShip) {
 				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
 				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 545\x0a");
-				DeferCall(80, &UnlockS1, 0);									// double bounce fix. increase delay if button still bounces
 			}
 		}
 		else {
 			tgHUDMode(0);														// If we're in Supercruise, just toggle HUD Mode
 		}
-		
+
+		bounce:
+		DeferCall(80, &UnlockS1, 0);									// double bounce fix. increase delay if button still bounces		
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
 	
