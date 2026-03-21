@@ -189,7 +189,7 @@
 	define ED_NightVision			0x0000000010000000
 	define ED_AltFromAvgRad	    	0x0000000020000000
 	define ED_FSDJump				0x0000000040000000	
-	define ED_SRVHiBeam				0x0000000080000000	
+	define ED_SRVHiBeam				0x0000000080000000			// Need to test if this bitmask can be used. We use negative value of Flags to indicate fSRVHiBeam
 
 	//---------------------------------//
 	//  Corresponding Flags Variables  //
@@ -322,7 +322,7 @@
 	define ED_RESERVED29			0x0000000010000000
 	define ED_RESERVED30    		0x0000000020000000
 	define ED_RESERVED31			0x0000000040000000	
-	define ED_RESERVED32			0x0000000080000000
+	define ED_RESERVED32			0x0000000080000000				// Not tested. We use negative value of Flags2 to dermine value of fRESERVED32
 
 	//----------------------------------//
 	//  Corresponding Flags2 Variables  //
