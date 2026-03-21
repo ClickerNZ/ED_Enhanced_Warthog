@@ -14,7 +14,7 @@
 	Line   186: 		int initThrottleAxis() {
 	Line   203: 		int initSliderAxis() {
 	Line   219: 		int initSlewAxis() {
-	Line   236: 		int initRudderAxis() {
+	Line   236: 		int initRudderAxis() {	
 	Line   255: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
 	Line   332: 		int initSliderCurve(int x) {
 	Line   364: 		int initTextToSpeech() {
@@ -32,14 +32,14 @@
 	//----------------------------------------------------------------------//
 	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
 	//----------------------------------------------------------------------//
-
+	
 	// GLOBAL
 	
 	define VMajor		 			5						// Script Version Major Value			ie. 2xx
 	define VMinor		 			1						// Script Version Minor Value			ie. x3x
 	define VPoint					0						// Script Version Point Update			ie. xx4
 	define VBranch					"1"						// Script Version Branch				ie. xxx.01
-
+	
 	//--------------------------//
 	// INITIALISATION FUNCTIONS //
 	//--------------------------//
