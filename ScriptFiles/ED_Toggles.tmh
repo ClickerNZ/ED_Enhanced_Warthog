@@ -7,26 +7,26 @@
 /*
 	Index:				FUNCTION
 	Line    40: 		int tgTxt2Speech() {
-	Line    56: 		int tgEnhancedFAOFF(int dummy = 0) {
-	Line   102: 		int tgTriggerMode(int x) {
-	Line   150: 		int tgLights(int x) {
-	Line   211: 		int tgSilentRunning(int x) {
-	Line   268: 		int tgCargoScoop(int x) {
-	Line   330: 		int tgLandingGear(int Speedbrake) {
-	Line   390: 		int tgReverseThrust(int EnableSpeedBrake) {
-	Line   459: 		int tgBoost(int dummy = 0) {
-	Line   510: 		int tgHardpoints(int FixS1_Lock = 0) {
-	Line   561: 		int tgUnlockS1(int dummy) {
-	Line   569: 		int tgHUDMode(int delayannounce=0) {
-	Line   608: 		int tgFSSMode() {
-	Line   635: 		int tgPlanetView() {
-	Line   668: 		int tgWarpDrive(int JumpType) {
-	Line   778: 		int tgExtCamera() {
-	Line   798: 		int tgXAxis(int param = RESET) {
-	Line   823: 		int tgGALMap (int action) {
-	Line   843: 		int tgSYSMap (int action) {
-	Line   867: 		int tgWingBeacon(int dummy = 0) {
-	Line   889: 		int tgReportCrimes(int dummy = 0) {
+	Line    55: 		int tgEnhancedFAOFF(int dummy = 0) {
+	Line   100: 		int tgTriggerMode(int x) {
+	Line   148: 		int tgLights(int x) {
+	Line   207: 		int tgSilentRunning(int x) {
+	Line   264: 		int tgCargoScoop(int x) {
+	Line   325: 		int tgLandingGear(int Speedbrake) {
+	Line   385: 		int tgReverseThrust(int EnableSpeedBrake) {
+	Line   454: 		int tgBoost(int dummy = 0) {
+	Line   505: 		int tgHardpoints(int FixS1_Lock = 0) {
+	Line   556: 		int tgUnlockS1(int dummy) {
+	Line   564: 		int tgHUDMode(int delayannounce=0) {
+	Line   603: 		int tgFSSMode() {
+	Line   630: 		int tgPlanetView() {
+	Line   663: 		int tgWarpDrive(int JumpType) {
+	Line   772: 		int tgExtCamera() {
+	Line   792: 		int tgXAxis(int param = RESET) {
+	Line   817: 		int tgGALMap (int action) {
+	Line   837: 		int tgSYSMap (int action) {
+	Line   861: 		int tgWingBeacon(int dummy = 0) {
+	Line   883: 		int tgReportCrimes(int dummy = 0) {
 */
 	
 	// START
@@ -38,7 +38,6 @@
 	// TOGGLE: EnableVoice ON/OFF
 	
 	int tgTxt2Speech() {
-		int VoiceTxt;
 		
 		EnableVoice = !EnableVoice;
 		if(EnableVoice) {
@@ -56,7 +55,6 @@
 	int tgEnhancedFAOFF(int dummy = 0) {
 		int fnName = "Flight Assist";
 		int reason = 0;
-		int printtxt;
 
 		if (fSRV) {
 			if (!fSRVDriveAssist) {
@@ -148,9 +146,7 @@
 	// Uses Flags: fSRV, fLights, fSRVHiBeam, fNightVision
 
 	int tgLights(int x) {
-	
-		int VoiceTxt;
-		
+			
 		int ltext  = "";
 		int lstate = "";
 		char lmsg; Dim(&lmsg, 20); lmsg[0] = 0;
@@ -268,7 +264,6 @@
 	int tgCargoScoop(int x) {
 		int fnName = "Cargo Scoop";
 		int reason = 0;
-		int ScoopText = 0;
 		int ERROR = 0;
 
 		if (fSRV) {
@@ -670,7 +665,6 @@
 		int WarpDrive;
 		int fnName = "t g warp drive";
 		int reason = 0;
-		int VoiceTxt;
 				
 		if (JumpType) {
 			fnName = "Hyper Drive";
