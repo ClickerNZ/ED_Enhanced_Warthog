@@ -1,5 +1,4 @@
-# v33 	- ATC Chatter functions added - Grabs any NPC chatter sent to LOCAL and sends to [TTS]
-#		- Global $script:StatusPath created so we can easily grab status.json key/values
+# v34 	- Detect if we have an Advanced Docing Computer
 #
 # ProcessJournal.ps1
 #
@@ -23,7 +22,7 @@ param (
     [string]$trackingFilePath   = "C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\Output\Tracking.json"
 )
 
-$MyVersion = 33
+$MyVersion = 34
 
 # Path to our output JSON
 $JsonFilePath = Join-Path -Path $outputFolderPath -ChildPath "MyJournalData.json"
@@ -976,19 +975,21 @@ $Global:moduleNames = @(
     'ChaffLauncherPresent',
     'SCBPresent',
     'ECMPresent',
-	'LimpetPresent'
+	'LimpetPresent,'
+	'AdvDockingComputer'
 )
 
 # A simple map of “key fragment” → which flag to set
 $Global:moduleMap = @{
-    hyperdrive_overcharge      = 'SCOPresent'
-    fighterbay                 = 'FighterPresent'
-    buggybay                   = 'SRVPresent'
-    heatsinklauncher           = 'HeatsinkPresent'
-    chafflauncher              = 'ChaffLauncherPresent'
-    shieldcellbank             = 'SCBPresent'
-    electroniccountermeasure   = 'ECMPresent'
-	dronecontrol               = 'LimpetPresent'
+    hyperdrive_overcharge        = 'SCOPresent'
+    fighterbay                   = 'FighterPresent'
+    buggybay                     = 'SRVPresent'
+    heatsinklauncher             = 'HeatsinkPresent'
+    chafflauncher                = 'ChaffLauncherPresent'
+    shieldcellbank               = 'SCBPresent'
+    electroniccountermeasure     = 'ECMPresent'
+	dronecontrol                 = 'LimpetPresent'
+	int_dockingcomputer_advanced = 'AdvDockingComputer'
 }
 
 # Initialize your flags table
