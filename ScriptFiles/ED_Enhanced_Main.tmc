@@ -8,7 +8,7 @@
 	//							THRUSTMASTER WARTHOG REQUIRED								//
 
 	// This file:	ED_Enhanced_Main.tmc	 		v510.1					// New Minor Version
-	// Supports:	Elite Dangerous 				v4.3.1.0				// Does not support Legacy Horizons
+	// Supports:	Elite Dangerous 				v4.3.3.0				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.603				// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
 	//				Throttle firmware 				v23
@@ -156,8 +156,8 @@
 																				
 		initUserSettings(0);													// Save default user settings. On the fly customisation available for most settings.
 		
-		printf("\x0a\++	Load MyStates from file...\x0a");
-		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json) and modified User Settings 
+//		printf("\x0a\++	Load MyStates from file...\x0a");
+//		stfnMyStates(LOAD);														// Load script status variables (not covered in status.json) and modified User Settings 
 		
 		fnLEDBrightness();														// Set initial LED Brightness levels
 
