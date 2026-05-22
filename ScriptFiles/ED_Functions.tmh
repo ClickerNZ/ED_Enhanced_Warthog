@@ -3,7 +3,7 @@
 	//		  CMDR Clicker's Elite Dangerous Enhanced Thrustmaster TARGET Script			//
 	//--------------------------------------------------------------------------------------//
 
-	//							This file: ED_UserSettings.tmh								//
+	//							This file: ED_Functions.tmh								//
 /*
 	Index:				FUNCTION
 	Line    67: 		int fnNotValid(int fnName, int reason=0) {
@@ -264,7 +264,7 @@
 		if (EnableVoice) {		// Move fnTTSExport code into here rather than having seperate function???
 
 		if (DEBUG >= LOG) {
-			printf("!!	DEBUG:	fnTextToSpeech() - Calling fnTTSExport line 404\x0a");
+			printf("!!	DEBUG:	fnTextToSpeech() - Calling fnTTSExport line 274\x0a");
 			printf("!!	DEBUG:	fnTextToSpeech() - text = %s\x0a", text);
 			printf("!!	DEBUG:	fnTextToSpeech() - VolumeOverride = %d\x0a", VolumeOverride);
 			printf("!!	DEBUG:	fnTextToSpeech() - Volume = %d\x0a", volume);
@@ -363,10 +363,7 @@
 
 		// Build sequential filename using 4 digits 
 
-		if (TTSSeq > -1		& TTSSeq < 10) 		sprintf(&TTSFilename, "TTSMsg000%d.json",	TTSSeq);
-		if (TTSSeq > 9		& TTSSeq < 100)		sprintf(&TTSFilename, "TTSMsg00%d.json",	TTSSeq);
-		if (TTSSeq > 99		& TTSSeq < 1000)	sprintf(&TTSFilename, "TTSMsg0%d.json",		TTSSeq);
-		if (TTSSeq > 999	& TTSSeq < 10000)	sprintf(&TTSFilename, "TTSMsg%d.json",		TTSSeq);
+		sprintf(&TTSFilename, "TTSMsg%04d.json", TTSSeq);
 
 		Dim(&TTSFile, strlen(&TTSQueue)+strlen(&TTSFilename)+1);
 		TTSFile[0] = 0;
@@ -380,11 +377,11 @@
 			fclose(fp);
 		}
 		else {
-			printf("!! ERROR: File open error TTSQueue file in fnTTSExport() line 507 !!!\x0a");		
+			printf("!! ERROR: File open error TTSQueue file in fnTTSExport() line 374 !!!\x0a");		
 		}
 		
 		if (myResult <= 0) {
-			printf("!! ERROR: File write error TTSQueue file in fnTTSExport() line 509 !!!\x0a");
+			printf("!! ERROR: File write error TTSQueue file in fnTTSExport() line 376 !!!\x0a");
 		}
 		else {
 			TTSSeq = TTSSeq + 1;
@@ -425,6 +422,13 @@
 
 	// FUNCTION:	Announce Game Start and initialise script and controller
 	
+	// Globals
+	// Build MyStatusFile Path using &MystatusFile1, &CMDRName, MyStatusFile2
+	
+	char	MyStatusFile;
+	alias	MyStatusFile1 = "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\";
+	alias	MyStatusFile2 = "StatusFile.json";
+	
 	int fnGameStarted(int dummy = 0) {
 		
 		alias mymsg = "Welcome back Commander ";
@@ -435,6 +439,8 @@
 		GameLoaded = YES;
 		StartupLock = OFF;
 
+		Dim(&lastJournalData, 1);		// Initialise &lastJournalData alias prior to calling stfnReadMyJournalData() for the first time 
+		lastJournalData[0] = NUL;
 		stfnReadMyJournalData();
 		ActKey(KEYON+REXEC(hReadMyJournalData, JournalReadRate, "stfnReadMyJournalData();", RNOSTOP));
 
@@ -449,18 +455,46 @@
 		}
 		if (!ConnectionStatus) {
 	//		ActKey(KEYON+PULSE+ShowConnectionStatus);								// ...turn on connection status. Alternate="m_ShowGameStats()"
-			ActKey(KEYON+PULSE+ShowFramerate);										// ...turn on frame rate. Alternate="m_ShowGameStats()"			
+	//		ActKey(KEYON+PULSE+ShowFramerate);										// ...turn on frame rate. Alternate="m_ShowGameStats()"			
 			ConnectionStatus = ON;													// tracks if above has already been turned on
 		}
 
 		ActKey(KEYON+PULSE+LookOnOff);												// Turns off headtrack to start game
 
 		fnMyName();																	// Sets global CMDRName char array 
-		Dim(&VoiceTxt, strlen(&mymsg)+strlen(&CMDRName)+1); 						// Correctly dimeensions VoiceTxt char array +1 for termination
+		
+		// Build greeting message...
+		Dim(&VoiceTxt, strlen(&mymsg)+strlen(&CMDRName)+1);	 						// Correctly dimeensions VoiceTxt char array +1 for termination
 		VoiceTxt[0] = 0;															// Initialise VoiceTxt
 		sprintf(&VoiceTxt, "%s%s", &mymsg, &CMDRName);								// Builds VoiceTxt string 
 		VoiceTxt[strlen(&VoiceTxt)] = 0;											// terminates char array 
 		fnVPOutput(&VoiceTxt);
+		
+		// Build MyStatusFile path...
+		// Format:	MyStatusFile - "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\<CMDRName>StatusFile.json";
+		printf("\x0a\++	Load MyStates from file...\x0a");
+		Dim(&MyStatusFile, strlen(&MyStatusFile1)+strlen(&MyStatusFile2)+strlen(&CMDRName)+1);
+		MyStatusFile[0] = 0;
+		sprintf(&MyStatusFile, "%s%s%s", &MyStatusFile1, &CMDRName, &MyStatusFile2);
+		MyStatusFile[strlen(&MyStatusFile)] = 0;									// nul terminate the char array 
+		
+		if(DEBUG>0) printf("MyStatusFile is %s\x0a", &MyStatusFile);
+		
+		stfnMyStates(LOAD);															// Load script status variables (not covered in status.json) and modified User Settings 
+		
+		
+//-	DEBUG:	Customised for my personal use...
+
+		if(strcmp(&CMDRName, "Clicker") == 0) {
+			PrivateGroup = 2;
+			if(DEBUG>0) fnVPOutput("Private Group set to 2");
+		}
+		else {
+			PrivateGroup = 1;
+			if(DEBUG>0) fnVPOutput("Private Group set to 1");			
+		}
+
+//-	DEBUG:	Customised for my personal use...
 		
 		Flags2 = stfnGetKeyValue("Flags2", INTEGER);								// Check if running Odyssey or Legacy Horizons
 		if (Flags2 == -1) {															// That is, keyname not found 
@@ -469,7 +503,7 @@
 			Sleep(2000);
 			fnVPOutput("This TARGET script does not support Legacy Horizons", 0, 1);
 			printf("\x0a!!	Contact the author if you need a TARGET Script to support this version\x0a");
-			printf("!!	ABORT called from fnGameStarted() line 606\x0a");
+			printf("!!	ABORT called from fnGameStarted() line 486\x0a");
 			fnSoundFX("wstop");
 			Abort();
 		}
@@ -505,7 +539,7 @@
 				ActKey(KEYON+Pulse+SilentRunning);
 				SilentRunningState = 0;
 			}
-			stfnMyStates(LOAD);
+			stfnMyStates(LOAD);					// IS THIS REALLY REQUIRED? Mode switch restarts game but not TARGET script, so all captured script state should remain intact.
 		}
 		DeferCall(1100, &fnSetLEDs, NUL);
 	}
@@ -860,7 +894,7 @@
 				if (x == DEPLOY) {
 					if (!fSRV) {
 						if (fLanded) {												// DEPLOY
-							if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_DeploySRV line 996\x0a");
+							if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_DeploySRV line 876\x0a");
 							ActKey(KEYON+PULSE+m_DeploySRV);
 						}
 						else {
@@ -874,7 +908,7 @@
 				}
 				else {																// RECOVER and set PIPs to shields in case we're under fire 
 					if (fSRV & fSRVTurretRetracted) {
-						if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_BoardShip line 1010\x0a");
+						if (DEBUG >= LOG) printf("!!	DEBUG: fnDeploySRV() - Call m_BoardShip line 890\x0a");
 						ActKey(KEYON+PULSE+m_BoardShip);							// Duration = 1395 + in Game animation
 						printf("==	SRV:			RECOVERED\x0a");
 						DeferCall(8000, &fnPIPMapper, SYS);							// PIPs to Shields ... is 8 seconds long enough (was 14)?
@@ -913,11 +947,11 @@
 				if (x == DEPLOY) {
 					if (fMainShip & !fSupercruise & !fLanded & !fDocked & !ActiveFighter) {						// DEPLOY
 						if (fNPCCrewActive) {
-							if (DEBUG >= LOG) printf("!!	DEBUG:	fnDeployFighter() - Call m_DeployNPCFighter line 1049\x0a");
+							if (DEBUG >= LOG) printf("!!	DEBUG:	fnDeployFighter() - Call m_DeployNPCFighter line 929\x0a");
 							ActKey(KEYON+PULSE+m_DeployNPCFighter);												// Duration 2185
 						}
 						else {
-							if (DEBUG >= LOG) printf("!! DEBUG:	fnDeployFighter() - Call m_DeployFighter line 1053\x0a");
+							if (DEBUG >= LOG) printf("!! DEBUG:	fnDeployFighter() - Call m_DeployFighter line 933\x0a");
 							ActKey(KEYON+PULSE+m_DeployFighter);												// Duration 2185
 						}
 					}
@@ -1012,26 +1046,32 @@
 		if (DEBUG >= LOG) printf("!!	DEBUG: fnHangarServices() - input parameter = %d\x0a", x);
 		
 		if (GameLoaded) {
-			if (x == 2) {														// Toggle Usersetting 'AutoHangar'
-				AutoHangar = !AutoHangar;
-				if (AutoHangar) {
-					fnVPOutput("Auto Hangar set");
+			if (x==2 | x==4) {
+				if (x == 2) {														// Toggle Usersetting 'AutoHangar'
+					AutoHangar = !AutoHangar;
+					if (AutoHangar) fnVPOutput("Auto Hangar set");
+					else fnVPOutput("Auto Hangar reset");
+				}
+				else if (x == 4) {													// Toggle Usersetting 'AutoDisembark'
+					AutoDisembark = !AutoDisembark;
+					if (AutoDisembark) fnVPOutput("Auto disembark set");
+					else fnVPOutput("Auto disembark reset");
+				}
+				
+				if(AutoHangar) {
+					fnVPOutput("Arrival mode station services");
+					return 0;
+				}
+				else if(AutoDisembark) {
+					fnVPOutput("Arrival mode disembark");
+					return 0;				
 				}
 				else {
-					fnVPOutput("Auto Hangar reset");
+					fnVPOutput("Arrival mode, surface");
+					return 0;
 				}
-				return 0;
 			}
-			if (x == 4) {														// Toggle Usersetting 'AutoDisembark'
-				AutoDisembark = !AutoDisembark;
-				if (AutoDisembark) {
-					fnVPOutput("Auto disembark set");
-				}
-				else {
-					fnVPOutput("Auto disembark reset");
-				}
-				return 0;
-			}
+						
 			if(fDocked) {
 				if(x == 1) {													// Refuel, Rearm, Repair and Enter Hangar and Station Services 
 					if (stfnProcessGuiFocus() != GUI_StationSvcs) {				//
@@ -1060,11 +1100,11 @@
 				reason = "You are not docked at a station services facility";
 			}
 		}
+		fnVPOutput(VoiceTxt);
 		if (DEBUG >= LOG) {
-			printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1191\x0a");
+			printf("!!	DEBUG: fnHangarServices() - Calling fnVPOutput() line 1081\x0a");
 			printf("!!	DEBUG: fnHangarServices() - VoiceTxt = %s\x0a", VoiceTxt);
 		}
-		fnVPOutput(VoiceTxt);
 		if (reason != 0) fnNotValid(fnName, reason);
 	}
 
@@ -1603,9 +1643,9 @@
 		alias part1 = "All hands announcement, Commander ";
 		alias part2 = " on board!";
 
-		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Calling fnGetStationName line 1713\x0a");
+		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Calling fnGetStationName line 1625\x0a");
 		fnGetStationName(0);
-		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Return from fnGetStationName line 1713\x0a");
+		if (DEBUG >= LOG) printf("!!	DEBUG:	fnGreetCMDR() - Return from fnGetStationName line 1625\x0a");
 
 //	DEBUG	+++++
 		if (DEBUG >= LOG) {
@@ -1635,15 +1675,15 @@
 		}
 		UseAltVoice = YES;
 		TTSMsg[strlen(&TTSMsg)] = NUL;
+		fnTextToSpeech(&TTSMsg, 100);	
 
 //	DEBUG	+++++
 		if (DEBUG >= LOG) {
-			printf("!!	DEBUG:	fnGreetCMDR() - Calling fnTextToSpeech() line 1752\x0a");
+			printf("!!	DEBUG:	fnGreetCMDR() - Calling fnTextToSpeech() line 1656\x0a");
 			printf("!!	DEBUG:	fnGreetCMDR() - TTSMsg = %s\x0a", &TTSMsg);
 		}
 //	DEBUG	+++++
 
-		fnTextToSpeech(&TTSMsg, 100);	
 	}
 
 	
@@ -1703,7 +1743,7 @@
 		}
 		else {
 			StationName[strlen(&StationName)] = 0;
-		}		
+		}
 	}
 	
 	
@@ -1747,7 +1787,7 @@
 			if (DEBUG > 0) {
 				if (AutoHangar) fnVPOutput("Arrival mode: station services");
 				else if (AutoDisembark) fnVPOutput("Arrival mode: disembark");
-				else fnVPOutput("Arrival mode: just sit tight");
+				else fnVPOutput("Arrival mode: surface");
 			}
 			
 			LandingPad = stfnGetKeyValue("LandingPad", INTEGER, 1);
@@ -1756,14 +1796,21 @@
 			pad10	= (LandingPad % 100) / 10;
 			pad1 	= (LandingPad % 100) % 10;
 
-	//		sprintf(&LPMsg, "Landing Pad %d", LandingPad);				// Speak Landing pad as whole number
 			sprintf(&LPMsg, "Landing Pad: %d %d", pad10, pad1);			// Speaks each digit ... eg 5,9,8
 			LPMsg[strlen(&LPMsg)] = 0;
 			fnTextToSpeech(&LPMsg);
-
+			sprintf(&LPMsg, ",repeat, %d %d", pad10, pad1);			//
+			LPMsg[strlen(&LPMsg)] = 0;
+			fnTextToSpeech(&LPMsg);
+			
 			// Cut engines once Masslocked to engage the docking computer			
-			if(fAdvDockingPresent & AutoDock) {							// AutoDock defined in ED_UserSettings.tmh
-				fnEngageDC(0);
+			if(AutoDock) {											// AutoDock defined in ED_UserSettings.tmh
+				if(fAdvDockingPresent) {
+					fnEngageDC(0);
+				}
+				else {
+					fnVPOutput("Auto dock module not present");
+				}
 			}
 		}
 		else if (strcmp(&DockingStatus, "Denied") == 0) {
@@ -1820,17 +1867,18 @@
 	//	Parameters:	dummy. enables calls via REXEC and DeferCall 
 
 	//	GLOBAL
-	int AUTODC = 0;			// Checked during fMassLocked trap in ED_StateTracker.tmh 
+	int AutoDC = 0;			// Checked during fMassLocked trap in ED_StateTracker.tmh 
 	
 	int fnEngageDC(int dummy) {
 
 		if (fMassLocked) {
 			ActKey(KEYON+PULSE+SetSpeed0);
-			AUTODC = 0;
+			AutoDC = 0;
+	//		fnVPOutput("Auto dock engaged");
 		}
 		else {
-			AUTODC = 1;							// wait for masslock and retry
-			fnVPOutput("Auto docking computer waiting for mass lock");
+			AutoDC = 1;							// wait for masslock and retry
+	//		fnVPOutput("Auto D C awaiting mass lock");
 		}		
 	}
 
@@ -1869,7 +1917,7 @@
 			}
 			else {
 				printf("\x0a");
-				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 292\x0a");				
+				printf("!! DEBUG:	fnPANIC() - Game Shutdown - Called from ED_StateTracker.tmh Line 248\x0a");				
 			}
 		}
 		fnSoundFX("wstop");
@@ -2027,7 +2075,7 @@
 			fnTextToSpeech(&TT);
 		}
 		// --- Reset Original Station and timers
-		fnSetOriginStation(0);		
+		fnSetOriginStation(0);
 	}
 
 
