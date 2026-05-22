@@ -76,7 +76,8 @@
 				EXEC("tgHUDMode(0);"),																		// U - Toggle - Analysis/Combat Mode
 				EXEC("tgHardpoints(0);"),																	// M - Deploy/Retract Hard-points
 	//			EXEC("tgXAxis(SET);")																		// D - Toggle Joystick X-Axis between Roll and Yaw
-				TEMPO(EXEC("tgHUDMode(2);"), EXEC("tgHardpoints(1);"), LongPress)							// D - Toggle - AutoHUD, Fix S1_Lock
+	//			TEMPO(EXEC("tgHUDMode(2);"), EXEC("tgHardpoints(1);"), LongPress)							// D - Toggle - AutoHUD, Fix S1_Lock
+				0
 				);
 		}
 	
@@ -640,7 +641,7 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnPrintState();"),																	// U -	Print Status Page
 				EXEC("fnSetLEDs();"),																		// M -	Reset Status LEDs manually
-				EXEC("stfnMyStates(SAVE);")																	// D -	Save MyStates to MyWarthogStatusFile.json
+				EXEC("stfnMyStates(SAVE);")																	// D -	Save MyStates to &MyStatusFile
 				);																							//		This is usefull when adding or removing vars to json file 
 		}
 				
@@ -962,7 +963,7 @@
 			MapKey(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Forward and sound reminder every 3 seconds\", 0, 1);"));
 			MapKeyR(&MyThrottle, PSF, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\", 0, 1);"));
 			
-//-			MapKey(&MyThrottle, PSM, EXEC("fnVPOutput(\"U M D Layer Middle\", 0, 1);"));
+	//-		MapKey(&MyThrottle, PSM, EXEC("fnVPOutput(\"U M D Layer Middle\", 0, 1);"));
 			
 			MapKey(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Back and sound reminder every 3 seconds\", 0, 1);"));
 			MapKeyR(&MyThrottle, PSB, EXEC("fnVPOutput(\"UMD Layer Middle and cancel reminder sound\", 0, 1);"));
@@ -1276,8 +1277,7 @@
 			MapKeyUMD(&MyThrottle, EFRNORM,
 				EXEC("fnVPOutput(\"Print status page to Con-sole\", 0, 1);"),
 				EXEC("fnVPOutput(\"Reset status LEDs\", 0, 1);"),
-		//		EXEC("fnVPOutput(\"Save my status file\", 0, 1);")
-				EXEC("stfnMyStates(SAVE);")									// use this when manually updating states to file and don't want to run/exit the game
+				EXEC("fnVPOutput(\"Save my status file\", 0, 1);")
 				);
 		}
 				
