@@ -11,14 +11,14 @@
 	Line   122: 		int stfnReadStatusJson() {
 	Line   271: 		int stfnWriteMaxJson() {
 	Line   328: 		int stfnGetKeyValue(alias pattern, int vtype, int jsonfile = 0) {
-	Line   441: 		int stfnDecodeFlags() {
-	Line   545: 		int stfnDecodeFlags2() {
-	Line   650: 		int stfnProcessFlags(int UpdateLEDs = NO) {
-	Line  1530: 		int stfnDecodeModules(int dummy = 0) {
-	Line  1601: 		int stfnProcessMyJournalData(int dummy = 0) {
-	Line  1648: 		int stfnProcessGuiFocus() {
-	Line  1694: 		int stfnStartCheck() {
-	Line  1764: 		int stfnMyStates(int action) {
+	Line   440: 		int stfnDecodeFlags() {
+	Line   544: 		int stfnDecodeFlags2() {
+	Line   649: 		int stfnProcessFlags(int UpdateLEDs = NO) {
+	Line  1528: 		int stfnDecodeModules(int dummy = 0) {
+	Line  1600: 		int stfnProcessMyJournalData(int dummy = 0) {
+	Line  1646: 		int stfnProcessGuiFocus() {
+	Line  1692: 		int stfnStartCheck() {
+	Line  1762: 		int stfnMyStates(int action) {
 */
 
 	// START
@@ -55,8 +55,8 @@
 
 			Dim(&myJournalData, buf+1);
 			myJournalData[0] = NUL;
-			Dim(&lastJournalData, buf+1); 
-			lastJournalData[0] = NUL;
+//			Dim(&lastJournalData, buf+1); 					// Initialised in fnGameStarted and moved to end of this function 
+//			lastJournalData[0] = NUL;
 //-	DEBUG +++++
 			
 			myResult = fread(&myJournalData, 1, buf, fp);	// Read the json string into global myJournalData global char array 
@@ -64,7 +64,7 @@
 			if (myResult == 0) {
 				ReadError2Count = ReadError2Count + 1;
 				if (ReadError2Count > 3) {
-					printf("!!	File Read Error Count = %d : MyJournalData.json\x0a", ReadErrorCount);
+					printf("!!	File Read Error Count = %d : MyJournalData.json\x0a", ReadError2Count);
 					printf("!!	Check file contents using notepad\x0a");
 					printf("!!	Recreate by deleting and running ProcessJournal.ps1");
 					if (!ReadError2Sent) {
@@ -88,9 +88,11 @@
 				if (strcmp(&myJournalData, &lastJournalData) != 0) {		// Process the string if different from last read
 					stfnProcessMyJournalData(0);
 				}
-				
+
+				Dim(&lastJournalData, buf+1); 								// redimension				
+				lastJournalData[0] = NUL;									// clear, then copy myJournalData into this array
 				strcpy(&lastJournalData, &myJournalData);					// enables tracking when MyJournaleData.json changes
-				lastJournalData[(strlen(&lastJournalData))] = 0;
+				lastJournalData[(strlen(&lastJournalData))] = 0;			// ensure null-terminated
 			}
 		}
 		else {																// ED must have the file locked for reading?
@@ -107,7 +109,7 @@
 
 	// GlobalVars
 
-	char myJson;		
+	char myJson;	
 	char lastJson;
 	
 	int		ReadErrorCount	= 0;
@@ -142,8 +144,8 @@
 
 			Dim(&myJson, buf+1);
 			myJson[0] = NUL;
-			Dim(&lastJson, buf+1); 
-			lastJson[0] = NUL;
+//			Dim(&lastJson, buf+1); 
+//			lastJson[0] = NUL;
 //-	DEBUG +++++
 			
 			myResult = fread(&myJson, 1, buf, fp);
@@ -165,7 +167,7 @@
 			else {
 				// Debug: check myJson string length to ensure buffer size is set high enough
 				if (loop == 9) {
-					if(maxjson > NewMaxJson) {
+					if((maxjson > NewMaxJson) & GameLoaded) {									// Process this block after game started
 
 						NewMaxJson = maxjson;
 
@@ -251,7 +253,9 @@
 						stfnProcessFlags(0);
 					}
 				}	
-				
+
+				Dim(&lastJson, buf+1); 
+				lastJson[0] = NUL;
 				strcpy(&lastJson, &myJson);											// copy myJson to lastJson
 				lastJson[strlen(&lastJson)] = NUL;									// terminate char array ... needed?
 			}
@@ -408,7 +412,6 @@
 				myResult = strcmp(&thischr, "}");
 				if (myResult == 0) {
 					EndValue = 1;
-//-					chrpnt = chrpnt - 1;								// assumes there's a space after last key-value and "}"
 				}
 				
 				myResult = strcmp(&thischr, " ");
@@ -702,7 +705,6 @@
 						}
 					}
 					printf("==	Liftoff @ %s\x0a", fnGetTOD());
-
 					DeferCall(2500, &fnGetStationName, 0);						// Undocked: PS-Journal should have trapped "Undocked" event and reset StationName by now.
 				}
 			}
@@ -727,7 +729,6 @@
 				}
 				strcpy(&LiftoffTOD, fnGetTOD());
 				printf("==	Liftoff @ %s\x0a", &LiftoffTOD);
-
 				if (fSRV | fOnFoot) {
 					if (!ShipDismissed) {
 						fnVPOutput("Ship has departed");
@@ -930,7 +931,7 @@
 		if (fMassLocked != lMassLocked) {
 			if (fMassLocked & !fLanded & !fDocked) {								// Detect when Mass Locked during flight 
 				fnVPOutput("Mass locked");
-				if(AUTODC) {
+				if(AutoDC) {
 					DeferCall(1000, &fnEngageDC, 0);								// Cuts engines to enageg Docking Computer
 				}
 			}
@@ -1104,10 +1105,53 @@
 		//			...Supercruise is entered from Normal flight
 		//			...or when we reach hyperjump destination
 		//			...or we're pulled out of witchspace
-			
+		// FUNCTION:
+		//			1) Turn HUD off on entry and on on exit FSDJump if FSDGUI is set
+		//			2) Select HUDMode is Analysis and Firegroup is 0 if AutoHONK is set 
+
+		int needDelay = 0;
+
+		if (fFSDJump != lFSDJump) {											// Detect when Supercruise or Hyperjump has been toggled
+
+			if (!fFSDJump & fSupercruise) {								// Detect when FSD Jump flag gets reset
+																			// Using && as a Logical v Bitwise AND
+				if (FSDGUI & GUIState == 0) {								// Turn HUD back ON if OFF when using FSDGUI flag
+					ActKey(KEYON+PULSE+HideShipGUI);
+					GUIState = 1;
+				}
+
+				if (AutoHONK) {												// AutoHONK set in ED_UserSettings
+									
+					if (!fHUDAnalysis) {
+						tgHUDMode(0);                   			        // Analysis mode
+						needDelay = 1;										// Use delays if we've called a HUDMode switch 
+					}
+
+					if (fnCheckFiregroup() != 0) {							// Check Firegroup is 0
+						DeferCall((needDelay*1000), &fnSelectFiregroup, 0);	// Select Discovery scanner. NOTE: Discovery scanner must be set to FG 0 (A)
+						needDelay = 1;										// Use delay if we've called a Firgroup switch 
+					}
+
+					FireModeP = 0;
+					DeferCall((needDelay*4000), &fnAdvFireControl, 1);     	// Fire Discovery Scanner
+					
+				}
+				needDelay = 0;
+			}
+
+			if (fFSDJump & fFSDHyperdriveChg) {
+
+				if (FSDGUI & GUIState == 1) {								// Turn GUI off when FSDGUI is set and we're jumping
+					ActKey(KEYON+PULSE+HideShipGUI);
+					GUIState = 0;
+				}
+			}
+		}
+
+/*			
 		if (fFSDJump != lFSDJump) {											// Detect when Supercruise or Hyperjump has been toggled
 		
-		// There's a LOT of calls in this section which may interfere with State Tracker detection candence
+		// There's a LOT of calls in this section which may interfere with State Tracker detection cadence
 		// Look into creating and calling dedicated functions instead if we start seeing issues
 		
 			if (!fFSDJump & fSupercruise) {									// Detect when FSD Jump flag gets reset
@@ -1116,14 +1160,16 @@
 					ActKey(KEYON+PULSE+HideShipGUI);						// Turn HUD back ON 
 					GUIState = 1;
 				}
-				if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings	
+				
+				if (!fHUDAnalysis & AutoHUD) {								// Toggle HUD to Discovery mode if AutoHUD is set in ED_ UserSettings
 					tgHUDMode(0);											// Turn on Analysis mode and... 
 
-					DeferCall(2000, &fnSelectFiregroup, 0);					// Select Discovery scanner. NOTE: Always have Discovery scanner set to FG 0 (A)
+					DeferCall(2000, &fnSelectFiregroup, 0);					// Select Discovery scanner. NOTE: Discovery scanner must be set to FG 0 (A)
 					if (AutoHONK) {											// Assumes both HUD switch and firegroup selection have completed ok...
 						DeferCall(4000, &fnAdvFireControl, 1);				// Fire Discovery Scanner. Assumes FG-0, Disco Scanner primary weapon
 					}
 				}
+				
 				if (AutoHONK & fHUDAnalysis) {								// fHUDAnalysis may not be set yet from above if statement 
 					if (fnCheckFiregroup() == 0) {
 						FireModeP = 0;										// Set FireModeP to Disco Scanner mode
@@ -1135,7 +1181,8 @@
 						DeferCall(1000, &fnAdvFireControl, 1);				// Fire Discovery Scanner. Assumes FG-0, Disco Scanner primary weapon
 					}
 				}
-			}				
+			}
+			
 			if (fFSDJump & fFSDHyperdriveChg) {					
 				if (FSDGUI & GUIState == 1) {								// FSDGUI set in ED_UserSettings.tmh 
 					ActKey(KEYON+PULSE+HideShipGUI);						// Turn HUD OFF 
@@ -1143,6 +1190,7 @@
 				}
 			}
 		}
+*/
 
 		if (fSRVHiBeam != lSRVHiBeam) {
 			if (fSRVHiBeam & (fSRV == lSRV)) {
@@ -1330,7 +1378,6 @@
 				if (fBreathableAtmosphere) {
 					printf("==	Atmosphere is breathable\x0a");					
 				}
-//-				else if (fOnFoot) {
 				else {
 					printf("==	Atmosphere is no longer breathable\x0a");	
 				}
@@ -1506,7 +1553,7 @@
 		//			if (DEBUG == VERBOSE)	fnVPOutput("F2 Bit 32 OFF");
 					fnVPOutput("F2 Bit 32 off");
 				}
-			}			
+			}
 		}
 
 		if ((lFAOff != fFAOff) | (lLights != fLights) | (lSilentRunning != fSilentRunning) | (lCargoScoop != fCargoScoop) | (lLandingGear != fLandingGear) | (lMainShip != fMainShip) | (lSRV !=  fSRV)) UpdateLEDs = YES;
@@ -1571,7 +1618,7 @@
 	//	fReservedModule			=	((Modules & ED_ReservedModule) > 0);
 	//	fReservedModule			=	((Modules & ED_ReservedModule) > 0);
 
-		if (DEBUG >= LOG) {
+		if (DEBUG > 0) {
 			if (fSCOPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - SCO FSD installed\x0a");
 			if (fFighterPresent)		printf("!!	DEBUG: stfnProcessMyJournalData() - Fighter Bay installed\x0a");
 			if (fSRVPresent)			printf("!!	DEBUG: stfnProcessMyJournalData() - SRV Bay installed\x0a");	
@@ -1651,19 +1698,16 @@
 
 		if (GameLoaded) {
 			GUIFocus = stfnGetKeyValue("GuiFocus", INTEGER);
+
 			// Not too sure of the value of this - to be reviewed	-	REVIEW 
-			if (GUIFocus == GUI_FSSMode) {
-				FSSMode = ON;
-			}
-			else FSSMode = OFF;
+			// EG	Why use FSSMode and SAAMode flags if we can simply look at GUIFocus???
 			
-			if (GUIFocus == GUI_SAAMode) {
-				SAAMode = ON;
-			}
-			else {
-				SAAMode = OFF;
-			}
+			if (GUIFocus == GUI_FSSMode)	FSSMode = ON;				//	=9
+			else 							FSSMode = OFF;
 			
+			if (GUIFocus == GUI_SAAMode)	SAAMode = ON;				//	=10
+			else 							SAAMode = OFF;
+	
 			if (DEBUG >= LOG) {
 				if (GUIFocus == 0) GUITxt = "No Focus";
 				else if (GUIFocus == 1) GUITxt	= "RH Panel";
@@ -1714,6 +1758,9 @@
 			fnSoundFX("wstop");
 			Abort();
 		}
+
+		Dim(&lastJson, 1);																		// Initialise lastJson via dimension prior to first call of stfnReadStatusJson()
+		lastJson[0] = NUL;																		// Clear lastJson
 		
 		stfnReadStatusJson();																	// Read status.json first time before starting loop. Won't work otherwise. I don't know why.
 		ActKey(KEYON+REXEC(hReadStatusJson, StatusReadRate, "stfnReadStatusJson();", RNOSTOP));	// Start perpetual loop to read status.json. StatusReadRate is set in ED_UserSettings file
