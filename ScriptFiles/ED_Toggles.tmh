@@ -541,7 +541,7 @@
 			}
 			if(fSRV | fMainShip) {
 				ActKey(KEYON+PULSE+DeployHardpoints);							// Depoy Hardpoints only if we're not in Supercruise
-				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 545\x0a");
+				if (DEBUG >= LOG) printf("!!	DEBUG: tgHardpoints() - DeployHardpoints on Line 543\x0a");
 			}
 		}
 		else {
@@ -559,40 +559,42 @@
 
 
 	// TOGGLE: 		Analysis/Combat HUD Modes
-	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 2 second, 2 = Toggle AutoHUD 
+	// Parameter:	delayannounce: 0 = announce immediately, 1 = delay announce by 2 seconds, 2 = Toggle AutoHUD (no longer used) 
 	
 	int tgHUDMode(int delayannounce=0) {
 		
-		if (delayannounce == 2) {
-			AutoHUD = !AutoHUD;
-			if (AutoHUD){
-				fnVPOutput("Auto hud set");
-			}
-			else {
-				fnVPOutput("Auto hud reset");				
-			}
-			return 0;
-		}
+//		if (delayannounce == 2) {
+//			AutoHUD = !AutoHUD;
+//			if (AutoHUD){
+//				fnVPOutput("Auto hud set");
+//			}
+//			else {
+//				fnVPOutput("Auto hud reset");				
+//			}
+//			return 0;
+//		}
 		if (fHUDAnalysis) {
 			printf("==	HUD Mode:		COMBAT\x0a");			// Switching to Combat Mode
 			if (FSSMode) {
 				FSSMode = OFF;
 			}
-			if (delayannounce) {
-				DeferCall(2000, &fnTextToSpeech, "Combat mode");			
-			} 
-			else {
-				fnTextToSpeech("Combat mode");			
-			}
+//			if (delayannounce) {
+//				DeferCall(2000, &fnTextToSpeech, "Combat mode");			
+//			}			
+//			else {
+//				fnTextToSpeech("Combat mode");			
+//			}
+			DeferCall((delayannounce*2000), &fnTextToSpeech, "Combat mode");
 		}
 		else {
 			printf("==	HUD Mode:		ANALYSIS\x0a");		// Switching to Analysis Mode
-			if (delayannounce) {
-				DeferCall(2000, &fnTextToSpeech, "Analysis mode");
-			} 
-			else {
-				fnTextToSpeech("Analysis mode");
-			}
+//			if (delayannounce) {
+//				DeferCall(2000, &fnTextToSpeech, "Analysis mode");
+//			} 
+//			else {
+//				fnTextToSpeech("Analysis mode");
+//			}
+			DeferCall((delayannounce*2000), &fnTextToSpeech, "Analysis mode");
 		}
 		ActKey(KEYON+PULSE+HUDMode);							// Switch HUD Modes
 	}
