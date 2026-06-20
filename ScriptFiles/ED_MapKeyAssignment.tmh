@@ -259,10 +259,13 @@
 				CameraBlurIn																				// D - Camera Blur - IN
 				);
 				
-			MapKeyUMD(&MyJoystick, H4P,
-				EXEC("fnPIPMode(RESET);"),																	// U - Reset PIPMode 
-				EXEC("fnPIPMode(NEXT);"),																	// M - Increment PIPMode
-				EXEC("fnPIPMode(PREVIOUS);")																// D - Decrement PIPMode 
+			MapKeyIOUMD(&MyJoystick, H4P,
+				0,																							// IU - 
+				EXEC("fnPIPMode(RESET);"),																	// OU - Reset PIPMode 
+				EXEC("fnPIPMode(PREVIOUS);"),																// IM - Decrement PIPMode 
+				EXEC("fnPIPMode(NEXT);"),																	// OM - Increment PIPMode
+				0,																							// ID - 
+				EXEC("tgAutoPIPS();")																		// OD - Toggle AutoPIPS
 				);
 		}
 			
