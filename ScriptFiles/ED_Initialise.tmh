@@ -10,35 +10,35 @@
 /*
 	Index:				FUNCTION
 	Line    53: 		int CheckControllers() {
-	Line   166: 		int initJoystickAxis() {
-	Line   186: 		int initThrottleAxis() {
-	Line   203: 		int initSliderAxis() {
-	Line   219: 		int initSlewAxis() {
-	Line   236: 		int initRudderAxis() {	
-	Line   255: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
-	Line   332: 		int initSliderCurve(int x) {
-	Line   364: 		int initTextToSpeech() {
-	Line   376: 		int initSoundFX() {
-	Line   435: 		int initUserSettings(int dummy = 0) {
-	Line   492: 		int fnResetUserSettings(int dummy = 0) {
-	Line   537: 		int fnEncodeUserSettings(int dummy = 0) {
-	Line   572: 		int fnDecodeUserSettings(int DecodeSettings) {
-	Line   603: 		int fnUserSettingsDelta(int dummy = 0)	{
-	Line   650: 		int fnCompareIntSettings(int dummy = 0) {
+	Line   167: 		int initJoystickAxis() {
+	Line   187: 		int initThrottleAxis() {
+	Line   204: 		int initSliderAxis() {
+	Line   220: 		int initSlewAxis() {
+	Line   237: 		int initRudderAxis() {	
+	Line   256: 		int initCurves(int profile, int print=NO, int announce=YES, int SaveCurveInfo=TRUE) {
+	Line   333: 		int initSliderCurve(int x) {
+	Line   365: 		int initTextToSpeech() {
+	Line   377: 		int initSoundFX() {
+	Line   437: 		int initUserSettings(int dummy = 0) {
+	Line   495: 		int fnResetUserSettings(int dummy = 0) {
+	Line   541: 		int fnEncodeUserSettings(int dummy = 0) {
+	Line   577: 		int fnDecodeUserSettings(int DecodeSettings) {
+	Line   609: 		int fnUserSettingsDelta(int dummy = 0)	{
+	Line   657: 		int fnCompareIntSettings(int dummy = 0) {
 */
 
 	// START
 
 	//----------------------------------------------------------------------//
-	// SCRIPT VERSION VARIABLES (Prev = 5.0.3)                              //
+	// SCRIPT VERSION VARIABLES (Prev = 5.1.0)                              //
 	//----------------------------------------------------------------------//
 	
 	// GLOBAL
 	
-	define VMajor		 			5						// Script Version Major Value			ie. 2xx
-	define VMinor		 			1						// Script Version Minor Value			ie. x3x
+	define VMajor		 			6						// Script Version Major Value			ie. 2xx
+	define VMinor		 			0						// Script Version Minor Value			ie. x3x
 	define VPoint					0						// Script Version Point Update			ie. xx4
-	define VBranch					"1"						// Script Version Branch				ie. xxx.01
+	define VBranch					"0"						// Script Version Branch				ie. xxx.01
 	
 	//--------------------------//
 	// INITIALISATION FUNCTIONS //
@@ -123,6 +123,7 @@
 		}
 		else {
 			&MyThrottle = &Throttle;
+			WARTHOG = 1;														// LED Functions not bypassed
 			printf("++	Connected throttle	is WARTHOG Replica A-10C Throttle\x0a");
 		}
 
@@ -417,6 +418,7 @@
 	int		defAutoAbort;			// ENABLED/DISABLED
 	int		defSCOLowFuelFailsafe;	// ENABLED/DISABLED
 	int		defAutoDisembark;		// ENABLED/DISABLED
+	int		defAutoPIPS;			// ENABLED/DISABLED
 
 	// Integer settings
 	int		defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
@@ -458,6 +460,7 @@
 		defAutoAbort			= AutoAbort;			// ENABLED/DISABLED
 		defSCOLowFuelFailsafe	= SCOLowFuelFailsafe;	// ENABLED/DISABLED
 		defAutoDisembark		= AutoDisembark;		// ENABLED/DISABLED
+		defAutoPIPS				= AutoPIPS;				// ENABLED/DISABLED
 		
 		// Integer settings
 		defFAOFFCurves			= FAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD  
@@ -515,6 +518,7 @@
 		AutoAbort			= defAutoAbort;				// ENABLED/DISABLED
 		SCOLowFuelFailsafe	= defSCOLowFuelFailsafe;	// ENABLED/DISABLED
 		AutoDisembark		= defAutoDisembark;			// ENABLED/DISABLED
+		AutoPIPS			= defAutoPIPS;				// ENABLED/DISABLED
 		
 		// Integer settings
 		FAOFFCurves			= defFAOFFCurves;			// OFF, SLOWEST, SLOW, MEDIUM, MILD 
@@ -559,6 +563,7 @@
 		if (AutoAbort)			EncodedSettings = EncodedSettings | (1 << 18);	// Bit 18
 		if (SCOLowFuelFailsafe) EncodedSettings = EncodedSettings | (1 << 19);  // Bit 19
 		if (AutoDisembark)		EncodedSettings = EncodedSettings | (1 << 20);	// Bit 20
+		if (AutoPIPS)			EncodedSettings = EncodedSettings | (1 << 21);	// Bit 21
 		
 		printf("++	Encoded User Settings = %d\x0a", EncodedSettings);
 		
@@ -592,6 +597,7 @@
 		if ((DecodeSettings & (1 << 18))	!= 0) AutoAbort = 1;			else AutoAbort = 0;
 		if ((DecodeSettings & (1 << 19))	!= 0) SCOLowFuelFailsafe = 1;	else SCOLowFuelFailsafe = 0;
 		if ((DecodeSettings & (1 << 20))	!= 0) AutoDisembark = 1;		else AutoDisembark = 0;
+		if ((DecodeSettings & (1 << 21))	!= 0) AutoPIPS = 1;				else AutoPIPS = 0;
 
 		printf("++	User settings decoded\x0a");
 		
@@ -628,6 +634,7 @@
 		if (AutoAbort			!= defAutoAbort)			printf("	AutoAbort		= %d	(%d)\x0a",	AutoAbort, defAutoAbort);
 		if (SCOLowFuelFailsafe	!= defSCOLowFuelFailsafe)	printf("	SCOLowFuelFailsafe	= %d	(%d)\x0a",	SCOLowFuelFailsafe, defSCOLowFuelFailsafe);
 		if (AutoDisembark		!= defAutoDisembark)		printf("	AutoDisembark		= %d	(%d)\x0a",	AutoDisembark, defAutoDisembark);
+		if (AutoPIPS			!= defAutoPIPS)				printf("	AutoPIPS		= %d	(%d)\x0a",	AutoPIPS, defAutoPIPS);
 			
 		// Numeric integer user settings
 		if (FAOFFCurves			!= defFAOFFCurves)			printf("	FAOFFCurves		= %d	(%d)\x0a", FAOFFCurves, defFAOFFCurves);		// OFF, SLOWEST, SLOW, MEDIUM, MILD 
