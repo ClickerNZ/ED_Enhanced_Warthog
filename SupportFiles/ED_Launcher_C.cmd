@@ -1,6 +1,6 @@
 @echo off
 echo.
-echo VERSION 5.1.0 - Clicker - MASTER LAUNCHER
+echo VERSION 6.0.0 - Clicker - MASTER LAUNCHER
 echo.
 
 setlocal EnableExtensions EnableDelayedExpansion
@@ -8,6 +8,7 @@ setlocal EnableExtensions EnableDelayedExpansion
 REM === USER SETTINGS ===
 set "PATH_WARTHOG=C:\Thrustmaster\ED_TargetScript_WARTHOG"
 set "PATH_T16000=C:\Thrustmaster\ED_TargetScript_T16000"
+set "PATH_Common=C:\Thrustmaster\Common"
 
 REM Default if nothing matches:
 set "ED_PREFIX=%PATH_WARTHOG%"
@@ -142,7 +143,7 @@ timeout /t 5 /nobreak >nul
 rem pause
 echo. 
 echo Start TTSMonitor powershell script...
-start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%ED_PREFIX%\SupportFiles\PowerShell\TTSMonitor.ps1"
+start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%PATH_Common%\PowerShell\TTSMonitor.ps1"
 echo.
 
 
@@ -151,8 +152,8 @@ timeout /t 20 /nobreak >nul
 rem DO THIS LAST
 
 echo Start ProcessJournal powershell script...
-start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%ED_PREFIX%\SupportFiles\PowerShell\ProcessJournal.ps1"
-// start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%ED_PREFIX%\SupportFiles\PowerShell\ProcessJournal-v34.ps1"
+start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%PATH_Common%\PowerShell\ProcessJournal.ps1"
+// start powershell -NoProfile -ExecutionPolicy Bypass -NonInteractive -File "%PATH_Common%\PowerShell\ProcessJournal-v34.ps1"
 echo.
 
 rem timeout /t 5
