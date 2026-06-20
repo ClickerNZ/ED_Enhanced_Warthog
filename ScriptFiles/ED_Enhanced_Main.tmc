@@ -7,7 +7,7 @@
 
 	//							THRUSTMASTER WARTHOG REQUIRED								//
 
-	// This file:	ED_Enhanced_Main.tmc	 		v510.1					// New Minor Version
+	// This file:	ED_Enhanced_Main.tmc	 		v600.0					// New Minor Version
 	// Supports:	Elite Dangerous 				v4.3.3.0				// Does not support Legacy Horizons
 	// Requires:	TARGET 							v3.0.25.603				// https://support.thrustmaster.com/
 	//				Joystick firmware				v12
@@ -77,15 +77,15 @@
 	///                                                                       ///
 	/////////////////////////////////////////////////////////////////////////////
 
-	include "ED_ScriptDefines.ttm"			// The order that these files are 'included' matters
-	include "ED_GameBindings.ttm"
-	include "ED_GlobalVars.tmh"
+	include "..\\..\\Common\\ScriptFiles\\ED_ScriptDefines.ttm"			// The order that these files are 'included' matters
+	include "..\\..\\Common\\ScriptFiles\\ED_GameBindings.ttm"
+	include "..\\..\\Common\\ScriptFiles\\ED_GlobalVars.tmh"
 	include "ED_UserSettings.tmh"
-	include "ED_Macros.tmh"
+	include "..\\..\\Common\\ScriptFiles\\ED_Macros.tmh"
 	include "ED_Initialise.tmh"
-	include "ED_Functions.tmh"
-	include "ED_StateTracker.tmh"
-	include "ED_Toggles.tmh"
+	include "..\\..\\Common\\ScriptFiles\\ED_Functions.tmh"
+	include "..\\..\\Common\\ScriptFiles\\ED_StateTracker.tmh"
+	include "..\\..\\Common\\ScriptFiles\\ED_Toggles.tmh"
 	include "ED_MapKeyAssignment.tmh"
 
 //- Excluded from github - remove prior to publishing
