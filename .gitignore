@@ -1,3 +1,7 @@
 ScriptFiles/ED_Development.tmh
 ScriptFiles/CommonScriptFileList.txt
 SupportFiles/Documents/ED_TargetScript - User Reference Guide - v600.docx
+SupportFiles/PowerShell/TTSMonitor-v21.ps1
+SupportFiles/PowerShell/TTSMonitor-v20.ps1
+SupportFiles/PowerShell/ProcessJournal-v33.ps1
+SupportFiles/PowerShell/ProcessJournal-v32.ps1
