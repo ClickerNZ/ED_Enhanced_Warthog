@@ -1,6 +1,6 @@
 CMDR Clicker's Thrustmaster TARGET Script for Elite Dangerous  
   
-Version 6.0.0  
+Version 5.1.0  
   
 STATUS: BETA  
   
