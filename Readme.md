@@ -21,7 +21,7 @@ If you want to test fly this script...
 5. Run the 2x batch files under C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\powershell folder  
    a. PSJournal.cmd  
    b. TTSMonitor.cmd  
-   These rely on paths to journal file to be correct within the script  
+   These rely on paths to journal file (same path as status.json) to be correct within the script  
    Open the corresponding .ps1 files via notepad++ and adjust if necessary  
 6. Open C:\Thrustmaster\ED_TargetScript_Warthog\ScriptFiles\ED_Enhanced_Warthog.tmc via TARGET Script Editor, compile then run  
 7. Run Elite Dangerous  
