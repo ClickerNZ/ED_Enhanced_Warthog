@@ -17,7 +17,7 @@ If you want to test fly this script...
    Usually found at C:\Users\<windows username>\AppData\Local\Frontier Developments\Elite Dangerous\Options\Bindings  
 4. Open C:\Thrustmaster\ED_TargetScript_Warthog\ScriptFiles\ED_UserSettings.tmh via notepad++ and carefully go through and set your preferences  
    a. Ensure that the path to the status.json file is correct  
-      Usually found at C:\Users\\<windows user name>\Saved Games\Frontier Developments\Elite Dangerous  
+      Usually found at C:\Users\your windows login name\Saved Games\Frontier Developments\Elite Dangerous  
 5. Run the 2x batch files under C:\Thrustmaster\ED_TargetScript_Warthog\SupportFiles\powershell folder  
    a. PSJournal.cmd  
    b. TTSMonitor.cmd  
