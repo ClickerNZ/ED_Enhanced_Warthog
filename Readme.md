@@ -4,7 +4,7 @@ NOTE: The entire documentation set needs an overhaul!
 
 Version 510.1 (Vanguards)
 
-STATUS: BETA (Development phase)
+STATUS: CLOSED
 
 Requires latest version of TARGET software + a Thrustmaster WARTHOG Joystick and Throttle.
 (Rudder Pedals are optional but highly recommended)
