@@ -1,3 +1,0 @@
-LIBRARY "testPluginStdCall"
-EXPORTS
-    targetPluginMap
