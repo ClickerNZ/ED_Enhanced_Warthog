@@ -61,27 +61,25 @@ When publishing or sharing this script the following should be included in the z
 - The license file
 - User reference guide (pdf)
 - The following script files;
-		ED_CommsControl.tmh
-		ED_Functions.tmh
-		ED_GameBindings.ttm
-		ED_GlobalVars.tmh
-		ED_Initialise.tmh
-		ED_Macros.tmh
-		ED_Main.tmc
-		ED_MapKeyAssignment.tmh
-		ED_ScriptDefines.ttm
-		ED_StateTracker.tmh
-		ED_Toggles.tmh
-		ED_UserSettings.tmh
+		ED_Enhanced_Main.tmc  
+		ED_Functions.tmh  
+		ED_GameBindings.ttm  
+		ED_GlobalVars.tmh  
+		ED_Initialise.tmh  
+		ED_Macros.tmh  
+		ED_MapKeyAssignment.tmh  
+		ED_ScriptDefines.ttm  
+		ED_StateTracker.tmh  
+		ED_Toggles.tmh  
+		ED_UserSettings.tmh  
 - Voice.exe (users can find this on github and check out the source if they wish) - No longer used  
 - sounder.exe (users can find this on github via the same author as voice.exe)  
-- target_enhanced.tmh As of version 4.0.0, I use a modified target.tmh file which itself was modified by Sedenion  
-(whenever Thrustmaster update their TARGET software, I will update it and provide a new version here)  
-- Windows batch file (SAMPLE_Launcher.cmd) to use to launch Elite Dangerous, my TARGET script and supporting apps)  
+- Windows batch file (Launcher.cmd) to use to launch Elite Dangerous, my TARGET script and supporting apps)  
 - The Elite Dangerous .bind file created to support this script  
 - The image files created to summarise the Joystick and Throttle button assignments  
 - The image files created to summarise keyboard key utilisation  
-- The change log for this version  
+- The change log for this version
+- 2x PowerShell helper scripts, ProcessJournal.ps1 and TTSMonitor.ps1 (inside the supportfiles\powershell folder)  
 
 INSTALLATION:  
 
@@ -90,7 +88,7 @@ Refer User Reference guide for complete installation instructions
 USER SETTINGS:
 
 All user configurable settings are in the ED_UserSettings.tmh file.
-Avoid changing anything in ED_GlobalVars or ED_KeyMap files until you become more familiar with the script itself.
+Avoid changing anything in ED_GlobalVars or ED_MapKeyAssignment files until you become more familiar with the script itself.
 
 USAGE and SHARING: 
 
@@ -104,7 +102,6 @@ CREDITS:
 
 Original script by Aussiedroid.
 Contribution and ideas lifted from Touille and Darkcyde.
-Modified target.tmh was sourced from Sedenion.
 
 DISCLAIMER:
 
