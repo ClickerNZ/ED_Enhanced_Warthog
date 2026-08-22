@@ -60,7 +60,7 @@ When publishing or sharing this script the following should be included in the z
 - This readme file
 - The license file
 - User reference guide (pdf)
-- The following script files;
+- The following script files;  
 		ED_Enhanced_Main.tmc  
 		ED_Functions.tmh  
 		ED_GameBindings.ttm  
