@@ -15,8 +15,8 @@
 
 	// --- Refer 'status.json' section below for more info
 	// --- Change '<username>' to your windows user name
-	alias	StatusFile			= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
-	alias	MaxStatusFile		= "d:\\Users\\den\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
+	alias	StatusFile			= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\status.json";			// This is critical and must be set correctly
+	alias	MaxStatusFile		= "d:\\Users\\<username>\\Saved Games\\Frontier Developments\\Elite Dangerous\\NewMaxJson.json";		// You can set the path to anywhere you like. I prefer keeping this in same folder as status.json 
 
 	// 		!!! IMPORTANT !!! 
 	// If you have chosen to unzip/install to somewhere other than 'c:\Thrustmaster\ED_TargetScript_Warthog\' on your PC
@@ -45,11 +45,11 @@
 	// If you don't wish to use this functionality (maybe you only have one account), ENABLE CMDRNameOverride and set your Commander name manually below.
 	
 	define	CMDRNameOverride	DISABLED  
-	alias	MyName 				= "Clicker";
+	alias	MyName 				= "<your commander naem>";
 
-	alias	MyFC				= "X7X-08Z";			// Replace "X7X-08Z" with your Carrier ID if you have one
-	alias	MyFCName			= "Clicker's Folly";	// Replace with the name you've given to your Fleetcarrier
-	alias	FCOwner				= "Clicker";			// Commander's name who owns 'MyFC'. Script will assume 'FCOwner' owns this FC.
+	alias	MyFC				= "<your FC ID>";		// Replace with your Carrier ID if you have one
+	alias	MyFCName			= "<your FC name>";		// Replace with the name you've given to your Fleetcarrier
+	alias	FCOwner				= "<FC Owner>";			// Commander's name who owns 'MyFC'. Script will assume 'FCOwner' owns this FC.
 														// This caters for Squadron Carriers and for players with multiple accounts (but only one fleetcarrier)
 	//----------------//									
 	// MapKey Profile //
@@ -99,8 +99,7 @@
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//	FUNCTION:	Stores/Restores additional script states when games starts/stops or during script initiated relog. 
 
-	// Set at top in CRITICAL Settings	
-	// alias	MyStatusFile		= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyStatusFile.json";
+	// 										Path Set at top in CRITICAL Settings	
 
 	//---------------//
 	// MyJournalData //
@@ -109,9 +108,7 @@
 	//	NOTE:		Set the 'alias' at top of this file to point to where the output folder is. 
 	//				I've included an example below but so long as you create the folder structure, you can put this anywhere on your PC
 	//				If you do change the location, you will also need to edit the ProcessJournal.ps1 powershell file found in the SupportFiles Folder
-	
-	// alias	MyJournalData			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\Output\\MyJournalData.json";
-	
+		
 	define	JournalReadRate			300			// Set Read Loop rate in milliseconds. (ie 1000 = one second)
 												// You may see issues if this is set too small. If you do, raise this value
 													
@@ -188,9 +185,7 @@
 
 	int		EnableSoundFX		= ENABLED;	 				// ENABLED or DISABLED. Enable this if you wish to use "sounder.exe"
 	
-	// Set at top in CRITICAL Settings
-	// alias	SoundPath			= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounder.exe";
-	// alias	WAVPath				= "C:\\Thrustmaster\\ED_TargetScript_Warthog\\SupportFiles\\sounds\\";
+	// 										Path Set at top in CRITICAL Settings	
 
 	alias	SoundCMD			= "";
 
